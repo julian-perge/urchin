@@ -69,11 +69,11 @@
 # header from every block in frame order and concatenating gives a valid,
 # playable MP3.
 #
-# The exported AVI stores frames as PNG-in-AVI, and one ffmpeg pass crops
-# and pads them, encodes them as Theora and the MP3 as Vorbis, and writes the
-# Ogg file. ffmpeg needs libtheora and libvorbis for that, which Homebrew's
-# ffmpeg-full has. The settings match what the Theora and Vorbis
-# identification headers of the clips this replaced carry: Theora quality 38
+# The exported AVI stores frames as PNG-in-AVI, and one ffmpeg pass encodes
+# them as Theora and the MP3 as Vorbis, and writes the Ogg file. ffmpeg
+# needs libtheora and libvorbis for that, which Homebrew's ffmpeg-full has.
+# The settings match what the Theora and Vorbis identification headers of
+# the clips this replaced carry: Theora quality 38
 # of 63, a keyframe at least every 64 frames, and Vorbis at a nominal
 # 80 kbps. Those clips went through ffmpeg2theora, which Homebrew deprecated,
 # by way of an x264 intermediate that only worked around ffmpeg2theora's
@@ -108,8 +108,10 @@
 from __future__ import annotations
 
 import functools
+import itertools
 import re
 import shutil
+import subprocess
 import sys
 import tempfile
 import zlib
@@ -176,18 +178,22 @@ MASK_W, MASK_H = 533, 300
 
 # The SWF stage is 16000x11500 twips (800x575 px). Five wrappers sit on it at
 # (2670, 2750) twips = (133.5, 137.5) px, which centers the 533x300 mask
-# exactly, and CS_CUT5's sits at (2811, 2831). Godot's viewport is the same
-# 800x575 (project.godot), so a clip with the mask box centered in an 800x575
-# frame is the whole Stage, and cutscene_player.tscn's VideoStreamPlayer fills
-# the viewport with it and does not scale it. stage_layers() moves every
-# cutscene's root layers so the box lands on whole pixels at (133, 137), half
-# a pixel up and left of the five centered wrappers.
+# exactly, and CS_CUT5's sits at (2811, 2831), 7 px right and 4 px down. A
+# Traced run in the Flash debug player read the same positions (#411). Godot's
+# viewport is the same 800x575 (project.godot), and
+# cutscene_player.tscn's VideoStreamPlayer fills the viewport with the clip and
+# does not scale it. So each clip is the whole stage as the root shows it, with
+# every root layer at its own position and the backdrop around the box.
 OUT_W, OUT_H = 800, 575
-CONTENT_X, CONTENT_Y = (OUT_W - MASK_W) // 2, (OUT_H - MASK_H) // 2
 
 # Verification thresholds - see verify_output()'s and _frame_noise()'s
 # docstrings. A frame has to clear both noise bars to be called static.
 DURATION_TOLERANCE_S = 2.0
+# check_encode_matches_render() allows this mean difference, out of 255,
+# between a frame of the encoded clip and ffdec's render of it. Theora at
+# quality 38 gave 1.51 on CS_CUT3's middle frame. The same encode with the old
+# crop and black pad, shifted 7 px left and 4 px up, gave 11.47 (#411).
+MAX_ENCODE_DIFFERENCE = 6.0
 NOISE_RESIDUAL_THRESHOLD = 20.0
 NOISE_RATIO_THRESHOLD = 0.35
 NOISE_SAMPLE_INTERVAL_S = 1.0
@@ -327,17 +333,13 @@ def stage_layers(
     index: SwfIndex, label: str, wrapper_id: int
 ) -> list[tuple[int, int, Matrix]]:
     """What the root timeline shows on the label's frame, from depth 1 up to
-    the wrapper, as (depth, character id, matrix). Every layer moves by the
-    same offset, so the wrapper's clip mask lands on whole pixels at
-    (CONTENT_X, CONTENT_Y), where the encode crops it. Below the wrapper the
-    game shows shape 3475, the dark backdrop."""
+    the wrapper, as (depth, character id, matrix). Each layer keeps the
+    position the root gives it. Below the wrapper the game shows shape 3475,
+    the dark backdrop."""
     shown = timeline.frames(index, 0)[timeline.frame_of(index, 0, label) - 1]
     wrapper_depth = next(
         depth for depth, layer in shown.items() if layer.character_id == wrapper_id
     )
-    wrapper = shown[wrapper_depth]
-    dx = CONTENT_X * 20 - wrapper.matrix[4]
-    dy = CONTENT_Y * 20 - wrapper.matrix[5]
     layers = []
     for depth, layer in sorted(shown.items()):
         if depth > wrapper_depth:
@@ -351,8 +353,7 @@ def stage_layers(
                 f"{label}: root depth {depth} scales, tints or masks, which the "
                 "cutscene export does not copy"
             )
-        tx, ty = layer.matrix[4] + dx, layer.matrix[5] + dy
-        layers.append((depth, layer.character_id, (1.0, 0.0, 0.0, 1.0, tx, ty)))
+        layers.append((depth, layer.character_id, layer.matrix))
     return layers
 
 
@@ -446,7 +447,7 @@ def _camera_wrapper(
     if not placed:
         raise RuntimeError(f"wrapper {wrapper_id} does not place sprite {animation_id}")
     inner += SHOW_FRAME_TAG
-    for previous, (matrix, color) in zip(views, views[1:]):
+    for previous, (matrix, color) in itertools.pairwise(views):
         if (matrix, color) != previous:
             inner += _place(
                 animation_depth,
@@ -577,8 +578,56 @@ def _frame_noise(png_path: Path) -> tuple[float, float]:
     return residual_std, residual_std / (frame_std + 1e-6)
 
 
+def _decoded_frame(video: Path, index: int) -> Image.Image:
+    """Frame index (0-based) of a video, read by decoding the whole stream in
+    order. ffmpeg's select=eq(n,N) returned a frame of another shot of
+    CS_CUT4.ogv (#411), so this does not use it."""
+    size = OUT_W * OUT_H * 3
+    with subprocess.Popen(
+        [str(tool("ffmpeg")), "-v", "error", "-i", str(video)]
+        + ["-f", "rawvideo", "-pix_fmt", "rgb24", "-"],
+        stdout=subprocess.PIPE,
+    ) as decoder:
+        for _ in range(index):
+            decoder.stdout.read(size)
+        frame = decoder.stdout.read(size)
+        decoder.kill()
+    if len(frame) != size:
+        raise RuntimeError(f"{video} has no frame {index} of {OUT_W}x{OUT_H}")
+    return Image.frombytes("RGB", (OUT_W, OUT_H), frame)
+
+
+def mean_difference(a: Image.Image, b: Image.Image) -> float:
+    """The mean of the per-channel difference between two frames, 0 to 255."""
+    return sum(ImageStat.Stat(ImageChops.difference(a, b)).mean) / 3
+
+
+def check_encode_matches_render(
+    label: str, avi_path: Path, ogv_path: Path, index: int
+) -> None:
+    """Stop when frame index of the encoded clip does not show what ffdec
+    rendered on that frame. ffdec renders the stage as the game's root shows
+    it, so an encode that moves, crops or pads the picture fails here. Until
+    #411 the encode cropped the 533x300 box and padded it with black, which
+    put CS_CUT5's box 7 px left and 4 px up of where the game shows it.
+    """
+    difference = mean_difference(
+        _decoded_frame(avi_path, index), _decoded_frame(ogv_path, index)
+    )
+    if difference > MAX_ENCODE_DIFFERENCE:
+        raise RuntimeError(
+            f"{label}: frame {index} of the clip differs from ffdec's render by "
+            f"{difference:.2f} on average, over {MAX_ENCODE_DIFFERENCE}"
+        )
+
+
 def verify_output(
-    label: str, ogv_path: Path, expected_frames: int, has_audio: bool, work_dir: Path
+    label: str,
+    ogv_path: Path,
+    expected_frames: int,
+    has_audio: bool,
+    work_dir: Path,
+    box: tuple[int, int],
 ) -> tuple[int, int]:
     """Fail loudly instead of shipping a silently-corrupt or mis-framed file -
     except for up to MAX_TOLERATED_NOISE_FRAMES isolated noise hits (a clip
@@ -597,9 +646,11 @@ def verify_output(
     (not just a start/midpoint spot check) for high-frequency noise via
     _frame_noise(), which catches a render that comes out as static.
 
-    The noise sweep crops back down to the cutscene box before measuring,
-    since the surrounding letterbox is flat black and would otherwise dilute
-    the measurement far enough to hide real static.
+    The noise sweep crops each frame to the 533x300 cutscene box before it
+    measures. box is the top left corner of that box, rounded down to whole
+    pixels.
+    The backdrop around the box is nearly flat, so without the crop it would
+    dilute the measurement far enough to hide real static.
     """
     probe = run(
         [
@@ -632,8 +683,8 @@ def verify_output(
     width, height = int(width_match.group(1)), int(height_match.group(1))
     if (width, height) != (OUT_W, OUT_H):
         raise RuntimeError(
-            f"{label}: frame is {width}x{height}, expected {OUT_W}x{OUT_H} - "
-            "the clip mask crop or the stage-centering pad is wrong"
+            f"{label}: frame is {width}x{height}, expected {OUT_W}x{OUT_H}, "
+            "the size of the stage"
         )
     dur_match = re.search(r"duration=([\d.]+)", probe)
     if dur_match is None:
@@ -667,7 +718,7 @@ def verify_output(
                 "-frames:v",
                 "1",
                 "-vf",
-                f"crop={MASK_W}:{MASK_H}:{CONTENT_X}:{CONTENT_Y}",
+                f"crop={MASK_W}:{MASK_H}:{box[0]}:{box[1]}",
                 str(frame_path),
             ]
         )
@@ -776,11 +827,6 @@ def process_cutscene(
         if n_blocks:
             encode_cmd += ["-i", str(mp3_path), "-map", "0:v", "-map", "1:a"]
         encode_cmd += [
-            # Crop to the wrapper's clip mask, then re-center that box in an
-            # OUT_W x OUT_H frame the way the original centers it on the
-            # stage.
-            "-vf",
-            f"crop={MASK_W}:{MASK_H}:{CONTENT_X}:{CONTENT_Y},pad={OUT_W}:{OUT_H}:{CONTENT_X}:{CONTENT_Y}:black",
             "-pix_fmt",
             "yuv420p",
             "-c:v",
@@ -802,7 +848,12 @@ def process_cutscene(
 
         # Verified in scratch first, so a failed encode or check leaves the
         # committed clip in assets/ untouched.
-        resolution = verify_output(label, ogv_path, frames, bool(n_blocks), work_dir)
+        wrapper_x, wrapper_y = stage[-1][2][4:]
+        box = (wrapper_x // 20, wrapper_y // 20)
+        check_encode_matches_render(label, avi_path, ogv_path, frames // 2)
+        resolution = verify_output(
+            label, ogv_path, frames, bool(n_blocks), work_dir, box
+        )
         shutil.copyfile(ogv_path, OUT_DIR / ogv_path.name)
         print(f"{label}: verified OK, copied to {OUT_DIR}", file=sys.stderr)
         return resolution
