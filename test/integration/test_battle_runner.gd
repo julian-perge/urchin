@@ -21,6 +21,12 @@ func before_all():
 	unit_templates = UnitManagerAuto.units_by_id
 
 
+# BattleAI keeps the original's left-behind AI values between calls, so a seeded
+# battle here picks the same moves whichever tests ran before it.
+func before_each():
+	BattleAI.reset_scratch()
+
+
 func test_all_moves_parse_including_undefined_heavy_move_0():
 	assert_eq(moves_by_id.size(), 479)
 	assert_true(moves_by_id.has(0), "move 0 present")
