@@ -15,6 +15,7 @@ const LAYOUT_FILE := "res://assets/ui/hub_fade.json"
 # The clip's _alpha, on Flash's 0 to 100 scale. It goes below 0 on its last
 # step, as in the original, and Flash draws that as clear.
 var _alpha: int = 0
+var _start_alpha: int = 0
 var _step: int = 0
 var _frame_seconds: float = 0.0
 var _elapsed: float = 0.0
@@ -27,17 +28,31 @@ func _ready() -> void:
 	size = Vector2(rect["w"], rect["h"])
 	color = Color(layout["color"])
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_alpha = int(layout["start_alpha"])
+	_start_alpha = int(layout["start_alpha"])
 	_step = int(layout["alpha_step"])
 	_frame_seconds = 1.0 / float(layout["fps"])
+	restart()
+
+
+# Shows the black at the load alpha again and starts the steps over, as the
+# original does each time a jump to Navigation places the clip again.
+func restart() -> void:
+	_alpha = _start_alpha
+	_elapsed = 0.0
 	_show_alpha()
+	set_process(true)
 
 
-# Flash plays a slow frame late and drops none, so a long delta still steps
-# only once and drops the time it ran over. A delta of a normal length keeps the
-# time it ran over, so the steps keep the SWF's frame rate when the frames of
-# the display do not divide it evenly.
 func _process(delta: float) -> void:
+	advance(delta)
+
+
+# Moves the fade on by `delta` seconds of display time. Flash plays a slow
+# frame late and drops none, so a long delta still steps only once and drops the
+# time it ran over. A delta of a normal length keeps the time it ran over, so
+# the steps keep the SWF's frame rate when the frames of the display do not
+# divide it evenly.
+func advance(delta: float) -> void:
 	_elapsed += delta
 	if _elapsed < _frame_seconds:
 		return

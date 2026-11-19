@@ -7,6 +7,10 @@
 # panel at the same time.
 extends Control
 
+# The player picked a zone the map can open. The original's zone button jumps
+# to Navigation (DefineButton2_4155 on(release)), so the Hub fades in again.
+signal zone_picked(zone_id: int)
+
 func _ready():
 	add_to_group("zone_map_panel")
 	visible = false
@@ -43,3 +47,4 @@ func _on_zone_selected(zone_id: int):
 	if ZoneManager.can_access_zone(zone_id):
 		ZoneManager.change_zone(zone_id)
 		close_map()
+		zone_picked.emit(zone_id)

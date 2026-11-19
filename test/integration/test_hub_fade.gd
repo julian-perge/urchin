@@ -75,13 +75,13 @@ func test_the_fade_steps_once_for_each_frame_of_the_swf_and_never_skips_one():
 	var fade: HubFade = _fade()
 	var frame_seconds: float = 1.0 / float(_layout()["fps"])
 	var first: float = _expected_alphas()[0]
-	fade._process(frame_seconds * 0.5)
+	fade.advance(frame_seconds * 0.5)
 	assert_almost_eq(fade.color.a, float(_layout()["start_alpha"]) / 100.0, 0.0001, "half a frame steps nothing")
-	fade._process(frame_seconds * 0.5)
+	fade.advance(frame_seconds * 0.5)
 	assert_almost_eq(fade.color.a, first, 0.0001, "a whole frame steps once")
 	# Flash plays every frame of a slow stretch late and drops none, so a long
 	# delta still steps only once.
-	fade._process(frame_seconds * 5.0)
+	fade.advance(frame_seconds * 5.0)
 	assert_almost_eq(fade.color.a, _expected_alphas()[1], 0.0001, "a long frame steps once")
 
 
@@ -92,7 +92,7 @@ func test_the_fade_keeps_the_swf_frame_rate_when_the_deltas_do_not_divide_it():
 	var fade: HubFade = _fade()
 	var frame_seconds: float = 1.0 / float(_layout()["fps"])
 	for _delta: int in 9:
-		fade._process(frame_seconds * 0.7)
+		fade.advance(frame_seconds * 0.7)
 	assert_almost_eq(fade.color.a, _expected_alphas()[5], 0.0001, "six steps in 6.3 frames")
 
 
@@ -110,3 +110,17 @@ func test_after_a_win_the_hub_and_the_victory_window_show_under_the_fade_until_i
 	for _frame: int in _expected_alphas().size():
 		fade.step_frame()
 	assert_eq(fade.color.a, 0.0, "the Hub and the Window show after the original's frame count")
+
+
+func test_a_zone_picked_on_the_world_map_fades_the_hub_in_again():
+	var game: Control = GameScene.instantiate()
+	add_child_autofree(game)
+	var fade: HubFade = game.get_node("HubFade")
+	fade.set_process(false)
+	for _frame: int in _expected_alphas().size():
+		fade.step_frame()
+	assert_eq(fade.color.a, 0.0, "the first fade is over")
+	var map: Control = game.get_node("ZoneMapOverlay")
+	map.visible = true
+	map._on_zone_selected(ZoneManager.current_zone)
+	assert_almost_eq(fade.color.a, float(_layout()["start_alpha"]) / 100.0, 0.0001, "the pick jumps to Navigation, which places the clip again")

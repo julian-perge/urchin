@@ -57,8 +57,9 @@ the GUT panel inside the Godot editor.
 ## Project layout
 
 Standard Godot type-based split (`scenes/`, `scripts/`, `resources/`, `assets/`) - this section
-describes what's actually there, not an aspirational target. See `KNOWN_GAPS.md` for defects in
-what exists and `NEXT_PHASES.md` for what hasn't been built yet.
+describes what's actually there, not an aspirational target. Open work is in the GitHub issues,
+decisions to depart from the original are in `docs/adr/`, and what the original does is in
+`DECODED_ALGORITHMS.md`.
 
 ```text
 res://
@@ -137,7 +138,5 @@ res://
 │       ├── action_script/            # Full ffdec script export - game-logic ground truth
 │       ├── action_script_curated/    # Hand-picked, commented excerpts (former action_script_files/)
 │       └── swf_xml/                  # ffdec -swf2xml dumps of both SWFs, kept for grepping
-├── KNOWN_GAPS.md                     # Specific defects/scoped-out edges in work already done
-├── NEXT_PHASES.md                    # Priority-ordered roadmap of what's left
 └── SWF_DIFFERENCES.md                # Divergences found between the web SWF and the Steam rebundle
 ```
