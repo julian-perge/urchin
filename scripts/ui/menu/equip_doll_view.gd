@@ -2,7 +2,7 @@
 # of the original menu clip) and the Store window (frame 16) each place this
 # node in their scene, with its Doll and its slots, at their own positions.
 # Call setup() once, then refresh() after each change to the save or the
-# equipment.
+# equipment, with the battle unit of the member it shows.
 extends Control
 class_name EquipDollView
 
@@ -30,12 +30,12 @@ func setup() -> void:
 		_slots[equip_index] = slot
 
 
-func refresh(save: PlayerSave, items_by_id: Dictionary) -> void:
+func refresh(unit: CombatUnit, items_by_id: Dictionary) -> void:
+	var equip_ids: Array = unit.equipment_ids
 	for equip_index in _slots:
 		var slot: ItemSlot = _slots[equip_index]
-		var item_id: int = int(save.equip_array[equip_index]) if equip_index < save.equip_array.size() else 0
+		var item_id: int = int(equip_ids[equip_index]) if equip_index < equip_ids.size() else 0
 		slot.set_item(items_by_id.get(item_id) if item_id != 0 else null)
-	var unit: CombatUnit = CombatUnit.from_player_save(save)
 	_doll.dress_from_model(unit.model, CharacterVisual.resolve_equip_looks(unit, items_by_id))
 
 

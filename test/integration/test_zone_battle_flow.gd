@@ -30,7 +30,7 @@ func test_battle_resources_load_by_id():
 func test_roster_build_places_player_companion_and_enemies():
 	var save = PlayerSave.new_game("Flow", 0)
 	var battle = BattleSetup.load_battle(100)  # players [5, -2, 0, -1, 0]
-	var units = BattleSetup.build_units(battle, save, unit_templates, CombatUnit.Difficulty.HARD)
+	var units = BattleSetup.build_units(battle, save, unit_templates, ItemManagerAuto.items_by_id, CombatUnit.Difficulty.HARD)
 	assert_true(units.has(1), "player in slot 1")
 	assert_false(units[1].ai_enabled, "player is human-controlled")
 	assert_true(units.has(2), "Prison Guard enemy in slot 2")
@@ -44,7 +44,7 @@ func test_roster_build_places_player_companion_and_enemies():
 
 func test_roster_records_where_each_unit_came_from():
 	var save = PlayerSave.new_game("Flow", 0)
-	var units = BattleSetup.build_units(BattleSetup.load_battle(100), save, unit_templates, CombatUnit.Difficulty.HARD)
+	var units = BattleSetup.build_units(BattleSetup.load_battle(100), save, unit_templates, ItemManagerAuto.items_by_id, CombatUnit.Difficulty.HARD)
 	assert_eq(units[1].origin, CombatUnit.Origin.PLAYER, "slot 1 is the player")
 	assert_eq(units[1].party_id, -1, "the player isn't a companion")
 	assert_eq(units[2].origin, CombatUnit.Origin.ENEMY, "Prison Guard is an enemy")
@@ -57,8 +57,8 @@ func test_roster_records_where_each_unit_came_from():
 # the same template on the enemy's, so only the slot tells a guest from an enemy.
 func test_roster_tells_a_guest_from_an_enemy_with_the_same_template():
 	var save = PlayerSave.new_game("Flow", 0)
-	var guest: CombatUnit = BattleSetup.build_units(BattleSetup.load_battle(508), save, unit_templates, CombatUnit.Difficulty.HARD)[3]
-	var enemy: CombatUnit = BattleSetup.build_units(BattleSetup.load_battle(504), save, unit_templates, CombatUnit.Difficulty.HARD)[2]
+	var guest: CombatUnit = BattleSetup.build_units(BattleSetup.load_battle(508), save, unit_templates, ItemManagerAuto.items_by_id, CombatUnit.Difficulty.HARD)[3]
+	var enemy: CombatUnit = BattleSetup.build_units(BattleSetup.load_battle(504), save, unit_templates, ItemManagerAuto.items_by_id, CombatUnit.Difficulty.HARD)[2]
 	assert_eq(guest.player_name, "Felicity", "508's slot 3")
 	assert_eq(enemy.player_name, "Felicity", "504's slot 2")
 	assert_eq(guest.origin, CombatUnit.Origin.GUEST, "on the player's team the template is a guest")
@@ -78,7 +78,7 @@ func test_only_battles_2_and_508_put_a_guest_on_the_field():
 	battle_ids.sort()
 	var guests: Array = []
 	for battle_id in battle_ids:
-		var units = BattleSetup.build_units(BattleSetup.load_battle(battle_id), save, unit_templates, CombatUnit.Difficulty.HARD)
+		var units = BattleSetup.build_units(BattleSetup.load_battle(battle_id), save, unit_templates, ItemManagerAuto.items_by_id, CombatUnit.Difficulty.HARD)
 		for slot in units:
 			if units[slot].origin == CombatUnit.Origin.GUEST:
 				guests.append([battle_id, slot])
@@ -91,14 +91,14 @@ func test_roster_takes_a_companions_party_id_from_the_deployment():
 	var save = PlayerSave.new_game("Flow", 0)
 	save.party_roster = [0, 1, 2, -1, -1, -1]
 	save.party_deployed = [2, 1]
-	var units = BattleSetup.build_units(BattleSetup.load_battle(100), save, unit_templates, CombatUnit.Difficulty.HARD)
+	var units = BattleSetup.build_units(BattleSetup.load_battle(100), save, unit_templates, ItemManagerAuto.items_by_id, CombatUnit.Difficulty.HARD)
 	assert_eq([units[3].player_name, units[3].party_id], ["Roald", 2], "the first marker fields Roald")
 	assert_eq([units[5].player_name, units[5].party_id], ["Veradux", 1], "and the second fields Veradux")
 
 
 func test_companion_stat_model():
 	var save = PlayerSave.new_game("Flow", 0)
-	var veradux = Party.build_companion_unit(save, 1, unit_templates, 3)
+	var veradux = Party.build_companion_unit(save, 1, unit_templates, ItemManagerAuto.items_by_id, 3)
 	# Level 1 Veradux (template ratios all 20): allocation + ceil(curve).
 	var curve = ceil(CombatUnit.get_stat(20, 1, true))
 	assert_eq(veradux.base_life, round(9 + curve) * 33)
@@ -117,7 +117,7 @@ func test_full_zone_battle_loop():
 	var pick = ZoneProgression.pick_story_battle(save)
 	assert_eq(pick["battle_id"], 100)
 	var battle = BattleSetup.load_battle(pick["battle_id"])
-	var units = BattleSetup.build_units(battle, save, unit_templates, CombatUnit.Difficulty.HARD)
+	var units = BattleSetup.build_units(battle, save, unit_templates, ItemManagerAuto.items_by_id, CombatUnit.Difficulty.HARD)
 
 	# Headless autonomy: let the AI drive the player unit with their talent
 	# moves (the battle UI will feed real input later).

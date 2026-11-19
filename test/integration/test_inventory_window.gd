@@ -5,6 +5,7 @@ const SCENE = preload("res://scenes/ui/menu/inventory_window.tscn")
 
 func after_each() -> void:
 	GameData.current_save = null
+	GameData.menu_party_id = Party.PLAYER_PARTY_ID
 
 
 func test_the_window_uses_the_shared_shell_and_its_close_signal() -> void:
@@ -189,3 +190,56 @@ func test_the_sixteen_bars_are_the_elements_in_order_with_their_own_stat() -> vo
 		assert_eq((window.get_node("PerBars/Bars/Bar%d" % k) as ElementBar)._kind, ElementBar.Kind.PIERCING)
 		assert_eq((window.get_node("DefBars/Bars/Bar%d" % k) as ElementBar)._kind, ElementBar.Kind.DEFENSE)
 		assert_eq((window.get_node("PerBars/Bars/Bar%d" % k) as ElementBar)._element, k)
+
+
+# A plain click on a party face selects the member (DefineButton2_2895
+# on(press) lines 30-37). The left panel then shows that member's name, level,
+# class (CLASS[ClassStats - 1]), stats and gear, and the equip slots act on
+# that member's gear (DefineButton2_2981 on(press)).
+func _window_with_felicity_selected() -> Control:
+	GameData.current_save = PlayerSave.new_game("Inventory", 0)
+	GameData.current_save.party_roster = [0, 1, 2, 3, -1, -1]
+	var window: Control = add_child_autofree(SCENE.instantiate())
+	window.refresh()
+	var face: PartyFace = window._party_faces[3]
+	assert_eq(face.party_id, 3)
+	face.chosen.emit(3, false)
+	return window
+
+
+func test_a_click_on_a_companions_face_shows_that_companion() -> void:
+	var window: Control = _window_with_felicity_selected()
+	var felicity: Dictionary = Party.COMPANIONS[3]
+	assert_eq(GameData.menu_party_id, 3)
+	assert_eq(window._name_label.text, felicity["name"])
+	assert_eq(window._level_label.text, "%s22 %s" % [Strings.menu(0), Strings.text("CLASS", felicity["unit_id"] - 1)])
+	var shown: Array = []
+	for label: Label in window._stat_values:
+		shown.append(int(label.text))
+	assert_eq(shown, [40, 150, 40, 171, 125], "Felicity's stats in the original at level 22")
+	for i in 7:
+		var slot: ItemSlot = window.equip_view.get_node("Slot%d" % i)
+		var item_id: int = int(felicity["equipment"][i])
+		assert_eq(slot.item.id if slot.item != null else 0, item_id, "equip slot %d shows her gear" % i)
+
+
+func test_the_equip_slots_act_on_the_selected_companion() -> void:
+	var window: Control = _window_with_felicity_selected()
+	var save: PlayerSave = GameData.current_save
+	var player_gear: Array = save.equip_array.duplicate()
+	var slot: ItemSlot = window.equip_view.get_node("Slot5")
+	var blade_id: int = int(Party.COMPANIONS[3]["equipment"][5])
+	slot.slot_clicked.emit(slot)
+	assert_eq(int(save.party_equip[3][5]), 0, "the click unequipped Felicity's main hand")
+	assert_true(save.item_array.has(blade_id))
+	assert_eq(save.equip_array, player_gear, "the player's gear is untouched")
+	assert_eq(GameData.equip_from_inventory(save.item_array.find(blade_id)), Equipment.EquipResult.OK)
+	assert_eq(int(save.party_equip[3][5]), blade_id, "an inventory click equips onto Felicity")
+
+
+func test_reopening_the_window_selects_the_player_again() -> void:
+	var window: Control = _window_with_felicity_selected()
+	window.hide()
+	window.show()
+	assert_eq(GameData.menu_party_id, Party.PLAYER_PARTY_ID)
+	assert_eq(window._name_label.text, Party.PLAYER_NAME)

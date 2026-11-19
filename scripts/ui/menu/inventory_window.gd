@@ -19,10 +19,6 @@ var _exp_full_width: float = 0.0
 var _per_bars: Array[ElementBar] = []
 var _def_bars: Array[ElementBar] = []
 var _party_faces: Array[PartyFace] = []
-# The member the left panel shows, Krin.MenuPlayerSelect in the original. It goes
-# back to the player each time the window opens (DefineSprite_3142/frame_25).
-# Until Companion equip lands, it only moves the green frame.
-var selected_party_id: int = Party.PLAYER_PARTY_ID
 # The slot of the Deployed pair that the next shift-clicked Companion takes
 # (bickerPicker in the original).
 var _deploy_picker: int = 0
@@ -81,23 +77,25 @@ func _build_party_bar() -> void:
 
 
 func _reset_party_state() -> void:
-	selected_party_id = Party.PLAYER_PARTY_ID
+	GameData.menu_party_id = Party.PLAYER_PARTY_ID
 	var save: PlayerSave = GameData.current_save
 	if save != null and save.party_deployed.size() == 2:
 		_deploy_picker = Party.initial_deploy_picker(save.party_deployed)
 
 
 # DefineButton2_2895 on(press). A shift-click changes the Deployed pair. Any
-# other click selects the member, when that member joined.
+# other click selects the member, when that member joined, and the whole left
+# panel then shows that member and equips onto them.
 func _on_party_face_chosen(party_id: int, shift: bool) -> void:
 	var save: PlayerSave = GameData.current_save
 	if save == null or party_id < 0:
 		return
 	if shift:
 		_deploy_picker = Party.toggle_deployed(save, party_id, _deploy_picker)
+		_refresh_portraits(save)
 	else:
-		selected_party_id = party_id
-	_refresh_portraits(save)
+		GameData.menu_party_id = party_id
+		refresh()
 
 
 func refresh() -> void:
@@ -105,23 +103,61 @@ func refresh() -> void:
 	if save == null:
 		return
 	_status_label.text = ""
-	_name_label.text = Party.PLAYER_NAME
-	_level_label.text = "%s%d %s" % [Strings.menu(0), save.level, Strings.text("CLASS", save.player_class)]
-	var stats: Array[Variant] = [save.life, save.strength, save.magic, save.speed, save.focus]
+	var member: Dictionary = _selected_member(save)
+	var wearer: Equipment.Wearer = member["wearer"]
+	_name_label.text = member["name"]
+	# The class name is CLASS[ClassStats - 1] (updateStatus, line 93).
+	_level_label.text = "%s%d %s" % [Strings.menu(0), wearer.level, Strings.text("CLASS", wearer.class_id - 1)]
+	var stats: Array = member["stats"]
 	for i in _stat_values.size():
 		_stat_values[i].text = str(int(stats[i]))
 	for k in 8:
-		_per_bars[k].show_value(float(save.per.get(k, 0.0)), save.level)
-		_def_bars[k].show_value(float(save.def.get(k, 0.0)), save.level)
-	var exp_fraction: float = clampf(save.experience / 100.0, 0.0, 1.0)
+		_per_bars[k].show_value(float(wearer.per.get(k, 0.0)), wearer.level)
+		_def_bars[k].show_value(float(wearer.def.get(k, 0.0)), wearer.level)
+	var experience: float = member["experience"]
+	var exp_fraction: float = clampf(experience / 100.0, 0.0, 1.0)
 	_exp_fill.size.x = _exp_full_width * exp_fraction
 	# The original rounds the percent with Math.round, in the enterFrame script of
 	# PlaceObject2_2867_1419.
-	_exp_percent.text = "%d%%" % roundi(save.experience)
-	equip_view.refresh(save, ItemManagerAuto.items_by_id)
+	_exp_percent.text = "%d%%" % roundi(experience)
+	equip_view.refresh(member["unit"], ItemManagerAuto.items_by_id)
 	right_column.populate_from_save(save, ItemManagerAuto.items_by_id)
 	right_column.set_gold(save.euro)
 	_refresh_portraits(save)
+
+
+# What the left panel shows for the GameData.menu_party_id member: the name,
+# the Equipment.Wearer with level, class and bonus pools, the five stats, the
+# experience bar and a unit that dresses the doll. The original reads
+# all of them from the arrays of Krin.MenuPlayerSelect (updateStatus,
+# updateDoll, and the experience bar's Krin.n).
+func _selected_member(save: PlayerSave) -> Dictionary:
+	var party_id: int = GameData.menu_party_id
+	if party_id == Party.PLAYER_PARTY_ID:
+		return {
+			"name": Party.PLAYER_NAME,
+			"wearer": Equipment.Wearer.for_player(save),
+			"stats": [save.life, save.strength, save.magic, save.speed, save.focus],
+			"experience": save.experience,
+			"unit": CombatUnit.from_player_save(save),
+		}
+	var wearer: Equipment.Wearer = Party.companion_wearer(save, party_id, ItemManagerAuto.items_by_id)
+	var template: Character = UnitManagerAuto.get_unit(Party.COMPANIONS[party_id]["unit_id"])
+	return {
+		"name": Party.COMPANIONS[party_id]["name"],
+		"wearer": wearer,
+		"stats": Party.companion_stats(wearer, template),
+		"experience": float(save.party_exp[party_id]),
+		"unit": _doll_unit(Party.COMPANIONS[party_id]["model"], wearer.equip),
+	}
+
+
+# A unit that carries only what the doll reads: the model and the gear.
+func _doll_unit(model: Array, equip_ids: Array) -> CombatUnit:
+	var unit := CombatUnit.new()
+	unit.model = model.duplicate()
+	unit.equipment_ids = equip_ids.duplicate()
+	return unit
 
 
 # Each face shows the member of its roster slot, as the original does
@@ -130,7 +166,7 @@ func refresh() -> void:
 func _refresh_portraits(save: PlayerSave) -> void:
 	for slot in _party_faces.size():
 		var id: int = int(save.party_roster[slot]) if slot < save.party_roster.size() else -1
-		_party_faces[slot].show_member(id, id == selected_party_id, save.party_deployed.has(id))
+		_party_faces[slot].show_member(id, id == GameData.menu_party_id, save.party_deployed.has(id))
 
 
 func _refresh_if_visible() -> void:

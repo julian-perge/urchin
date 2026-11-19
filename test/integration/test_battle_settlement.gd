@@ -24,7 +24,7 @@ func _remove_achievements_file() -> void:
 func _runner(battle_id: int, save: PlayerSave, pick: Dictionary) -> BattleRunner:
 	var battle: BattleFight = BattleSetup.load_battle(battle_id)
 	var train_cap: int = int(pick.get("train_cap", BattleSetup.DEFAULT_TRAIN_CAP))
-	var units: Dictionary = BattleSetup.build_units(battle, save, UnitManagerAuto.units_by_id, save.difficulty, train_cap)
+	var units: Dictionary = BattleSetup.build_units(battle, save, UnitManagerAuto.units_by_id, ItemManagerAuto.items_by_id, save.difficulty, train_cap)
 	var runner := BattleRunner.new()
 	runner.setup(
 		units, battle, MoveManagerAuto.moves_by_id, BuffManagerAuto.buffs_by_id,
