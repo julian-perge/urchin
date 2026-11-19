@@ -810,7 +810,7 @@ Ported: `TalentTree`, `AbilityTooltipBuilder` and `Leveling.respec`.
 - The learn button is `DefineButton2_3096` on the tree screen. It loops every `PRESKILL` entry of a node and refuses when any of them has rank 0, so a node with several prerequisites needs
   all of them. Each learn takes one skill point (`skillPoints--`).
 - A level-up grants one skill point (`skillPoints++` in the victory frame's level-up code, `DefineSprite_3142/frame_9/PlaceObject3_3002_1197/CLIPACTIONRECORD onClipEvent(enterFrame).as:31`), and a new character starts with 5, `preStartSkill` (`frame_41/DoAction_2.as:77-78`). So a respec sets `skillPoints` to `Level - 1 + preStartSkill`.
-- The learn button rebuilds `moveMatrix2` from the class's starting moves and every `skillAdderMatrix` entry that is not 0, in node order. It does not keep a running list.
+- The learn button rebuilds `moveMatrix2` from the class's starting moves and every `skillAdderMatrix` entry that is not 0, from node 37 down (see "for..in order over arrays"). It does not keep a running list.
 - `krinRemakeTree` builds each node's tooltip in four lines. The header is the rank over the maximum rank and the name, such as `"(2/4)  Vicious Strike"`. For a passive node
   (`CLASSIFY == 1`) the title and each rank's text come from `KrinLang.ENGLISH.BUFFSAY`, not from the buff record, and the cost line is `SKILLAURA`, "Passive Combat Effect". 9 of the 14 passive
   families have a title that is not their family name, for example Marathon is "Endurance". The bottom line names the next tier's level and what it grants, from `BUFFSAY[family + rank]` for a
@@ -851,7 +851,7 @@ AS2 `for..in` walks an array's keys in the reverse of the order the keys were cr
 - `new Array(n)` creates no keys, so it walks nothing. `delete` removes a key, and a later write puts it first. `splice`, `shift` and `sort` leave a descending walk. `reverse` walks `3,1,4,0,2` for 5 items, so do not assume an order after it.
 - An array copied by `for..in` from a literal walks ascending, and a list pushed while walking that copy walks descending again. So each `for..in` and `push` step of a filter chain flips the order.
 - That explains the `createNewItemKrin` case in SWF_DIFFERENCES.md: `statUpdater` gets indexes 0 to 4 written in order and walks `4..0`. `statUpdaterP` and `statUpdaterD` are written while walking the literal `Krin.PIU` (`frame_42/DoAction_16.as:14,41-45`), so they get keys 7 down to 0 and walk `0..7`.
-- Save loading writes into keys that already exist (`frame_42/DoAction_20.as:109-115`), so a loaded game keeps the new-game order. This is read from source. No run has loaded a save with the Probe.
+- Save loading writes each saved value into the array that is already there (`frame_42/DoAction_20.as:109-115`). Where the key already exists, as in `skillAdderMatrix` and `itemArray`, a loaded game keeps the new-game order. An array that is empty before the load, such as `moveMatrix2` (`frame_41/DoAction_2.as:90`), gets its keys in the order the loop walks the saved copy, and no run has measured that order. This is read from source. No run has loaded a save with the Probe.
 
 What it means for the port:
 
