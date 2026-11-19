@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bqey66wvy1t6b"
-path="res://.godot/imported/battle_pbar_full.png-6b2b8c7a0cea9bd5cdeb9c83f365a7cc.ctex"
+uid="uid://bdoq6hi5uovtr"
+path="res://.godot/imported/enemy_058.png-16d2cd408057fd0f0063b2b32714dc9a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/battle/battle_pbar_full.png"
-dest_files=["res://.godot/imported/battle_pbar_full.png-6b2b8c7a0cea9bd5cdeb9c83f365a7cc.ctex"]
+source_file="res://assets/ui/battle/clock/enemy_058.png"
+dest_files=["res://.godot/imported/enemy_058.png-16d2cd408057fd0f0063b2b32714dc9a.ctex"]
 
 [params]
 
