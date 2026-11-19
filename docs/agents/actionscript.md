@@ -89,6 +89,11 @@ a caller by name, and it does not resolve which timeline a bare name such as
   assigned, so the original plays no clip. Before you write that a variable is
   a global, find its declaration and run `rg -uu 'NAME\s*=[^=]'` over
   `dev/source_files/action_script` for an assignment (`c8733b7f`).
+- **`for..in` over an array walks its keys newest first.** An array literal or a
+  `push`-built list walks from the last index down, and a list built by walking
+  another one with `for..in` walks the other way. Port each loop from the rule
+  in DECODED_ALGORITHMS.md, "for..in order over arrays", which two players
+  measured (#38).
 - **Flash folds case in linkage lookups.** `KRIN.MAGICBOLT` and
   `Krin.Magicbolt` are the same clip; resolve export names case-insensitively
   (`4ccdb39`).
@@ -183,6 +188,15 @@ otherwise.
   session tried two runs at once. Before you start a run, check that no Flash
   player or Ruffle process is running.
 - Flash reports `_currentframe` 0 for an empty clip and Ruffle reports 1.
+- **`trace-run` overwrites the committed Trace log.** A run for a logic Probe
+  still saves to `references/traced_runs/<build>_<player>.txt`. Copy its lines
+  to a file of their own, such as `forin_web_flash.txt`, and restore the Trace
+  log with `git checkout -- references/traced_runs/` (#38).
+- **The game stops for a click before frame 42.** It waits on the language
+  screen (root frame 1) and on CLICK TO PLAY (frames 4 and 5). The #38 runs
+  used a throwaway Probe file that ran the English button's code
+  (`DefineButton2_298`) and called `_root.play()` on those frames. It was not
+  committed, because it changes what the game does.
 
 ### Add a Probe
 
