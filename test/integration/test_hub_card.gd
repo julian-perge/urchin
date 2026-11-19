@@ -27,6 +27,8 @@ func after_each() -> void:
 	GameData.current_save = _save_before
 	GameData.current_slot = _slot_before
 	GameData.save_dir = GameData.SAVE_DIR
+	# A failed hint test must not leave a win for the next test's Hub.
+	ZoneManager.pending_victory = {}
 	for file: String in DirAccess.get_files_at(TEST_SAVE_DIR):
 		DirAccess.remove_absolute(TEST_SAVE_DIR + file)
 	DirAccess.remove_absolute(TEST_SAVE_DIR)
@@ -253,16 +255,40 @@ func test_a_hub_built_for_the_next_win_shows_the_hint_again():
 	assert_true((second.get_node("HubCard") as HubCard).visible)
 
 
+# After a win with no cutscene, no zone map and no level-up, the original's
+# Proceed shows the hint at once (DefineButton2_3004 on(release), line 27).
+func test_proceed_after_a_plain_win_shows_its_hint_at_once():
+	var game: Control = await _hub_after_win(101, 0)
+	var card: HubCard = game.get_node("HubCard")
+	assert_true(card.visible)
+	assert_eq((card.get_node("%Title") as Label).text, Strings.text("NAVTITLE2", _hint_index(101)))
+	assert_eq((card.get_node("%Body") as Label).text, Strings.text("NAVTEXT2", _hint_index(101)))
+	_free_hub(game)
+
+
+func test_a_hub_opened_with_no_hint_shows_no_card():
+	GameData.current_save = PlayerSave.new_game("Hinter", 0)
+	var game: Control = await _hub_scene()
+	assert_false((game.get_node("HubCard") as HubCard).visible)
+	_free_hub(game)
+
+
 # A win that levelled the player up leaves the hint waiting until the player
 # closes the Inventory or the Store (button 2853, DefineButton2_2853 on(press)).
 # The Hub opens on that win, and Proceed switches it to the Abilities Window.
 func _hub_after_level_up_win(battle_id: int) -> Control:
+	return await _hub_after_win(battle_id, 1)
+
+
+# The Hub opened on a win of the battle, then Proceed pressed once the player's
+# experience row has run its frames.
+func _hub_after_win(battle_id: int, levels_gained: int) -> Control:
 	var save := PlayerSave.new_game("Hinter", 0)
 	save.autosave = false
 	GameData.current_save = save
 	var settlement := BattleSettlement.new()
 	settlement.fighters[0] = BattleSettlement.FighterExperience.new()
-	settlement.levels_gained = 1
+	settlement.levels_gained = levels_gained
 	ZoneManager.pending_victory = {"settlement": settlement, "battle_id": battle_id, "is_boss": false}
 	var game: Control = await _hub_scene()
 	var victory: VictoryWindow = game.get_node("VictoryWindow")
