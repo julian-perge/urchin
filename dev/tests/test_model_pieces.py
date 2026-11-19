@@ -131,5 +131,13 @@ def test_a_clip_placed_again_after_a_gap_starts_from_its_frame_1():
     assert planned.frames[4][6].child_frame == 1
 
 
+def test_a_clip_with_no_stop_shown_past_its_last_frame_fails():
+    # ONCE has three frames and no script, so Flash would loop it on frame 4,
+    # which a render of one look per frame cannot show.
+    index = parse_swf(model_swf(SHOW, place2(6, cid=ONCE) + SHOW, SHOW, SHOW, SHOW))
+    with pytest.raises(ValueError, match="no stop"):
+        model_pieces.plan(index, MODEL, set())
+
+
 def test_each_model_writes_its_own_file():
     assert model_pieces.out_path("MODEL8").name == "model8_pieces.json"

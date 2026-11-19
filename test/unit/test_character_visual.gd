@@ -1124,3 +1124,15 @@ func test_every_model_with_pieces_names_art_that_exists():
 		var pieces: Dictionary = _pieces_of(model)
 		for art in pieces["art"]:
 			assert_true(ResourceLoader.exists(CharacterVisual.PIECE_ART % art), art)
+
+
+# extract_doll_shadow and extract_model_animations each write a model's frame 1
+# shadow matrix. show_shadow reads the first and each frame the second, so they
+# must agree or the shadow jumps on the clip's first frame.
+func test_the_shadow_layout_and_each_timelines_first_shadow_agree():
+	var models: Dictionary = _shadow_layout()["models"]
+	for model in CharacterVisual.CLIP_MODELS:
+		var first: Array = _animations(model)["shadow"][0]
+		var want: Array = models[model]
+		for index in 6:
+			assert_almost_eq(float(first[index]), float(want[index]), 0.01, "%s matrix entry %d" % [model, index])

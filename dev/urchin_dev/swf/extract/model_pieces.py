@@ -35,7 +35,6 @@
 from __future__ import annotations
 
 import json
-import shutil
 import sys
 from dataclasses import dataclass, field
 
@@ -149,7 +148,16 @@ def plan(index: SwfIndex, sprite: int, effects: set[int]) -> Plan:
             child_frame = 0
             if cid in index.sprite_frames:
                 age = number - started[1] + 1
-                child_frame = min(age, last_played_frame(index, cid))
+                held = last_played_frame(index, cid)
+                looping = index.sprite_frames[cid] > 1 and not render.runs_stop(
+                    index, cid, held
+                )
+                if age > held and looping:
+                    raise ValueError(
+                        f"frame {number} depth {depth}: clip {cid} has played its"
+                        f" {held} frames and runs no stop(), so Flash would loop it"
+                    )
+                child_frame = min(age, held)
             key = (cid, layer.matrix, color, child_frame)
             look = result.looks.setdefault(key, Look(number, depth, child_frame))
             shown[depth] = look
@@ -169,11 +177,10 @@ def out_path(model: str):
     return SPRITES / f"{model.lower()}_pieces.json"
 
 
-def render_model(index: SwfIndex, model: str, effects: set[int]) -> dict | None:
+def render_model(index: SwfIndex, model: str, planned: Plan) -> dict | None:
     """-> the JSON for `model`, after it writes the model's PNGs, or None when
     the model has no piece."""
     sprite = MODELS[model]
-    planned = plan(index, sprite, effects)
     if not planned.looks and not planned.loops:
         return None
     names: dict[Look, str] = {}
@@ -222,18 +229,28 @@ def render_model(index: SwfIndex, model: str, effects: set[int]) -> dict | None:
 def main():
     index = read_swf(WEB_SWF)
     effects = effect_clips(index)
-    if ART.exists():
-        shutil.rmtree(ART)
-    ART.mkdir(parents=True)
+    # Every model is planned before any art is written, so a model that fails
+    # its checks leaves the committed art as it was.
+    plans = {model: plan(index, sprite, effects) for model, sprite in MODELS.items()}
+    ART.mkdir(parents=True, exist_ok=True)
+    written: set[str] = set()
     for model in MODELS:
         out = out_path(model)
-        result = render_model(index, model, effects)
+        result = render_model(index, model, plans[model])
         if result is None:
             out.unlink(missing_ok=True)
             print(model, "has no pieces", file=sys.stderr)
             continue
+        written.update(result["art"])
         out.write_text(json.dumps(result, sort_keys=True) + "\n")
         print(model, len(result["art"]), "renders, wrote", out, file=sys.stderr)
+    # A PNG that no model uses any more goes with its .import file. The .import
+    # files of the PNGs that stay keep their uids, which Godot's scenes and
+    # caches refer to.
+    for stale in ART.glob("*.png"):
+        if stale.stem not in written:
+            stale.unlink()
+            stale.with_name(stale.name + ".import").unlink(missing_ok=True)
 
 
 if __name__ == "__main__":

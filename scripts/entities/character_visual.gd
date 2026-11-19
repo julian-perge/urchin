@@ -86,6 +86,9 @@ const PIECE_SHADER: Shader = preload("res://scenes/doll_piece.gdshader")
 #   (lines 117-123). The original's home is where the swing started. The
 #   port's is the doll's own, and the port measures the Runback from it (see
 #   play_melee).
+# The label that set_state() starts for each one-shot state, which a model's
+# clip can lack.
+const STATE_LABELS: Dictionary = {State.HIT: "hit", State.CAST: "cast", State.STUN: "stun"}
 const MELEE_STEP_SHARE: float = 10.0 / 60.0
 const MELEE_IMPACT_FRAMES: float = 15.0
 const MELEE_RUNBACK_FRAMES: float = 14.0
@@ -347,8 +350,7 @@ func dress_from_model(model: Array, equip_looks: Array) -> void:
 # MODEL2, which has no hit label, because Flash ignores a goto to a label the
 # clip does not have and the clip plays on.
 func set_state(new_state: State) -> void:
-	var labels: Dictionary = {State.HIT: "hit", State.CAST: "cast", State.STUN: "stun"}
-	if labels.has(new_state) and not _has_label(labels[new_state]):
+	if STATE_LABELS.has(new_state) and not _has_label(STATE_LABELS[new_state]):
 		return
 	_state = new_state
 	_attack_fired = false
@@ -730,7 +732,9 @@ func _show_piece_art(sprite: Sprite2D, art: String, placed: Transform2D) -> void
 	if rect.is_empty():
 		sprite.visible = false
 		return
-	sprite.texture = load(PIECE_ART % art)
+	var path: String = PIECE_ART % art
+	if sprite.texture == null or sprite.texture.resource_path != path:
+		sprite.texture = load(path)
 	var size: Vector2 = sprite.texture.get_size()
 	sprite.transform = placed * Transform2D(0.0, Vector2(rect["w"] / size.x, rect["h"] / size.y), 0.0, Vector2(rect["x"], rect["y"]))
 
