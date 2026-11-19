@@ -71,9 +71,8 @@ class_name ManualPanel
 extends Control
 
 # frame_124/DoAction.as fills the five topics from MANUAL and the body from
-# EXPLAINEXTRA each time the Screen opens.
-const TOPIC_COUNT: int = 5
-
+# EXPLAINEXTRA each time the Screen opens. The scene's five topic slots set
+# the count, so the script types none.
 
 func open() -> void:
 	$Body.text = Strings.text("EXPLAINEXTRA")

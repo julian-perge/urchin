@@ -5,17 +5,16 @@
 class_name ManualPanel
 extends Control
 
-# MANUAL holds the five topic captions and MANUALEX their five texts.
-const TOPIC_COUNT: int = 5
-
+@onready var _topics: Container = $Topics
 @onready var _body: Label = $Body
 
 
 # frame_124/DoAction.as fills the five topics from MANUAL each time the Screen
-# opens. They never change, so the panel fills them once.
+# opens. They never change, so the panel fills them once. The scene holds one
+# slot for each of the five MANUAL captions.
 func _ready() -> void:
-	for topic in TOPIC_COUNT:
-		get_node("Topics/Topic%d/Caption" % topic).text = Strings.text("MANUAL", topic)
+	for topic in _topics.get_child_count():
+		_topics.get_child(topic).get_node("Caption").text = Strings.text("MANUAL", topic)
 	open()
 
 
