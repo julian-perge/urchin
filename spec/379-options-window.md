@@ -70,7 +70,7 @@ scripts/ui/menu/options_window.gd      fill, Sound and Autosave (proposed)
 - **Rows (GUT).** Sound flips `PlayerSave.sound` and `AudioManager.sound_enabled`, stops the music when off and starts the menu music when on. Autosave flips `PlayerSave.autosave`. The Window has no Effects, Graphics or difficulty button.
 - **Hotbar (GUT).** Options opens the Window, a second press closes it, and the close X hides it.
 - **Sound setting (GUT).** Loading a save with sound off turns `AudioManager.sound_enabled` off. The new-game screen's Sound row reaches the new save.
-- **Compare tool.** An `options` entry in `chrome` mode scores the shell and the Panel against the frame with the left-out depths stripped. The bar comes from the first passing run, and the 20 px control scores over it.
+- **Compare tool.** An `options` entry in `chrome` mode scores the shell and the Panel against the frame with the left-out depths stripped. The first run scored p99 9 with the 20 px control at 65, so the bar is 9.
 - **Whole suite.** `just gut` passes before each commit.
 
 ## Boundaries

@@ -154,7 +154,7 @@ The snippet shows style only.
 - Tooltip text and look for the sell slot, delete slot, empty cell and the rarity-tinted title bars. The tooltip spec owns them. The shell scenes expose each slot as a node it can drive.
 - The original's pick-up and put-down handling, where a press moves an item onto the cursor. The port selects a slot and drags. That is behavior, and no spec in this map covers it.
 - Hiding the Hub art when a Window opens. That is the hub spec.
-- Achievements and Options Windows.
+- Achievements and Options Windows. Options is [spec/379-options-window.md](379-options-window.md).
 - Each Window's own Panel rects.
 
 ## Success criteria
