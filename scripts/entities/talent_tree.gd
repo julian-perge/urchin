@@ -390,7 +390,7 @@ static func learn(save: PlayerSave, node_index: int) -> LearnResult:
 	else:
 		# Source-faithful (talent learn button, DefineButton2_3096): upgrade
 		# the equipped bar in place, then REBUILD the known pool from
-		# skill_adder_matrix in node-index order.
+		# skill_adder_matrix, from the last node down.
 		var new_move_id: int = granted_move_id(node, new_rank)
 		var old_move_id: int = int(save.skill_adder_matrix[node_index])
 		if old_move_id != 0:
@@ -401,12 +401,16 @@ static func learn(save: PlayerSave, node_index: int) -> LearnResult:
 
 
 # moveMatrix2 = [startSkill1, startSkill2] + every nonzero skill_adder_matrix
-# entry, in node-index order.
+# entry, from node 37 down to node 0. The original rebuilds the pool with
+# for..in over skillAdderMatrix (DefineButton2_3096 on(release) lines 48-58),
+# and AS2 for..in walks that array from its last index down
+# (DECODED_ALGORITHMS.md, "for..in order over arrays").
 static func _rebuild_known_moves(save: PlayerSave) -> void:
 	save.move_matrix2 = TalentTree.STARTING_MOVES.get(save.player_class, []).duplicate()
-	for granted in save.skill_adder_matrix:
-		if int(granted) > 0:
-			save.move_matrix2.append(int(granted))
+	for node_index in range(save.skill_adder_matrix.size() - 1, -1, -1):
+		var granted: int = int(save.skill_adder_matrix[node_index])
+		if granted > 0:
+			save.move_matrix2.append(granted)
 
 
 # Passive buff internal_names to apply to the player's CombatUnit at battle
