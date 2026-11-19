@@ -4,22 +4,16 @@
 extends GutTest
 
 
-# The ending's two texts sit at the rects of edit text 2796 and static text 2799
-# in root frame 116, and OK! is clickable over the rect of button 2797, whose
-# only state is shape 291, the same 30 px square the game over buttons use.
-func test_ending_screen_uses_the_frame_116_rects():
+# The Ending Screen fills enderText, edit text 2796, from ENDING
+# (frame_116/DoAction.as:1), word for word as ADR 0002 and ADR 0006 keep it, and
+# both of its captions draw in the menu caption look (spec/107-ending.md).
+func test_the_ending_screen_shows_ending_from_strings_json_in_the_caption_look():
+	var strings: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://dev/converted_json/strings.json"))
 	var ending = add_child_autofree(load("res://scenes/battle/ending_screen.tscn").instantiate())
-	var texts: Dictionary = {
-		"EndingLabel": Rect2(195.3, 109.45, 418.05, 275.2),
-		"OkLabel": Rect2(221.0, 410.1, 342.1, 51.3),
-	}
-	for node_name in texts:
+	assert_eq(ending.get_node("EndingLabel").text, strings["ENDING"], "ENDING")
+	for node_name in ["EndingLabel", "OkLabel"]:
 		var label: Label = ending.get_node(node_name)
-		assert_almost_eq(label.position, texts[node_name].position, Vector2(0.01, 0.01), "%s position" % node_name)
-		assert_almost_eq(label.size.x, texts[node_name].size.x, 0.01, "%s width" % node_name)
-	var button: Button = ending.get_node("OkButton")
-	assert_almost_eq(button.position, Vector2(340.43, 412.4), Vector2(0.01, 0.01), "OkButton position")
-	assert_almost_eq(button.size, Vector2(104.04, 40.0), Vector2(0.01, 0.01), "OkButton size")
+		assert_eq(label.theme_type_variation, &"MenuCaption", "%s uses MenuCaption" % node_name)
 
 
 # The layout JSON carries where each hall, sky and chrome character actually
