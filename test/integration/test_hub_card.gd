@@ -27,6 +27,9 @@ func after_each() -> void:
 	GameData.current_save = _save_before
 	GameData.current_slot = _slot_before
 	GameData.save_dir = GameData.SAVE_DIR
+	# A failed hint test must not leave a hint for the next test's Hub.
+	ZoneManager.hint_battle_on_load = 0
+	ZoneManager.hint_battle_after_close = 0
 	for file: String in DirAccess.get_files_at(TEST_SAVE_DIR):
 		DirAccess.remove_absolute(TEST_SAVE_DIR + file)
 	DirAccess.remove_absolute(TEST_SAVE_DIR)
@@ -251,6 +254,28 @@ func test_a_hub_built_for_the_next_win_shows_the_hint_again():
 	var second: Control = await _hub_scene()
 	second.show_battle_hint(100)
 	assert_true((second.get_node("HubCard") as HubCard).visible)
+
+
+# After a win with no cutscene, no zone map and no level-up, the original's
+# Proceed shows the hint at once (DefineButton2_3004 on(release), line 27).
+func test_a_hub_opened_by_a_plain_win_shows_its_hint_at_once():
+	GameData.current_save = PlayerSave.new_game("Hinter", 0)
+	ZoneManager.hint_battle_on_load = 101
+	var game: Control = await _hub_scene()
+	var card: HubCard = game.get_node("HubCard")
+	assert_true(card.visible)
+	assert_eq((card.get_node("%Title") as Label).text, Strings.text("NAVTITLE2", _hint_index(101)))
+	assert_eq((card.get_node("%Body") as Label).text, Strings.text("NAVTEXT2", _hint_index(101)))
+	assert_eq(ZoneManager.hint_battle_on_load, 0, "the Hub took the hint")
+	_free_hub(game)
+
+
+func test_a_hub_opened_with_no_hint_shows_no_card():
+	GameData.current_save = PlayerSave.new_game("Hinter", 0)
+	ZoneManager.hint_battle_on_load = 0
+	var game: Control = await _hub_scene()
+	assert_false((game.get_node("HubCard") as HubCard).visible)
+	_free_hub(game)
 
 
 # A win that levelled the player up leaves the hint waiting until the player

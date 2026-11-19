@@ -32,6 +32,12 @@ var open_abilities_on_load: bool = false
 # that battle's hint when the player closes the Inventory or the Store, as the
 # original's button 2853 does (DefineButton2_2853 on(press)).
 var hint_battle_after_close: int = 0
+# Set by battle_scene.gd right before it switches back to game.tscn after a win
+# with no cutscene, no zone map and no level-up. It holds the id of the battle
+# just won, and 0 means no hint. game.gd's _ready() takes it, clears it and shows
+# that battle's hint at once, as the original's Proceed calls krinNavTutSpeech
+# on such a win (DefineButton2_3004 on(release), line 27).
+var hint_battle_on_load: int = 0
 # Tests point this at a temp file so they can grant Legend without touching the
 # player's real achievements.
 var achievements_path: String = Achievements.SAVE_PATH
