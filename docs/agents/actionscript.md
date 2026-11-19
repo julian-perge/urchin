@@ -213,6 +213,12 @@ otherwise.
   On Heroic the player's half-turn passes by itself after 4 seconds, so the
   battle plays on with no clicks. The Probe is
   `references/traced_runs/cost_failure_probe.as`.
+- **A capture Probe that changes the game is kept next to its capture.** The
+  #162 Probes jump from `mainMenu` to `LOADBATTLESCENE` with `BattlePick` 408,
+  freeze the dolls and attach clips, so they are not in `dev/probes/`, where
+  `trace-swf` would build them into every Traced run. They are in
+  `references/traced_runs/zone4_boss/` with the logs and PNGs they made. To run
+  one again, copy it to `dev/probes/` for one `trace-swf` and delete it after.
 - **ffmpeg's `select=eq(n,N)` picks the wrong frame of a Theora clip.** In
   #411 it returned a frame of another shot of CS_CUT4. To read frame N of a
   clip, decode the whole clip as a stream and count the frames.
