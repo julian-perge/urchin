@@ -414,7 +414,12 @@ Ported: `CharacterVisual._play_death` and `FighterPresenter.die`. Frame counts b
   (`DefineSprite_166_MODEL1/frame_371/DoAction.as`), 58 frames after the death. Frame 360 runs `_parent.shadower._visible = false`, which hides nothing, so the Ground shadow goes with the doll on frame 371 (see "Doll ground shadow" in the audit table).
 - `lifeBarUpdate` plays the death voice and attaches LifeBarSmoother to the unit's bar with `deadNow` set (`frame_42/DoAction_8.as:345-347`). The clip's frame 18, 17 frames after the
   death, removes the buff icons `bshr0` to `bshr9` and sends the bar's `inner` clip (DefineSprite 3407, the name and the life and focus numbers) to its empty `third` frame. From the next
-  frame, its frame 38 takes 5 off the whole bar's `_alpha` every frame, so the bar is at 0 on frame 37 and hidden on frame 38.
+  frame, its frame 38 takes 5 off the whole bar's `_alpha` every frame and jumps back to `dead` (frame 37). The jump lands in the same frame, so the step runs on every frame, not on every
+  second frame. Flash keeps `_alpha` in steps of 1/256 and drops the rest on each write, so each step takes 13/256 off: 100, 94.921875, 89.84375, and so on to 3.515625 on frame 36 and
+  -1.171875 on frame 37. Frame 38 finds the alpha not above 0 and hides `inner2`. So the fade takes 20 frames, the bar draws nothing from frame 37, and it is hidden on frame 38, 38
+  frames after the death. Traced runs of the web build measured this frame by frame, with the same values in the Flash 14 debug player and in Ruffle 0.7.1
+  (`references/traced_runs/death_fade_web_flash.txt` and `death_fade_web_ruffle.txt`, #383). `StatusBar._advance_death` steps in 1/256 units, and
+  `test_the_bar_fades_and_hides_on_the_frames_the_traced_run_measured` checks every logged frame.
 - `lifeBarUpdate` does none of that when the bar's rounded percent hasn't changed (295-298), so a unit killed from under 0.5% life dies with no voice and no fade. ADR 0005 counts that as
   an Original bug, and the port plays both on every death.
 

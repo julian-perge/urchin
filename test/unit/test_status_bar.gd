@@ -253,8 +253,9 @@ func test_a_bar_that_runs_steps_its_clips_at_the_swf_frame_rate() -> void:
 	assert_false(bar.is_processing(), "and the bar stops running")
 
 
-# The death, which die() starts, clears the bar on frame 17 and then fades it.
-func test_a_death_clears_on_frame_17_then_fades_5_a_frame_and_hides() -> void:
+# The death, which die() starts, clears the bar on frame 17 and then fades it by
+# 5 points of Flash's _alpha a frame, which Flash stores as 13/256.
+func test_a_death_clears_on_frame_17_then_fades_13_256ths_a_frame_and_hides() -> void:
 	var bar: StatusBar = _shown_bar(1, _state(250.0, 250.0))
 	bar.show_status(_state(0.0, 250.0))
 	bar.die()
@@ -263,16 +264,17 @@ func test_a_death_clears_on_frame_17_then_fades_5_a_frame_and_hides() -> void:
 	watch_signals(bar)
 	var death: Dictionary = StatusBar.record()["death"]
 	var clear_frame: int = int(death["clear_frame"])
-	var per_frame: float = float(death["fade_per_frame"]) / 100.0
 	_advance(bar, clear_frame - 1)
 	assert_true(bar.inner.visible, "not yet cleared the frame before")
 	_advance(bar, 1)
 	assert_false(bar.inner.visible, "cleared on the clear frame")
 	assert_eq(bar.modulate.a, 1.0)
 	_advance(bar, 1)
-	assert_almost_eq(bar.modulate.a, 1.0 - per_frame, 0.001, "its step off the alpha the frame after")
-	_advance(bar, roundi(1.0 / per_frame) - 1)
-	assert_almost_eq(bar.modulate.a, 0.0, 0.001, "to 0")
+	assert_eq(bar.modulate.a, 243.0 / 256.0, "its step off the alpha the frame after")
+	_advance(bar, 18)
+	assert_eq(bar.modulate.a, 9.0 / 256.0, "the last step above 0")
+	_advance(bar, 1)
+	assert_eq(bar.modulate.a, 0.0, "to 0")
 	assert_true(bar.visible, "it hides on the frame after")
 	_advance(bar, 1)
 	assert_false(bar.visible)

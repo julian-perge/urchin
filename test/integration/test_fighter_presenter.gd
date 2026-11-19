@@ -204,14 +204,9 @@ func _play_out_the_hit() -> void:
 		_doll._process(1.0 / 30.0)
 
 
-# The frame that clears a dead bar and the alpha the fade takes off each frame
-# after it, as top_bar.json records them.
+# The frame that clears a dead bar, as top_bar.json records it.
 func _clear_frame() -> int:
 	return int(StatusBar.record()["death"]["clear_frame"])
-
-
-func _fade_per_frame() -> float:
-	return float(StatusBar.record()["death"]["fade_per_frame"]) / 100.0
 
 
 # Steps the presenter and its doll by `count` frames at the original's 30 fps.
@@ -722,17 +717,46 @@ func _overlay_alpha() -> float:
 	return _bar.modulate.a if _bar.is_visible_in_tree() else 0.0
 
 
-# From the frame after the clear, LifeBarSmoother takes 5 off the bar's alpha
-# every frame (DefineSprite_57_LifeBarSmoother/frame_38/DoAction.as).
-func test_the_bar_fades_its_step_of_alpha_a_frame_after_the_clear():
+# The bar's alpha on each frame of a death in a Traced run of the web build in
+# the Flash debug player, where frame 0 is the frame of the killing
+# lifeBarUpdate. Each line is the frame, the bar's _alpha and whether the bar's
+# inner2 clip is still visible. Ruffle logged the same values
+# (death_fade_web_ruffle.txt).
+const DEATH_FADE_LOG := "res://references/traced_runs/death_fade_web_flash.txt"
+
+
+# Returns [frame, alpha out of 1 as the original draws it, shown] for each frame
+# the Traced run logged. A negative _alpha draws nothing, and a hidden bar draws
+# nothing.
+func _traced_death_fade() -> Array:
+	var frames: Array = []
+	for line in FileAccess.get_file_as_string(DEATH_FADE_LOG).split("\n"):
+		var fields: PackedStringArray = line.split("\t")
+		if fields.size() < 7 or fields[1] != "frame":
+			continue
+		var shown: bool = fields[5] == "true"
+		var alpha: float = maxf(float(fields[4]), 0.0) / 100.0 if shown else 0.0
+		frames.append([int(fields[2]), alpha, shown])
+	return frames
+
+
+# LifeBarSmoother clears the bar 17 frames after the death and from the next
+# frame takes 5 off its _alpha every frame, until it hides it on frame 38
+# (DefineSprite_57_LifeBarSmoother/frame_18 and frame_38). Flash keeps _alpha
+# in steps of 1/256 and drops the rest, so each step takes 13/256 off.
+func test_the_bar_fades_and_hides_on_the_frames_the_traced_run_measured():
 	_presenter.show_result(_killing(_damage(100.0, 0.0)), null)
-	var clear: int = _clear_frame()
-	var alphas: Array = [_overlay_alpha()]
-	for frame in clear + roundi(1.0 / _fade_per_frame()):
-		_step_frames(1)
-		alphas.append(_overlay_alpha())
-	for expected in [[clear - 1, 1.0], [clear, 1.0], [clear + 1, 1.0 - _fade_per_frame()], [clear + roundi(0.5 / _fade_per_frame()), 0.5], [clear + roundi(1.0 / _fade_per_frame()), 0.0]]:
-		assert_almost_eq(alphas[expected[0]], expected[1], 0.001, "frame %d after the impact" % expected[0])
+	var traced: Array = _traced_death_fade()
+	assert_eq(traced.size(), 44, "the log holds frames 0 to 43")
+	var ported: Array = []
+	for frame in traced.size():
+		if frame > 0:
+			_step_frames(1)
+		ported.append([frame, snappedf(_overlay_alpha(), 1.0 / 1024.0), _bar.is_visible_in_tree()])
+	for row in traced:
+		row[1] = snappedf(row[1], 1.0 / 1024.0)
+	assert_eq(ported, traced)
+	assert_eq(traced.filter(func(row): return row[2]).size(), 38, "the bar shows for 38 frames, 0 to 37")
 
 
 # The scene snaps every fighter at the half-turn's end, and the bar's name,
@@ -787,9 +811,9 @@ func test_a_unit_killed_from_under_half_a_percent_life_still_plays_its_death_voi
 	_unit.life_n = 4.0
 	_present(_unit)
 	_presenter.show_result(_killing(_damage(4.0, 0.0)), null)
-	_step_frames(_clear_frame() + roundi(0.5 / _fade_per_frame()))
+	_step_frames(_clear_frame() + 10)
 	assert_eq(_cues, [VOICE_DIE], "the death voice")
-	assert_almost_eq(_overlay_alpha(), 0.5, 0.001, "and the bar halfway through its fade")
+	assert_eq(_overlay_alpha(), 126.0 / 256.0, "and the bar halfway through its fade")
 
 
 # A death from a Buff tick has no Move result to move the bar. The original empties
