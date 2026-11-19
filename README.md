@@ -104,7 +104,7 @@ res://
 │   │   ├── party.gd               # Story companions: roster/joins/deployment, stats, XP
 │   │   ├── equipment.gd           # Equip validation (slot/level/unit rules) + stat transfer
 │   │   ├── achievements.gd        # Grant table, battle counters, global persistence
-│   │   ├── character_visual.gd    # Paper-doll: MODEL1 and MODEL4 clips, dressChar port, animation states
+│   │   ├── character_visual.gd    # Paper-doll: every model's clip, dressChar port, animation states
 │   │   └── enemy.gd, player.gd    # still empty stubs
 │   ├── zones/                     # Zone navigation (map panel, background sync) + zone_progression.gd
 │   │                              #   (story/training battle selection, quest progress, zone unlocks)

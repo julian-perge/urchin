@@ -2,7 +2,8 @@
 # frame scripts, such as the swing whoosh on the frames of its attack labels.
 # Output: dev/converted_json/<model>_sound_cues.json, such as
 # model4_sound_cues.json, each {"<1-based frame>": ["<cue>", ...]} in frame
-# order. CharacterVisual plays a cue when the doll's playhead reaches its frame.
+# order, and {} for a model whose scripts play no sound. CharacterVisual plays a
+# cue when the doll's playhead reaches its frame.
 #
 # Run: uv run convert_model_sound_cues
 from __future__ import annotations
@@ -22,14 +23,17 @@ def read_cues(folder) -> dict[str, list[str]]:
 
     The result maps the 1-based frame, as a string because it is a JSON key, to
     the cues of its scripts, in frame order. A line that calls addSound in
-    another shape raises ValueError naming its frame, and so does a folder with
-    no cue.
+    another shape raises ValueError naming its frame. A folder with frame
+    scripts and no cue, such as MODEL8's, gives no cues, and a folder with no
+    frame script raises ValueError, because it is not a model's export.
     """
     cues: dict[str, list[str]] = {}
     frames = sorted(
         (path for path in folder.glob("frame_*") if path.is_dir()),
         key=lambda path: int(path.name.removeprefix("frame_")),
     )
+    if not frames:
+        raise ValueError(f"{folder} has no frame scripts")
     for frame_folder in frames:
         frame = frame_folder.name.removeprefix("frame_")
         for script in sorted(frame_folder.glob("DoAction*.as")):
@@ -42,8 +46,6 @@ def read_cues(folder) -> dict[str, list[str]]:
                         f"frame {frame}: cannot read {line.strip()[:80]!r}"
                     )
                 cues.setdefault(frame, []).append(match.group("cue"))
-    if not cues:
-        raise ValueError("no sound cues found")
     return cues
 
 
