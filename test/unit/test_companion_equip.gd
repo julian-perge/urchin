@@ -77,17 +77,25 @@ func test_felicity_at_level_22_shows_the_original_stats_with_all_gear_and_with_n
 
 
 # With their seed gear, Veradux and Roald have the StatSets and PerSets seeds,
-# the stats the port gave them before #195.
+# the stats the port gave them before #195. Their seed gear alone adds up to
+# the same seeds, and DoAction_17 seeds no DefSets for them, so their gear
+# must give no defense.
 func test_veradux_and_roald_keep_the_seed_stats_with_their_seed_gear() -> void:
 	for party_id in [1, 2]:
-		var wearer: Equipment.Wearer = Party.companion_wearer(save, party_id, ItemManagerAuto.items_by_id)
-		assert_eq(wearer.equip, _ints(_seed("equipArray%d" % party_id)), "party %d seed gear" % party_id)
+		var seed_gear: Array = _ints(_seed("equipArray%d" % party_id))
 		var stat_seed: Array = _ints(_seed("StatSets%d" % party_id))
-		assert_eq(wearer.stat_allocated, stat_seed, "party %d StatSets" % party_id)
 		var per_seed: Array = _seed("PerSets%d" % party_id)
+		var wearer: Equipment.Wearer = Party.companion_wearer(save, party_id, ItemManagerAuto.items_by_id)
+		assert_eq(wearer.equip, seed_gear, "party %d seed gear" % party_id)
+		assert_eq(wearer.stat_allocated, stat_seed, "party %d StatSets" % party_id)
+		var gear_only := Equipment.Wearer.new(seed_gear, 1, 0)
+		for item_id in seed_gear:
+			Equipment.apply_item_stats(gear_only, ItemManagerAuto.items_by_id.get(item_id), 1)
+		assert_eq(gear_only.stat_allocated, stat_seed, "party %d gear adds up to StatSets" % party_id)
 		for element in CombatUnit.ELEMENT_ORDER.size():
 			assert_eq(wearer.per[element], float(per_seed[element]), "party %d PerSets %d" % [party_id, element])
-			assert_eq(wearer.def[element], 0.0, "party %d has no defense from gear" % party_id)
+			assert_eq(gear_only.per[element], float(per_seed[element]), "party %d gear adds up to PerSets %d" % [party_id, element])
+			assert_eq(gear_only.def[element], 0.0, "party %d gear gives no defense %d" % [party_id, element])
 
 
 func test_the_class_check_uses_the_companions_class_stats() -> void:

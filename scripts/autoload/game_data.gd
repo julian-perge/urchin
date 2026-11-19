@@ -61,6 +61,7 @@ const STARTING_EQUIPMENT: Dictionary[int, int] = {1: 11, 3: 4, 4: 8, 5: 5}
 func new_game(slot: int, player_name: String, player_class: PlayerSave.PlayerClass = PlayerSave.PlayerClass.BIOLOGICAL) -> void:
 	current_slot = slot
 	current_save = PlayerSave.new_game(player_name, player_class)
+	menu_party_id = Party.PLAYER_PARTY_ID
 	for equip_slot in STARTING_EQUIPMENT:
 		var item: GameItem = ItemManagerAuto.get_item(STARTING_EQUIPMENT[equip_slot])
 		if item != null:
@@ -85,6 +86,7 @@ func load_game(slot: int) -> bool:
 	Party.ensure_party_equip(save)
 	current_slot = slot
 	current_save = save
+	menu_party_id = Party.PLAYER_PARTY_ID
 	save_loaded.emit(slot)
 	return true
 

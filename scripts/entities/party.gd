@@ -130,8 +130,10 @@ static func ensure_party_equip(save: PlayerSave) -> void:
 	if not save.party_equip.is_empty():
 		return
 	save.party_equip = [[]]
-	for party_id in range(1, COMPANIONS.size() + 1):
-		save.party_equip.append(COMPANIONS[party_id]["equipment"].duplicate())
+	for party_id in COMPANIONS:
+		while save.party_equip.size() <= party_id:
+			save.party_equip.append([])
+		save.party_equip[party_id] = COMPANIONS[party_id]["equipment"].duplicate()
 
 
 # The Companion's 7-slot equip array in the save, equipArray1-5 in the

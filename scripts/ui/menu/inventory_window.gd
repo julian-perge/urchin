@@ -128,7 +128,7 @@ func refresh() -> void:
 
 # What the left panel shows for the GameData.menu_party_id member: the name,
 # the Equipment.Wearer with level, class and bonus pools, the five stats, the
-# experience bar and the battle unit that dresses the doll. The original reads
+# experience bar and a unit that dresses the doll. The original reads
 # all of them from the arrays of Krin.MenuPlayerSelect (updateStatus,
 # updateDoll, and the experience bar's Krin.n).
 func _selected_member(save: PlayerSave) -> Dictionary:
@@ -148,8 +148,16 @@ func _selected_member(save: PlayerSave) -> Dictionary:
 		"wearer": wearer,
 		"stats": Party.companion_stats(wearer, template),
 		"experience": float(save.party_exp[party_id]),
-		"unit": Party.build_companion_unit(save, party_id, UnitManagerAuto.units_by_id, ItemManagerAuto.items_by_id, 0),
+		"unit": _doll_unit(Party.COMPANIONS[party_id]["model"], wearer.equip),
 	}
+
+
+# A unit that carries only what the doll reads: the model and the gear.
+func _doll_unit(model: Array, equip_ids: Array) -> CombatUnit:
+	var unit := CombatUnit.new()
+	unit.model = model.duplicate()
+	unit.equipment_ids = equip_ids.duplicate()
+	return unit
 
 
 # Each face shows the member of its roster slot, as the original does
