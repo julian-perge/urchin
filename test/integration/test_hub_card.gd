@@ -27,6 +27,9 @@ func after_each() -> void:
 	GameData.current_save = _save_before
 	GameData.current_slot = _slot_before
 	GameData.save_dir = GameData.SAVE_DIR
+	# A failed hint test must not leave a hint for the next test's Hub.
+	ZoneManager.hint_battle_on_load = 0
+	ZoneManager.hint_battle_after_close = 0
 	for file: String in DirAccess.get_files_at(TEST_SAVE_DIR):
 		DirAccess.remove_absolute(TEST_SAVE_DIR + file)
 	DirAccess.remove_absolute(TEST_SAVE_DIR)
@@ -262,6 +265,7 @@ func test_a_hub_opened_by_a_plain_win_shows_its_hint_at_once():
 	var card: HubCard = game.get_node("HubCard")
 	assert_true(card.visible)
 	assert_eq((card.get_node("%Title") as Label).text, Strings.text("NAVTITLE2", _hint_index(101)))
+	assert_eq((card.get_node("%Body") as Label).text, Strings.text("NAVTEXT2", _hint_index(101)))
 	assert_eq(ZoneManager.hint_battle_on_load, 0, "the Hub took the hint")
 	_free_hub(game)
 
