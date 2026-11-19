@@ -93,9 +93,11 @@ const PIECE_SHADER: Shader = preload("res://scenes/doll_piece.gdshader")
 # clip can lack.
 const STATE_LABELS: Dictionary = {State.HIT: "hit", State.CAST: "cast", State.STUN: "stun"}
 # krinMelee reads krinBodyMove, krinBoltTime, krinMeleeAttackCD and
-# krinMeleeAttackEndCD, which frame_42/DoAction_4.as sets at lines 213-218, and
-# writes the krinMeleeDash, Runback, StepCap and HomeTolerance numbers as
-# literals at lines 102-117. extract_krin_settings writes them all to this file.
+# krinMeleeAttackEndCD, which frame_42/DoAction_4.as sets at lines 213-218. It
+# also writes the numbers that extract_krin_settings names krinMeleeDashBase,
+# krinMeleeDashSlope, krinMeleeRunbackSlope, krinMeleeStepCap and
+# krinMeleeHomeTolerance as literals at lines 102-117. extract_krin_settings
+# writes them all to this file.
 const KRIN_SETTINGS_PATH: String = "res://assets/battle/krin_settings.json"
 static var _krin: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(KRIN_SETTINGS_PATH))
 static var _melee_step_share: float = float(_krin["krinBodyMove"]) / float(_krin["krinBoltTime"])

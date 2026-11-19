@@ -251,8 +251,8 @@ func test_miss_keeps_flying_past_the_target_until_off_screen():
 	assert_true(bolt.position.x > 103.0, "kept moving past the target")
 
 	# krinBoltMake removes a missed bolt once it is more than krinBoltMissX px
-	# from the origin of BATTLESCREEN (frame_42/DoAction_4.as:201), which sits where the
-	# battle frame places BATTLESCREEN.
+	# from the origin of BATTLESCREEN (frame_42/DoAction_4.as:201), which sits
+	# where the battle frame places BATTLESCREEN.
 	var ended: Array = []
 	bolt.flight_ended.connect(func(): ended.append(bolt.position.x))
 	var last_x: float = bolt.position.x

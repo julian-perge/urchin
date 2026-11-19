@@ -17,7 +17,7 @@ Constants (frame 42 globals). `just extract-krin-settings` (`dev/urchin_dev/swf/
 | `krinMeleeAttackCD` | 15 | frames from strike start to impact (0.5 s) |
 | `krinMeleeAttackEndCD` | 15 | frames the end counter counts before the runback goto, the impact frame included, so the goto comes 14 frames after impact |
 
-`krinMelee` also writes these numbers as literals (`frame_42/DoAction_4.as:102-117`). The extractor names them, since the ActionScript does not, and writes them to the same file:
+`krinMelee` also writes these numbers as literals (`frame_42/DoAction_4.as:102-117`). The extractor names them, since the ActionScript does not, and writes them to the same file. It refuses a script whose cap check and the value the cap sets write different numbers:
 
 | Name | Value | Meaning |
 |---|---|---|
