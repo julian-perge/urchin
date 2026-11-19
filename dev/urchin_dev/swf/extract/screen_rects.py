@@ -687,6 +687,7 @@ SCENES: dict[str, Scene] = {
             "SlotPanel",
             "NewGamePanel",
             "OptionsPanel",
+            "CreditsPanel",
         ),
         left_out=(38, 41),
     ),

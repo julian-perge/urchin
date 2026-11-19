@@ -2460,7 +2460,8 @@
     "NamePanel",
     "SlotPanel",
     "NewGamePanel",
-    "OptionsPanel"
+    "OptionsPanel",
+    "CreditsPanel"
    ],
    "timeline": 0
   },

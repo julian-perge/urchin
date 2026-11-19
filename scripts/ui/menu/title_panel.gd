@@ -1,7 +1,8 @@
 # title_panel.gd
 # The title (scenes/ui/menu/title_panel.tscn), the original's mainMenu, root
-# frame 46. The Game Manual and Credits Screens do not exist yet, so nothing
-# connects their two signals (spec/107-title-slots.md, The title).
+# frame 46. main_menu.gd connects credits_pressed to the Credits Screen. The
+# Game Manual Screen does not exist yet, so nothing connects
+# game_manual_pressed (spec/107-title-slots.md, The title).
 class_name TitlePanel
 extends Control
 
