@@ -255,9 +255,10 @@ This tool checks how it looks: the art, the fills and the shadows.
      scored. `alpha` mode needs two more, with `--control`, and it scores
      every pixel that the port or the reference draws.
   3. Run `just compare-screen <entry>` again. It prints p50, p90 and p99 of the
-     largest channel difference, and the control's p99. It writes
-     `<mode>_reference.png` and `<mode>_diff.png` beside the captures, in
-     `tasks/screen_compare/<entry>/`, which is git-ignored.
+     largest channel difference, or of the alpha difference in `alpha` mode,
+     and the control's p99. It writes `<mode>_reference.png` and
+     `<mode>_diff.png` beside the captures, in `tasks/screen_compare/<entry>/`,
+     which is git-ignored.
 - **The bar and the control.** A mode passes when its p99 is at or under its
   `bar` and the control is over the bar. The control scores the same capture
   against the reference moved 20 px to the right, so a bar that a wrong layout
@@ -382,12 +383,12 @@ This tool checks how it looks: the art, the fills and the shadows.
   the uniforms of `scenes/drop_shadow.gdshader` on the bar's Clip. The
   `status_bars` entry checks what that shader draws.
 - **The status bar shadow score is `alpha` p99 22, under a bar of 23, with
-  the no-material control at 143.** `just compare-screen status_bars` scores the Clips of Bar1,
-  Bar3 and Bar5 in `battle_scene.tscn` against p1BAR, p3BAR and p5BAR on root
-  frame 217, by alpha alone, because ffdec draws every fill in the color of
-  frame 1. Bar1 alone scores p90 15 and p99 22, and its control p99 141. The
-  control capture takes the DropShadow material off the three Clips. The
-  right-hand bars are out, because ffdec does not mirror them. The reference
+  the no-material control at 143.** `just compare-screen status_bars` scores
+  the Clips of Bar1, Bar3 and Bar5 in `battle_scene.tscn` against p1BAR, p3BAR
+  and p5BAR on root frame 217, by alpha alone, because ffdec draws every fill
+  in the color of frame 1. Bar1 alone scores p90 15 and p99 22, and its
+  control p99 141. The control capture takes the DropShadow material off the
+  three Clips. The right-hand bars are out, because ffdec does not mirror them. The reference
   also keeps depth 72, the Hall window's clip mask, because the ffdec driver
   refuses to hide a clip mask. The mask draws nothing and clips only depths up
   to 340. The diff is on the bars' edges and the shadow's rim
