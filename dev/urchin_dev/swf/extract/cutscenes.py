@@ -60,7 +60,7 @@
 # The frame counts are each animation sprite's own frameCount, and each camera
 # clip is a sprite the animation places directly on its frame 1.
 #
-# ffdec's sprite:avi export renders video only (no audio track) - each
+# ffdec's frame:avi export renders video only (no audio track) - each
 # cutscene's dialogue/music is a SoundStreamBlockTag-per-frame MP3 stream
 # attached to the *animation* sprite's timeline (not the wrapper's and not the
 # main timeline), so it has to be reconstructed by hand: per the SWF10 spec,
@@ -156,8 +156,10 @@ def tool(name: str) -> Path:
 
 
 # label -> (animation sprite chid, wrapper sprite chid, frame count,
-# camera clip chid to strip). The frame count is the *animation* sprite's;
-# the wrapper always declares 1 and gets patched up to this (see file header).
+# camera clip chid to strip). The frame count is the *animation* sprite's.
+# The wrapper declares 1, and write_cutscene_swf() gives the wrapper and the
+# root timeline of the working copy one frame per camera view, which is this
+# count (see file header).
 # CS_CUT1 and CS_CUT3 place the same camera clip, 3812.
 CUTSCENES: dict[str, tuple[int, int, int, int]] = {
     "CS_INTRO2": (3643, 3644, 2084, 3478),
