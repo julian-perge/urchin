@@ -1,0 +1,8 @@
+{
+ "krinBodyMove": 10,
+ "krinBoltIncrease": 1.1500000000000001,
+ "krinBoltSpeed": 1,
+ "krinBoltTime": 60,
+ "krinMeleeAttackCD": 15,
+ "krinMeleeAttackEndCD": 15
+}
