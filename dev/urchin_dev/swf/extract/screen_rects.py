@@ -15,6 +15,13 @@
 #
 # A piece has one of these kinds:
 #   "point" - a Node2D at a sprite placement, with its position and scale.
+#   "centre" - a Control that the port centres on the registration point of
+#             a child that a sprite places on its own first frame, found by
+#             the child's instance name. A tree node of the Abilities Window is
+#             one. It is recorded as that point on the Stage, and as the
+#             sprite's DropShadow when it has one, which the port draws as the
+#             Control's StyleBoxFlat shadow. The Control's size is the port's
+#             own, so the record holds no rect for it.
 #   "panel" - a flat Panel (Part 3): a sprite whose one shape has a solid fill
 #             and a line, under an inner DropShadow. Its rect is the fill rect
 #             grown by half the border. The fill rect is ShapeBounds through
@@ -186,6 +193,9 @@ class Piece:
     # for each sprite on the way: each is read on the first frame of the sprite
     # that the step before it reached. `inner_depth` is the same for one step.
     via: tuple[int, ...] = ()
+    # For a "centre": the instance name of the child inside the sprite, such
+    # as st0 inside talenttreefull.
+    inner_instance: str | None = None
     # For a "doll": whether the frame places the female set of the 15 parts
     # next to the male one. The Inventory frame does and the shop frame does not.
     female_set: bool = True
@@ -200,6 +210,11 @@ class Piece:
             raise ValueError(
                 f"An {self.kind} piece needs the name of its art: depth {self.depth},"
                 f" instance {self.instance}"
+            )
+        if self.kind == "centre" and self.inner_instance is None:
+            raise ValueError(
+                f"A centre piece needs the inner_instance of its child: depth"
+                f" {self.depth}, instance {self.instance}"
             )
 
 
@@ -252,6 +267,11 @@ PARTY_FACE_PIECES = {
     "HitButton": lambda n: Piece("hit", None, instance=f"fa{n}", inner_depth=38),
     "Frame": lambda n: Piece("art", None, art="party_frame", instance=f"fa{n}"),
 }
+
+# The skills frame's tree 'talenttreefull' names its nodes st0 to st27, and
+# the ring 'selector' names its sockets thing0 to thing7.
+TREE_NODES = 28
+RING_SOCKETS = 8
 
 # The frame names the grid's slots itemSlot0 to itemSlot35, row by row.
 INVENTORY_SLOTS = 36
@@ -446,9 +466,9 @@ SCENES: dict[str, Scene] = {
             ),
         ),
     ),
-    # The skills frame (spec/107-abilities.md). The tree nodes and the pool
-    # are port only here until #237 and #238 record them. StatusLabel has no
-    # piece in the SWF.
+    # The skills frame (spec/107-abilities.md). The pool is port only here
+    # until #238 records it. StatusLabel has no piece in the SWF, and the
+    # icon and rank text on each tree node are the port's own.
     "res://scenes/ui/menu/abilities_window.tscn": Scene(
         timeline=KRINMENU,
         frame="skills",
@@ -487,15 +507,30 @@ SCENES: dict[str, Scene] = {
             "AttributeRows/StrengthRow/StrengthValue": Piece("text", 648),
             "AttributeRows/InstinctRow/InstinctValue": Piece("text", 649),
             "AttributeRows/SpeedRow/SpeedValue": Piece("text", 650),
+            **{
+                f"TreeNodes/Node{n}": Piece(
+                    "centre", None, instance="talenttreefull", inner_instance=f"st{n}"
+                )
+                for n in range(TREE_NODES)
+            },
+            **{
+                f"Socket{n}": Piece(
+                    "centre", None, instance="selector", inner_instance=f"thing{n}"
+                )
+                for n in range(RING_SOCKETS)
+            },
         },
         port_only=(
             "StatusLabel",
-            "TreeNodes",
             "PoolBackdrop",
             "PoolRows",
             "ScrollUpButton",
             "ScrollDownButton",
-            *(f"Socket{i}" for i in range(8)),
+            *(
+                f"TreeNodes/Node{n}/{node}"
+                for n in range(TREE_NODES)
+                for node in ("IconRect", "RankLabel")
+            ),
         ),
     ),
     # The background that every menu frame from mainMenu to endMenu places at
@@ -1092,6 +1127,36 @@ def _scale(matrix) -> tuple[float, float]:
     if skew0 or skew1:
         raise ValueError(f"matrix {matrix} rotates or skews, and a rect can't hold it")
     return scale_x, scale_y
+
+
+def centre_record(
+    holder_matrix, child_matrix, origin, shadow: DropShadow | None
+) -> dict:
+    """-> the Stage point where a sprite placed with `holder_matrix` puts the
+    registration point of a child placed with `child_matrix`. The holder's
+    scale scales the child's translation. The holder's `shadow` is recorded
+    as text_shadow writes it, and the rect test checks its blur too, because a
+    StyleBoxFlat shadow has a size."""
+    scale_x, scale_y = _scale(holder_matrix)
+    _scale(child_matrix)
+    record = {
+        "kind": "centre",
+        "position": [
+            round(
+                origin[0]
+                + (holder_matrix[4] + scale_x * child_matrix[4]) / render.TWIPS,
+                4,
+            ),
+            round(
+                origin[1]
+                + (holder_matrix[5] + scale_y * child_matrix[5]) / render.TWIPS,
+                4,
+            ),
+        ],
+    }
+    if shadow is not None:
+        record["shadow"] = text_shadow(shadow)
+    return record
 
 
 def stage_rect(bounds, matrix, origin) -> tuple[float, float, float, float]:
@@ -1947,6 +2012,15 @@ def scene_record(
                 f"{path}: depth {where} of frame {scene.frame} holds character"
                 f" {layer.character_id}, not {piece.character}"
             )
+        if piece.kind == "centre":
+            first = timeline.frames(index, layer.character_id)[0]
+            child = placed_layer(
+                first, piece.inner_instance, path, f"1 of sprite {layer.character_id}"
+            )
+            pieces[path] = centre_record(
+                layer.matrix, child.matrix, origin, _shadow_of(layer)
+            )
+            continue
         placed = layer
         piece_origin = origin
         sprite_origins = {}

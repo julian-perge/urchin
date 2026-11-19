@@ -1319,3 +1319,42 @@ def test_art_set_record_refuses_an_empty_list():
     crop = {"rect": [0, 0, 1, 1], "relative_to": "stage", "size": [4, 4], "zoom": 4.0}
     with pytest.raises(ValueError, match="at least one"):
         screen_rects.art_set_record(crop, [])
+
+
+# The skills frame places the ring 'selector' at (4602, -1004) twips with a
+# scale of 1.0383, and the ring places thing0 at (0, -49.2) px.
+SELECTOR_MATRIX = (1.0383, 0.0, 0.0, 1.0383, 4602, -1004)
+THING0_MATRIX = (1.0, 0.0, 0.0, 1.0, 0, -984)
+IDENTITY = (1.0, 0.0, 0.0, 1.0, 0, 0)
+
+
+def test_centre_record_scales_the_childs_translation_by_the_holder():
+    record = screen_rects.centre_record(SELECTOR_MATRIX, THING0_MATRIX, ORIGIN, None)
+    assert record["kind"] == "centre"
+    assert record["position"] == pytest.approx(
+        [400.5 + 230.1, 222.4 - 50.2 - 1.0383 * 49.2], abs=0.0001
+    )
+    assert "shadow" not in record
+
+
+def test_centre_record_holds_the_holders_drop_shadow_with_its_blur():
+    drop = shadow(inner=False, blur_x=6.0, blur_y=6.0, distance=4.0, strength=0.5)
+    record = screen_rects.centre_record(IDENTITY, IDENTITY, ORIGIN, drop)
+    assert record["shadow"] == {
+        "offset": [2.8284, 2.8284],
+        "color": "00000080",
+        "blur": 6.0,
+    }
+
+
+@pytest.mark.parametrize("rotated", ["holder", "child"])
+def test_centre_record_refuses_a_rotation(rotated):
+    turned = (1.0, 0.5, 0.0, 1.0, 0, 0)
+    holder, child = (turned, IDENTITY) if rotated == "holder" else (IDENTITY, turned)
+    with pytest.raises(ValueError, match="rotates or skews"):
+        screen_rects.centre_record(holder, child, ORIGIN, None)
+
+
+def test_a_centre_piece_needs_the_name_of_its_child():
+    with pytest.raises(ValueError, match="inner_instance"):
+        screen_rects.Piece("centre", None, instance="selector")

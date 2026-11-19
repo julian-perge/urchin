@@ -11,27 +11,19 @@ extends Node2D
 # fight. Set by request_story_fight(), request_training_fight() and
 # request_fight(), consumed by battle_scene.gd's _ready().
 var pending_battle: Dictionary = {}
-# Tests/headless flows set this false to keep request_* from switching scenes.
-var auto_start_battles: bool = true
-# Set by battle_scene.gd right before switching back to game.tscn when the
-# battle just won was a boss fight with no cutscene queued, or queued a cutscene
-# that goes on to the map (ZoneProgression.CUTSCENE_GOTO_SCENE == "overMap").
-# game.gd's _ready() opens the zone map overlay on load and clears this,
-# matching the original's Proceed (DefineButton2_3004 on(release), lines 8-16)
-# and gotoSceneKrin == "overMap" (frame_219).
+# Tests and headless flows set this false to keep request_* from switching to
+# the battle scene, and to keep a won battle from switching back to the Hub.
+var auto_switch_scenes: bool = true
+# Set by game.gd's Victory Proceed right before it builds a new Hub, when the
+# cutscene it played goes on to the map (gotoSceneKrin == "overMap",
+# frame_219/DoAction.as). The new Hub's _ready() opens the zone map overlay and
+# clears this.
 var open_zone_map_on_load: bool = false
-# Set by battle_scene.gd right before switching back to game.tscn when the win
-# that just ended levelled the player up and neither a cutscene nor the zone map
-# comes next. game.gd's _ready() opens the Abilities window through the hotbar
-# and clears this, matching the original's Proceed, which opens the skills frame
-# when playerLeveled is set (DefineButton2_3004 on(release), lines 17-29).
-var open_abilities_on_load: bool = false
-# Set by battle_scene.gd right before it switches back to game.tscn on the same
-# win that sets open_abilities_on_load. It holds the id of the battle just won,
-# and 0 means no hint waits. game.gd's _ready() takes it and clears it, and shows
-# that battle's hint when the player closes the Inventory or the Store, as the
-# original's button 2853 does (DefineButton2_2853 on(press)).
-var hint_battle_after_close: int = 0
+# The result of a win that opens the Victory Window: {settlement, battle_id,
+# is_boss}. battle_scene.gd sets it after the fade, right before it switches to
+# game.tscn, and game.gd's _ready() takes it, clears it and opens the Window.
+# It is empty when no win waits.
+var pending_victory: Dictionary = {}
 # Tests point this at a temp file so they can grant Legend without touching the
 # player's real achievements.
 var achievements_path: String = Achievements.SAVE_PATH
@@ -114,7 +106,7 @@ func request_fight(pick: Dictionary) -> Dictionary:
 func _launch_battle(info: Dictionary) -> void:
 	pending_battle = info
 	battle_selected.emit(info)
-	if auto_start_battles:
+	if auto_switch_scenes:
 		get_tree().change_scene_to_file.call_deferred("res://scenes/battle_scene.tscn")
 
 # Zone definitions stored as resource
