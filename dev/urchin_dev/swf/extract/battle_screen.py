@@ -120,13 +120,13 @@ FADE_RESULT_FRAME = 85
 IDENTITY_COLOR_TRANSFORM = (256, 256, 256, 256, 0, 0, 0, 0)
 
 # The Radial menu, which the battle frame places as "selector". thing0 to thing7
-# are its move icons, at the offsets RadialMenu puts its orbs on, and thingo0 to
-# thingo7 are the buttons over them. Its enterFrame tests the mouse with
-# hitTest and no shape flag, which tests the bounding box of everything the clip
-# draws (frame_217/PlaceObject3_3382_500 enterFrame, line 48).
+# are its move icons and thingo0 to thingo7 the buttons over them, which
+# RadialMenu builds its orbs from. Its enterFrame tests the mouse with hitTest
+# and no shape flag, which tests the bounding box of everything the clip draws
+# (frame_217/PlaceObject3_3382_500 enterFrame, line 48).
 SELECTOR = 3382
 SELECTOR_NAME = "selector"
-ORB_NAME = "thing"
+ORB_BUTTON_NAME = "thingo"
 ORB_COUNT = 8
 
 LAYOUT_JSON = HALL_DIR / "battle_layout.json"
@@ -435,34 +435,38 @@ def drawn_bounds(
     raise RuntimeError(f"character {cid} is a {kind}, which drawn_bounds can't measure")
 
 
-def ring_layout(selector_matrix, orb_offsets, child_bounds) -> dict:
-    """-> what RadialMenu needs from the selector clip: the scale the battle
-    frame places it at, where it places each orb in its own px, and the box of
-    everything it draws in its own px. orb_offsets are in twips in orb order,
-    and child_bounds are (xmin, ymin, xmax, ymax) rects in twips."""
+def px_rect(rect) -> dict[str, float]:
+    """-> an (xmin, ymin, xmax, ymax) rect in twips as rect_entry() records it,
+    in px."""
+    twips = render.TWIPS
+    return rect_entry(
+        (
+            rect[0] / twips,
+            rect[1] / twips,
+            (rect[2] - rect[0]) / twips,
+            (rect[3] - rect[1]) / twips,
+        )
+    )
+
+
+def ring_layout(selector_matrix, orb_rects, child_bounds) -> dict:
+    """-> what RadialMenu needs from the Radial menu clip: the scale the battle
+    frame places it at, the rect of each orb's button in the clip's own px, and
+    the box of everything the clip draws in its own px. orb_rects and
+    child_bounds are (xmin, ymin, xmax, ymax) rects in twips, orb_rects in orb
+    order."""
     scale_x, skew0, skew1, scale_y = selector_matrix[:4]
     if skew0 or skew1 or scale_x != scale_y:
-        raise RuntimeError(f"the selector is placed with {selector_matrix}")
-    box = union(child_bounds)
-    twips = render.TWIPS
+        raise RuntimeError(f"the Radial menu clip is placed with {selector_matrix}")
     return {
-        "box": rect_entry(
-            (
-                box[0] / twips,
-                box[1] / twips,
-                (box[2] - box[0]) / twips,
-                (box[3] - box[1]) / twips,
-            )
-        ),
-        "orb_offsets": [
-            {"x": round(x / twips, 2), "y": round(y / twips, 2)} for x, y in orb_offsets
-        ],
+        "box": px_rect(union(child_bounds)),
+        "orb_rects": [px_rect(rect) for rect in orb_rects],
         "scale": round(scale_x, 4),
     }
 
 
 def radial_menu_layout(index: SwfIndex, battle_frame: int) -> dict:
-    """-> ring_layout() for the selector clip the battle frame places."""
+    """-> ring_layout() for the Radial menu clip the battle frame places."""
     placed = [
         layer
         for layer in timeline.frames(index, 0)[battle_frame - 1].values()
@@ -478,12 +482,14 @@ def radial_menu_layout(index: SwfIndex, battle_frame: int) -> dict:
         raise RuntimeError(f"{SELECTOR} has {len(frames)} frames, want 1")
     layers = frames[0].values()
     by_name = {layer.name: layer for layer in layers}
-    orbs = [by_name.get(f"{ORB_NAME}{i}") for i in range(ORB_COUNT)]
-    if None in orbs:
-        raise RuntimeError(f"{SELECTOR} names {sorted(by_name)}, want {ORB_NAME}0 to 7")
+    buttons = [by_name.get(f"{ORB_BUTTON_NAME}{i}") for i in range(ORB_COUNT)]
+    if None in buttons:
+        raise RuntimeError(
+            f"{SELECTOR} names {sorted(by_name)}, want {ORB_BUTTON_NAME}0 to 7"
+        )
     return ring_layout(
         placed[0].matrix,
-        [orb.matrix[4:] for orb in orbs],
+        [drawn_bounds(index, b.character_id, b.matrix) for b in buttons],
         [drawn_bounds(index, layer.character_id, layer.matrix) for layer in layers],
     )
 

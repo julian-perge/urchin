@@ -459,9 +459,9 @@ Ported: `MoveLegality`. `refusal` is the player's rule and `can_afford` is the p
 
 ## The orb ring's hover and fade (frame_217/PlaceObject3_3382_500 enterFrame)
 
-Ported: `RadialMenu` plays the enterFrame below once per SWF frame. It tests the mouse against the clip's box and places its orbs at the clip's offsets times its scale, all of which `extract_battle_screen` writes to the `radial_menu` entry of `battle_layout.json`.
+Ported: `RadialMenu` plays the enterFrame below once per SWF frame. It tests the mouse against the clip's box and builds each orb from its `thingo` button's up-state rect times the clip's scale, all of which `extract_battle_screen` writes to the `radial_menu` entry of `battle_layout.json`.
 
-- Root frame 217 places the Radial menu clip, DefineSprite 3382, at 1.0383 scale, so every orb sits 1.0383 times its `thing` offset from the clicked unit. Nothing in the ActionScript sets the clip's scale.
+- Root frame 217 places the Radial menu clip, DefineSprite 3382, at 1.0383 scale, so every orb sits 1.0383 times further from the clicked unit and is 1.0383 times its button's 24.42 px. The port centres the icon on the button, which sits up to 0.35 px off the `thing` icon's own centre. Nothing in the ActionScript sets the clip's scale.
 - The box is the union of `thingo0` to `thingo7` in their up state and `thing0` to `thing7` at frame 1, about 128 px square on the stage. It counts an empty slot's hidden `thingo` too, because Flash counts a hidden child in its parent's bounds. Once the ring shows a move's icon, an icon wider than its button widens the original's box at that slot, by up to 21 px in the clip's own px. The port keeps the frame 1 box.
 
 - A click shows the clip at alpha 0 (`frame_217/DoAction_3.as:46-48`), and it gains 50 per frame (enterFrame lines 32-35).

@@ -79,9 +79,11 @@ func _ring_scale() -> float:
 	return float(_layout["radial_menu"]["scale"])
 
 
-func _orb_offset(bar_index: int) -> Vector2:
-	var offset: Dictionary = _layout["radial_menu"]["orb_offsets"][bar_index]
-	return Vector2(offset["x"], offset["y"]) * _ring_scale()
+# Where orb bar_index sits on the stage: its button's rect from
+# battle_layout.json, scaled, around the menu's centre.
+func _orb_rect(bar_index: int) -> Rect2:
+	var rect: Dictionary = _layout["radial_menu"]["orb_rects"][bar_index]
+	return Rect2(CENTRE + Vector2(rect["x"], rect["y"]) * _ring_scale(), Vector2(rect["w"], rect["h"]) * _ring_scale())
 
 
 # The Radial menu clip's box on the stage, from battle_layout.json.
@@ -91,7 +93,7 @@ func _box() -> Rect2:
 
 
 func _gap_between_orbs(first: int, second: int) -> Vector2:
-	return CENTRE + (_orb_offset(first) + _orb_offset(second)) / 2.0
+	return (_orb_rect(first).get_center() + _orb_rect(second).get_center()) / 2.0
 
 
 func _on_any_orb(point: Vector2) -> bool:
@@ -134,16 +136,27 @@ func test_opening_centres_the_menu_and_shows_each_equipped_slot():
 func test_an_orb_sits_at_its_own_bar_slots_offset():
 	_player.ability_cooldowns[0] = 5
 	_open()
-	assert_almost_eq(_orb_centre(1), CENTRE + _orb_offset(1), Vector2(0.01, 0.01))
+	assert_almost_eq(_orb_centre(1), _orb_rect(1).get_center(), Vector2(0.01, 0.01))
 
 
-# The battle frame places the Radial menu clip scaled, which moves every orb out
-# from the unit by that scale.
-func test_every_orb_sits_at_the_clips_offset_times_its_scale():
+# Each orb is its thingo button's rect, scaled by the Radial menu clip's scale,
+# which moves every orb out from the unit and grows it by that scale.
+func test_every_orb_is_its_buttons_rect_times_the_clips_scale():
 	assert_gt(_ring_scale(), 1.0, "sanity: the clip is scaled up")
 	_open()
 	for bar_index in _menu.orbs.size():
-		assert_almost_eq(_orb_centre(bar_index), CENTRE + _orb_offset(bar_index), Vector2(0.01, 0.01), "orb %d" % bar_index)
+		var orb_rect: Rect2 = _menu.orbs[bar_index].get_global_rect()
+		var want: Rect2 = _orb_rect(bar_index)
+		assert_almost_eq(orb_rect.position, want.position, Vector2(0.01, 0.01), "orb %d's corner" % bar_index)
+		assert_almost_eq(orb_rect.size, want.size, Vector2(0.01, 0.01), "orb %d's size" % bar_index)
+
+
+# The box hitTest uses holds every button, so the mouse on any part of a shown
+# orb keeps the menu open.
+func test_every_orb_lies_inside_the_clips_box():
+	_open()
+	for bar_index in _menu.orbs.size():
+		assert_true(_box().grow(0.01).encloses(_menu.orbs[bar_index].get_global_rect()), "orb %d" % bar_index)
 
 
 func test_the_menu_opens_when_every_equipped_move_is_refused():

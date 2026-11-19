@@ -20,11 +20,11 @@ signal move_picked(bar_index: int, move_id: int, target_slot: int)
 # Combat text banner shows for its Refusal. The menu stays open.
 signal pick_refused(message: String)
 
-const ORB_RADIUS: float = 15.0
 const ICON_DIR: String = "res://assets/ui/abilities/"
-# extract_battle_screen writes the Radial menu clip's scale, where it places
-# thing0 to thing7, and the box of everything it draws into the radial_menu
-# entry, and the SWF's frame rate into the fade entry.
+# extract_battle_screen writes the Radial menu clip's scale, the rects of its
+# thingo0 to thingo7 buttons that the orbs are built from, and the box of
+# everything it draws into the radial_menu entry, and the SWF's frame rate into
+# the fade entry.
 const BATTLE_LAYOUT_PATH: String = "res://assets/backgrounds/battle/battle_layout.json"
 # The ring's enterFrame adds 50 to the clip's alpha each frame while it fades in
 # and takes 10 each frame the mouse is off it (frame_217/PlaceObject3_3382_500
@@ -32,6 +32,9 @@ const BATTLE_LAYOUT_PATH: String = "res://assets/backgrounds/battle/battle_layou
 # _alpha does.
 const FADE_IN_STEP: int = 50
 const FADE_OUT_STEP: int = 10
+# Render deltas that add up to a whole SWF frame can fall short of it by a float
+# rounding error, so a frame counts as passed within this margin.
+const FRAME_EPSILON: float = 0.000001
 # extract_ability_icons writes the black disc a darkened orb is covered with and
 # where it and the cooldown count sit on the orb.
 const COOLDOWN_LAYOUT_PATH: String = "res://assets/ui/abilities/cooldown.json"
@@ -76,10 +79,10 @@ func _ready() -> void:
 	var cover_texture: Texture2D = load(COVER_PATH)
 	for bar_index in orbs.size():
 		var orb: Button = orbs[bar_index]
-		var offset: Dictionary = ring["orb_offsets"][bar_index]
-		orb.custom_minimum_size = Vector2(ORB_RADIUS * 2, ORB_RADIUS * 2)
+		var rect: Dictionary = ring["orb_rects"][bar_index]
+		orb.custom_minimum_size = Vector2(rect["w"], rect["h"]) * ring_scale
 		orb.size = orb.custom_minimum_size
-		orb.position = Vector2(offset["x"], offset["y"]) * ring_scale - orb.size / 2.0
+		orb.position = Vector2(rect["x"], rect["y"]) * ring_scale
 		orb.expand_icon = true
 		orb.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		orb.add_child(_make_cover(cover_texture, layout["cover"], orb.size / 2.0))
@@ -163,7 +166,7 @@ func advance(delta: float, pointer: Vector2) -> void:
 	if not visible:
 		return
 	_frame_clock += delta
-	while visible and _frame_clock >= _frame_time:
+	while visible and _frame_clock >= _frame_time - FRAME_EPSILON:
 		_frame_clock -= _frame_time
 		_play_frame(pointer)
 
