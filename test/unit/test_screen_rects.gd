@@ -194,6 +194,24 @@ func _text_problems(path: String, label: Label, entry: Dictionary) -> Array[Stri
 	return found
 
 
+# A centre piece draws the DropShadow of the sprite that holds it as the
+# StyleBoxFlat shadow of its normal style. A StyleBoxFlat blurs its shadow by
+# whole px, so the size is the SWF's blur rounded.
+func _box_shadow_problems(path: String, node: Control, shadow: Dictionary) -> Array[String]:
+	var style: StyleBoxFlat = node.get_theme_stylebox("normal") as StyleBoxFlat
+	if style == null:
+		return ["%s: shadow: the normal style is not a StyleBoxFlat" % path]
+	var found: Array[String] = []
+	if style.shadow_size != roundi(shadow["blur"]):
+		found.append("%s: shadow size %d, expected %d" % [path, style.shadow_size, roundi(shadow["blur"])])
+	var offset := Vector2(shadow["offset"][0], shadow["offset"][1])
+	if not (_close(style.shadow_offset.x, offset.x) and _close(style.shadow_offset.y, offset.y)):
+		found.append("%s: shadow offset %s, expected %s" % [path, style.shadow_offset, offset])
+	if not _same_color(style.shadow_color, shadow["color"]):
+		found.append("%s: shadow colour %s, expected %s" % [path, style.shadow_color.to_html(), shadow["color"]])
+	return found
+
+
 # A doll is a CharacterVisual, whose art is a set of rotated and scaled parts, so
 # no rect holds it. The record holds the position and scale that put it where the
 # SWF's 31 part clips sit, and the union rect of the art of the unequipped male
@@ -320,6 +338,13 @@ func _scene_problems(root: Control, scene: Dictionary) -> Array[String]:
 					found.append("%s: a box piece that is not a ColorRect" % path)
 			"shape":
 				found.append_array(_rect_problems(path, actual, entry["rect"], true))
+			"centre":
+				var expected_centre := Vector2(entry["position"][0], entry["position"][1])
+				var centre: Vector2 = actual.get_center()
+				if not (_close(centre.x, expected_centre.x) and _close(centre.y, expected_centre.y)):
+					found.append("%s: centre %s, expected %s" % [path, centre, expected_centre])
+				if entry.has("shadow"):
+					found.append_array(_box_shadow_problems(path, node, entry["shadow"]))
 			"hit", "button":
 				found.append_array(_rect_problems(path, actual, entry["rect"], true))
 				# An orb takes its clicks through a plain Control (orb_base.gd), so
@@ -577,6 +602,29 @@ func test_control_a_wrapping_label_with_the_wrong_line_pitch_fails() -> void:
 	var hint: Label = root.get_node("HintLabel")
 	hint.add_theme_constant_override("line_spacing", hint.get_theme_constant("line_spacing") + 3)
 	_assert_one_problem(_scene_problems(root, _record()["scenes"][ABILITIES_SCENE]), "HintLabel: line pitch")
+
+
+# The port places each tree node from code on the centre of its st placement.
+func test_control_a_tree_node_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(ABILITIES_SCENE)
+	(root.get_node("TreeNodes/Node5") as Control).position.x += 20.0
+	_assert_one_problem(_scene_problems(root, _record()["scenes"][ABILITIES_SCENE]), "TreeNodes/Node5: centre")
+
+
+# The ring, sprite 3109, is scaled 1.038, so a socket at the unscaled thing0
+# offset sits about 1.9 px too close to the ring's centre.
+func test_control_a_socket_placed_without_the_rings_scale_fails() -> void:
+	var root: Control = await _laid_out(ABILITIES_SCENE)
+	var socket: Control = root.get_node("Socket0")
+	socket.position = root.WHEEL_CENTER + root.WHEEL_OFFSETS[0] - socket.size / 2.0
+	_assert_one_problem(_scene_problems(root, _record()["scenes"][ABILITIES_SCENE]), "Socket0: centre")
+
+
+func test_control_a_socket_with_no_shadow_fails() -> void:
+	var root: Control = await _laid_out(ABILITIES_SCENE)
+	var style: StyleBoxFlat = (root.get_node("Socket2") as Control).get_theme_stylebox("normal")
+	style.shadow_size = 0
+	_assert_one_problem(_scene_problems(root, _record()["scenes"][ABILITIES_SCENE]), "Socket2: shadow size")
 
 
 const RIGHT_COLUMN_SCENE: String = "res://scenes/ui/window/right_column.tscn"
