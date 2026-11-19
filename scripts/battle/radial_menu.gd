@@ -25,12 +25,14 @@ signal pick_refused(message: String)
 # everything it draws into the radial_menu entry, and the SWF's frame rate into
 # the fade entry.
 const BATTLE_LAYOUT_PATH: String = "res://assets/backgrounds/battle/battle_layout.json"
-# The ring's enterFrame adds 50 to the clip's alpha each frame while it fades in
-# and takes 10 each frame the mouse is off it (frame_217/PlaceObject3_3382_500
-# enterFrame, lines 32-35 and 50). The alpha is in Flash's 1/256 steps
-# (FlashAlpha).
-const FADE_IN_STEP: int = 50
-const FADE_OUT_STEP: int = 10
+# The ring's enterFrame adds a step to the clip's alpha each frame while it fades
+# in, and takes a smaller step off each frame the mouse is off it. It sets the
+# black cover's alpha to one value while the ring fades in and to a higher one
+# once it has (frame_217/PlaceObject3_3382_500 enterFrame, lines 16, 32-35, 42
+# and 50). extract_fade_steps writes the two steps and the two cover alphas to
+# this file. The alpha is in Flash's 1/256 steps (FlashAlpha).
+const FADE_PATH: String = "res://assets/ui/battle/radial_menu_fade.json"
+static var _fade: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(FADE_PATH))
 # Render deltas that add up to a whole SWF frame can fall short of it by a float
 # rounding error, so a frame counts as passed within this margin.
 const FRAME_EPSILON: float = 0.000001
@@ -42,11 +44,6 @@ const COVER_PATH: String = "res://assets/ui/abilities/cooldown_cover.png"
 # each state and where that art sits in the Radial menu clip. The buttons draw
 # the same two rings as the pass button, so they share its PNGs.
 const RING_LAYOUT_PATH: String = "res://assets/ui/battle/pass_button.json"
-# The ring's enterFrame sets the disc's _alpha to 75 while the ring fades in and
-# to 85 once it has (frame_217/PlaceObject3_3382_500 enterFrame, lines 16 and
-# 42). Flash stores 85 as 217/256 (FlashAlpha).
-const COVER_PERCENT_FADING_IN: float = 75.0
-const COVER_PERCENT: float = 85.0
 
 # Setting this false closes any menu that is up, and open() does nothing until
 # it is true again.
@@ -124,7 +121,7 @@ func _make_cover(texture: Texture2D, rect: Dictionary, centre: Vector2) -> Textu
 	cover.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	cover.position = centre + Vector2(rect["x"], rect["y"])
 	cover.size = Vector2(rect["w"], rect["h"])
-	cover.modulate.a = FlashAlpha.multiplier(FlashAlpha.from_percent(COVER_PERCENT))
+	cover.modulate.a = FlashAlpha.multiplier(FlashAlpha.from_percent(float(_fade["cover_percent"])))
 	cover.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	cover.visible = false
 	return cover
@@ -223,7 +220,7 @@ func open(target_slot: int, centre: Vector2) -> void:
 	position = centre
 	_alpha = 0
 	_fading_in = true
-	_set_cover_alpha(COVER_PERCENT_FADING_IN)
+	_set_cover_alpha(float(_fade["cover_percent_fading_in"]))
 	modulate.a = 0.0
 	visible = true
 
@@ -247,13 +244,13 @@ func advance(delta: float, pointer: Vector2) -> void:
 func _play_frame(pointer: Vector2) -> void:
 	if _fading_in:
 		if FlashAlpha.to_percent(_alpha) < 100.0:
-			_alpha = FlashAlpha.add(_alpha, FADE_IN_STEP)
+			_alpha = FlashAlpha.add(_alpha, float(_fade["fade_in_step"]))
 		else:
 			_alpha = FlashAlpha.from_percent(100.0)
 			_fading_in = false
-			_set_cover_alpha(COVER_PERCENT)
+			_set_cover_alpha(float(_fade["cover_percent"]))
 	elif not _is_over_menu(pointer):
-		_alpha = FlashAlpha.add(_alpha, -FADE_OUT_STEP)
+		_alpha = FlashAlpha.add(_alpha, -float(_fade["fade_out_step"]))
 		if _alpha <= 0:
 			_close()
 			return
