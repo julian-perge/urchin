@@ -1988,6 +1988,24 @@ func test_each_fighter_home_is_where_every_hall_puts_its_rig():
 			assert_almost_eq(BattleSceneScript.SLOT_POSITIONS[slot], Vector2(mark[0], mark[1]), Vector2(0.5, 0.5), "%s slot %d" % [label, slot])
 
 
+# The Flash run of battle 408 (references/traced_runs/zone4_boss) logged where
+# BATTLESCREEN stands and where each player clip stands inside it, so each doll
+# origin is the sum of the two. Slot 5 has no fighter in that battle, but its
+# clip still stands at its home.
+func test_each_fighter_home_is_where_the_flash_run_of_battle_408_put_its_doll():
+	var screen := Vector2.INF
+	var checked: int = 0
+	for line in FileAccess.get_file_as_string("res://references/traced_runs/zone4_boss/dolls_web_flash.txt").split("\n"):
+		var f: PackedStringArray = line.split("\t")
+		if f[0] == "BS" and f[1] == "stand01":
+			screen = Vector2(float(f[2]), float(f[3]))
+		elif f[0] == "DOLL" and f[1] == "stand01":
+			var slot: int = int(f[2])
+			assert_almost_eq(BattleSceneScript.SLOT_POSITIONS[slot], screen + Vector2(float(f[6]), float(f[7])), Vector2(0.05, 0.05), "slot %d" % slot)
+			checked += 1
+	assert_eq(checked, 6, "every slot has a DOLL line after the BS line")
+
+
 # The window clips the hall, the sky, the fighters and the Floating numbers, as
 # shape 333 (clipDepth 340) clips depths 73 to 340 of the battle frame. The
 # window itself does not zoom or shake, because it is not inside the clip.

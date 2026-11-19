@@ -76,7 +76,10 @@ name, so it misses a call in class-level code and a callable reference such as
   anything else, write a SceneTree script that saves
   `root.get_texture().get_image()`. That script has to `load()` the scenes it
   uses, because autoloads such as `GameTooltip` don't exist yet when it
-  compiles.
+  compiles. A SCRIPT ERROR in such a script does not quit
+  Godot. The window stays open until something kills it, so start the
+  script with a timeout or with `--quit-after <frames>`. A #162 render sat
+  for 4 minutes this way.
 - A headless run still compiles a shader, but only when something first asks
   the renderer for it, such as `get_shader_uniform_list()` or a node that
   draws with it. Loading or preloading the `.gdshader` compiles nothing.
