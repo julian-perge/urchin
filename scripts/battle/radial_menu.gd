@@ -27,8 +27,8 @@ signal pick_refused(message: String)
 const BATTLE_LAYOUT_PATH: String = "res://assets/backgrounds/battle/battle_layout.json"
 # The ring's enterFrame adds 50 to the clip's alpha each frame while it fades in
 # and takes 10 each frame the mouse is off it (frame_217/PlaceObject3_3382_500
-# enterFrame, lines 32-35 and 50). Alpha runs from 0 to 100, as the original's
-# _alpha does.
+# enterFrame, lines 32-35 and 50). The alpha is in Flash's 1/256 steps
+# (FlashAlpha).
 const FADE_IN_STEP: int = 50
 const FADE_OUT_STEP: int = 10
 # Render deltas that add up to a whole SWF frame can fall short of it by a float
@@ -52,10 +52,11 @@ const RING_STATES: Dictionary = {
 	BaseButton.DRAW_PRESSED: "down",
 	BaseButton.DRAW_HOVER_PRESSED: "down",
 }
-# The ring's enterFrame sets the disc to 75% alpha while the ring fades in and to
-# 85% once it has (frame_217/PlaceObject3_3382_500 enterFrame, lines 16 and 42).
-const COVER_ALPHA_FADING_IN: float = 0.75
-const COVER_ALPHA: float = 0.85
+# The ring's enterFrame sets the disc's _alpha to 75 while the ring fades in and
+# to 85 once it has (frame_217/PlaceObject3_3382_500 enterFrame, lines 16 and
+# 42). Flash stores 85 as 217/256 (FlashAlpha).
+const COVER_PERCENT_FADING_IN: float = 75.0
+const COVER_PERCENT: float = 85.0
 
 # Setting this false closes any menu that is up, and open() does nothing until
 # it is true again.
@@ -117,7 +118,7 @@ func _make_cover(texture: Texture2D, rect: Dictionary, centre: Vector2) -> Textu
 	cover.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	cover.position = centre + Vector2(rect["x"], rect["y"])
 	cover.size = Vector2(rect["w"], rect["h"])
-	cover.modulate.a = COVER_ALPHA
+	cover.modulate.a = FlashAlpha.multiplier(FlashAlpha.from_percent(COVER_PERCENT))
 	cover.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	cover.visible = false
 	return cover
@@ -208,7 +209,7 @@ func open(target_slot: int, centre: Vector2) -> void:
 	position = centre
 	_alpha = 0
 	_fading_in = true
-	_set_cover_alpha(COVER_ALPHA_FADING_IN)
+	_set_cover_alpha(COVER_PERCENT_FADING_IN)
 	modulate.a = 0.0
 	visible = true
 
@@ -231,25 +232,25 @@ func advance(delta: float, pointer: Vector2) -> void:
 # goes straight back to 100.
 func _play_frame(pointer: Vector2) -> void:
 	if _fading_in:
-		if _alpha < 100:
-			_alpha += FADE_IN_STEP
+		if FlashAlpha.to_percent(_alpha) < 100.0:
+			_alpha = FlashAlpha.add(_alpha, FADE_IN_STEP)
 		else:
-			_alpha = 100
+			_alpha = FlashAlpha.from_percent(100.0)
 			_fading_in = false
-			_set_cover_alpha(COVER_ALPHA)
+			_set_cover_alpha(COVER_PERCENT)
 	elif not _is_over_menu(pointer):
-		_alpha -= FADE_OUT_STEP
+		_alpha = FlashAlpha.add(_alpha, -FADE_OUT_STEP)
 		if _alpha <= 0:
 			_close()
 			return
 	else:
-		_alpha = 100
-	modulate.a = _alpha / 100.0
+		_alpha = FlashAlpha.from_percent(100.0)
+	modulate.a = FlashAlpha.multiplier(_alpha)
 
 
-func _set_cover_alpha(alpha: float) -> void:
+func _set_cover_alpha(percent: float) -> void:
 	for orb in orbs:
-		(orb.get_node("Cover") as TextureRect).modulate.a = alpha
+		(orb.get_node("Cover") as TextureRect).modulate.a = FlashAlpha.multiplier(FlashAlpha.from_percent(percent))
 
 
 func _close() -> void:
