@@ -26,14 +26,10 @@ const CLASS_DESCRIPTIONS: Array[String] = [
 	"Strong and stable, the Hydraulic line derives its power from its mastery of water. You can use it to bolster your physical strength, or channel it against the enemy to bring about their icy doom. Wielding such powers allows you greater control over the battle, as well as powerful survival and team support options.",
 ]
 
-# Sonny's gear before frame_180 runs (frame_42/DoAction_17.as:50): Levo Jeans,
-# Proverse All Stars and A Broken Pipe, with no White T-Shirt.
-const TUTORIAL_EQUIP_ARRAY: Array[int] = [0, 0, 0, 4, 8, 5, 0]
-# Sonny's gear from frame_180/DoAction.as:7 on, which adds the White T-Shirt.
-const STORY_EQUIP_ARRAY: Array[int] = [0, 11, 0, 4, 8, 5, 0]
-# StatSets0 as both frame_42/DoAction_17.as:51 and frame_180/DoAction.as:8 set
-# it, which is the bonuses of all four starting items.
-const STARTING_STAT_ALLOCATION: Array[int] = [5, 6, 5, 3, 0]
+# Sonny's gear and stat allocation before frame_180 runs ("before_story") and
+# from frame_180 on ("story"). uv run convert_starting_state reads them out of
+# frame_42/DoAction_17.as:50-51 and frame_180/DoAction.as:7-8.
+const STARTING_STATE_FILE: String = "res://dev/converted_json/starting_state.json"
 
 @export var name_user: String = "Sonny"
 @export var euro: float = 0.0
@@ -171,8 +167,9 @@ static func new_game(player_name: String, new_player_class: PlayerClass = Player
 # level 1 spread (assignPointsStart). assign_points_start sets point_residue
 # again before it spreads, so the residue stays what new_game left.
 func enter_tutorial() -> void:
-	equip_array = TUTORIAL_EQUIP_ARRAY.duplicate()
-	stat_allocated = STARTING_STAT_ALLOCATION.duplicate()
+	var state: Dictionary = starting_state("before_story")
+	equip_array = state["equip"]
+	stat_allocated = state["stat_allocation"]
 	Leveling.assign_points_start(self)
 
 
@@ -181,6 +178,20 @@ func enter_tutorial() -> void:
 # that gear's bonuses. None of the four items has piercing or defense, and the
 # original does not touch PerSets0 or DefSets0 here.
 func start_story() -> void:
-	equip_array = STORY_EQUIP_ARRAY.duplicate()
-	stat_allocated = STARTING_STAT_ALLOCATION.duplicate()
+	var state: Dictionary = starting_state("story")
+	equip_array = state["equip"]
+	stat_allocated = state["stat_allocation"]
 	Leveling.compute_stats(self)
+
+
+# The "before_story" or "story" entry of starting_state.json, with new arrays
+# of ints each call, so the caller can change them. JSON reads every number as a
+# float, and the equip and allocation arrays hold ints everywhere else.
+static func starting_state(point: String) -> Dictionary:
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(STARTING_STATE_FILE))
+	assert(parsed is Dictionary and parsed.has(point), "could not read %s from %s" % [point, STARTING_STATE_FILE])
+	var state: Dictionary = parsed[point]
+	return {
+		"equip": state["equip"].map(func(value): return int(value)),
+		"stat_allocation": state["stat_allocation"].map(func(value): return int(value)),
+	}
