@@ -13,6 +13,7 @@ func before_each() -> void:
 
 func after_each() -> void:
 	GameData.current_save = null
+	GameTooltip.hide_tooltip()
 
 
 func _window() -> Control:
@@ -123,6 +124,43 @@ func test_a_tree_node_click_learns_the_talent() -> void:
 	(window.get_node("TreeNodes/Node0") as Button).pressed.emit()
 	assert_eq(TalentTree.get_rank(save, 0), 1)
 	assert_eq(_text(window, "AbilityPointsValue"), "0")
+
+
+func _tooltip_texts() -> Array[String]:
+	var texts: Array[String] = []
+	for section: Node in GameTooltip._sections.get_children():
+		for label: Node in section.get_child(0).get_children():
+			texts.append((label as Label).text)
+	return texts
+
+
+# DefineSprite_3142/frame_25/DoAction.as:85-88 sets the title to SKILLNONE,
+# toolTip to SKILLTUT and toolTip3 to SKILLTUT2. The tooltip clip draws
+# toolTip3 under the title and toolTip below that
+# (DefineSprite_2717/frame_7/DoAction.as:21-38).
+func test_an_empty_socket_tooltip_reads_strings_json() -> void:
+	GameData.current_save.move_matrix[3] = 0
+	var window: Control = _window()
+	var socket: Button = window.get_node("Socket3")
+	socket.mouse_entered.emit()
+	var expected: Array[String] = [
+		Strings.text("SKILLNONE"), Strings.text("SKILLTUT2"), Strings.text("SKILLTUT"),
+	]
+	assert_true(GameTooltip._root.visible, "the tooltip shows")
+	assert_eq(_tooltip_texts(), expected)
+	assert_eq(socket.tooltip_text, "", "no native tooltip shows over the rich one")
+
+
+func test_a_pool_row_places_its_ability_and_a_socket_click_sends_it_back() -> void:
+	var save: PlayerSave = GameData.current_save
+	var owned: Array = save.move_matrix2.filter(func(move_id): return int(move_id) != 0)
+	assert_gt(owned.size(), 0, "a new game owns an ability")
+	save.move_matrix.fill(0)
+	var window: Control = _window()
+	(window.get_node("PoolRows/PoolRow0") as Button).pressed.emit()
+	assert_eq(int(save.move_matrix[0]), int(owned[0]), "the first free socket holds it")
+	(window.get_node("Socket0") as Button).pressed.emit()
+	assert_eq(int(save.move_matrix[0]), 0, "the socket is empty again")
 
 
 func test_the_close_button_hides_the_window() -> void:
