@@ -102,9 +102,9 @@ var _turn_based: bool = true
 # player decides.
 var _battle_time_now: float = 0.0
 # Which frame of thingerClock the clock is on: blue for the player's side and
-# orange for the other side.
-# The conductor sets it when the battle loads and when the other side's turn
-# starts (onClipEvent(load), lines 9-16, and enterFrame, lines 297-310).
+# orange for the other side. The conductor sets it when the battle loads and
+# when the other side's turn starts (onClipEvent(load), lines 9-16, and
+# enterFrame, lines 297-310).
 var _clock_side: int = BattleClock.Side.FRIEND
 var _finished: bool = false
 # True while the Cutscene a pick names plays. The original's click and Space

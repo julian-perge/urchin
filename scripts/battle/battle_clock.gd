@@ -3,11 +3,11 @@ extends Control
 
 # The original's clock, battleClocker (DefineSprite 3389): the dark ring 3388
 # under thingerClock, whose two frames light the ring blue for the player's
-# side or orange for the other side. Two hands light the ring as BattleTimeNow climbs to BattleTimeLimit
-# (DefineSprite_3386/frame_1, the enterFrame scripts of PlaceObject2_3385_2 and
-# PlaceObject2_3385_6). extract_battle_screen renders the lit ring on each
-# frame at each BattleTimeNow from 0 to BattleTimeLimit, so this only picks the
-# render to show.
+# side or orange for the other side. Two hands light the ring as BattleTimeNow
+# climbs to BattleTimeLimit (DefineSprite_3386/frame_1, the enterFrame scripts
+# of PlaceObject2_3385_2 and PlaceObject2_3385_6). extract_battle_screen
+# renders the lit ring on each frame at each BattleTimeNow from 0 to
+# BattleTimeLimit, so this only picks the render to show.
 
 enum Side { FRIEND, ENEMY }
 

@@ -44,9 +44,9 @@
 #             piece's art names the set in art_set_sources: the Store keeper's
 #             seven shop PNGs are one, and the battle clock's lit rings
 #             another. It is recorded as the rect and size of the shared crop,
-#             and the list of PNGs. The piece's
-#             depth must hold the character `character`, and the crop's rect is
-#             on the Stage already, so the placement matrix is not applied.
+#             and the list of PNGs. The piece's depth must hold the character
+#             `character`, and the crop's rect is on the Stage already, so the
+#             placement matrix is not applied.
 #   "face"  - the portrait clip 2978, which the port draws as a TextureRect that
 #             shows a different PNG for each fighter. It is recorded as the crop
 #             box that extract_faces cut every portrait to, placed with the

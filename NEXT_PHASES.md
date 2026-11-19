@@ -104,7 +104,8 @@ the hotbar (menu buttons / world-map / zone progress), the zone map with SWF-exa
     runs out whether or not the player has picked; Easy and Normal wait for the player (see `DECODED_ALGORITHMS.md`'s Heroic decision timer). The countdown now runs for 4 s on Heroic
     only and passes for the player at 0, and the label is hidden on Easy and Normal and once the player's unit is dead. Covered by `test_battle_scene.gd`'s
     `test_heroic_decision_passes_the_turn_when_the_window_runs_out`, `test_normal_decision_waits_for_the_player_with_no_countdown` and
-    `test_heroic_countdown_stops_once_the_player_is_dead`.
+    `test_heroic_countdown_stops_once_the_player_is_dead`. #155 later replaced the ring and the label with the original's clock (`BattleClock`) and deleted
+    `battle_pbar_full.png`.
   - Target highlighting - a hover ring around each unit fades in over ~0.17s and out over ~0.67s (source-verified 30fps timing), but only fades in during the player's own decision
     window (fade-out always plays, ungated). Alongside this, the radial ability menu's dismissal was corrected to match the live original game: moving the mouse away from the clicked
     unit and its fanned-out orbs fades the menu out, replacing this port's earlier click-away guess, which the project owner confirmed doesn't match the real game.
