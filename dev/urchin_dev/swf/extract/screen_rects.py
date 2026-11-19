@@ -1513,6 +1513,8 @@ def outline_record(
     if only is None or only.fills or only.used_fills or len(only.lines) != 1:
         raise ValueError("an outline needs one line and no fill")
     width, color = only.lines[0]
+    if color is None:
+        raise ValueError("a filled line style has no one colour")
     if path is not None:
         half = width / 2
         grown = [
@@ -1798,6 +1800,8 @@ def one_fill_and_line(
         raise ValueError(f"shape {shape}'s fill 1 is not a solid colour")
     if len(only.lines) != 1:
         raise ValueError(f"shape {shape} has {len(only.lines)} lines, not one line")
+    if only.lines[0][1] is None:
+        raise ValueError(f"shape {shape}'s line is filled and has no one colour")
     return only.fills[0], only.lines[0]
 
 

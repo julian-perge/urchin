@@ -308,8 +308,9 @@ def extract_mp3(index: SwfIndex, sprite_id: int, out_path: Path) -> int:
 
 def find_broken_bitmap_fill_cids(index: SwfIndex, sprite_id: int) -> set[int]:
     """Shapes placed directly in this cutscene sprite where an edge paints
-    with a fill of bitmap 65535, which the SWF does not define. A 65535 fill
-    that no edge paints with draws nothing, so it does not count. The file
+    with a fill of bitmap 65535, which the SWF does not define, or strokes a
+    DefineShape4 line that such a fill paints. A 65535 fill that no edge
+    paints with draws nothing, so it does not count. The file
     header says why no shape in the game is on this list.
     """
     placed = {p.character_id for p in index.placements if p.owner == sprite_id}
@@ -319,9 +320,10 @@ def find_broken_bitmap_fill_cids(index: SwfIndex, sprite_id: int) -> set[int]:
         if cid is not None
         and index.characters[cid][0] in SHAPE_TAGS
         and any(
-            styles.bitmaps[fill - 1] == MISSING_BITMAP
+            MISSING_BITMAP
+            in {styles.bitmaps[fill - 1] for fill in styles.used_fills}
+            | {styles.line_bitmaps[line - 1] for line in styles.line_bounds}
             for styles in shape_styles(index, cid)
-            for fill in styles.used_fills
         )
     }
 

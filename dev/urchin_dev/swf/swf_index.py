@@ -902,18 +902,22 @@ class StyleSet:
     StyleChangeRecord declares partway through. fills holds each fill's
     (r, g, b, a), or None for a fill that is not a solid colour. bitmaps holds
     each fill's bitmap id, or None for a fill that is not a bitmap. lines holds
-    each line's (width in twips, (r, g, b, a)). used_fills holds the 1-based
-    fill indices that some edge fills with, and line_bounds the (xmin, ymin,
-    xmax, ymax) in twips of the edges each used 1-based line index strokes.
+    each line's (width in twips, (r, g, b, a)), with None for the colour of a
+    DefineShape4 line that a fill style paints. line_bitmaps holds each line's
+    bitmap id, or None for a line that no bitmap fill paints. used_fills holds
+    the 1-based fill indices that some edge fills with, and line_bounds the
+    (xmin, ymin, xmax, ymax) in twips of the edges each used 1-based line index
+    strokes.
     paths holds the same box for each stroked path, in drawing order. A path
     starts at a move, so a shape that draws three stacked rectangles has three."""
 
     fills: tuple[tuple[int, int, int, int] | None, ...]
-    lines: tuple[tuple[int, tuple[int, int, int, int]], ...]
+    lines: tuple[tuple[int, tuple[int, int, int, int] | None], ...]
     used_fills: frozenset[int]
     line_bounds: dict[int, tuple[int, int, int, int]]
     paths: tuple[tuple[int, int, int, int], ...] = ()
     bitmaps: tuple[int | None, ...] = ()
+    line_bitmaps: tuple[int | None, ...] = ()
 
 
 def shape_styles(index: SwfIndex, cid: int) -> list[StyleSet]:
@@ -923,7 +927,7 @@ def shape_styles(index: SwfIndex, cid: int) -> list[StyleSet]:
     code, pos = _fill_style_array(index, cid)
     data = index.data
     sets: list[StyleSet] = []
-    fills, bitmaps, lines, pos = _style_arrays(data, pos, code)
+    fills, bitmaps, lines, line_bitmaps, pos = _style_arrays(data, pos, code)
     fill_bits, line_bits = data[pos] >> 4, data[pos] & 0x0F
     bits = _Bits(data, pos + 1)
     used_fills: set[int] = set()
@@ -941,6 +945,7 @@ def shape_styles(index: SwfIndex, cid: int) -> list[StyleSet]:
                 line_bounds={k: tuple(v) for k, v in sorted(line_bounds.items())},
                 paths=tuple(tuple(box) for box in paths),
                 bitmaps=bitmaps,
+                line_bitmaps=line_bitmaps,
             )
         )
 
@@ -996,7 +1001,9 @@ def shape_styles(index: SwfIndex, cid: int) -> list[StyleSet]:
             used_fills, line_bounds = set(), {}
             paths, new_path = [], True
             fill0 = fill1 = line = 0
-            fills, bitmaps, lines, pos = _style_arrays(data, bits.align(), code)
+            fills, bitmaps, lines, line_bitmaps, pos = _style_arrays(
+                data, bits.align(), code
+            )
             fill_bits, line_bits = data[pos] >> 4, data[pos] & 0x0F
             bits = _Bits(data, pos + 1)
     close_set()
@@ -1004,8 +1011,8 @@ def shape_styles(index: SwfIndex, cid: int) -> list[StyleSet]:
 
 
 def _style_arrays(data: bytes, pos: int, code: int):
-    """-> (fills, bitmaps, lines, offset past them) for the FILLSTYLEARRAY at
-    pos and the LINESTYLEARRAY after it."""
+    """-> (fills, bitmaps, lines, line_bitmaps, offset past them) for the
+    FILLSTYLEARRAY at pos and the LINESTYLEARRAY after it."""
     rgba = code in (TAG_DEFINE_SHAPE3, TAG_DEFINE_SHAPE4)
     fills = []
     bitmaps = []
@@ -1020,6 +1027,7 @@ def _style_arrays(data: bytes, pos: int, code: int):
         bitmaps.append(struct.unpack_from("<H", data, pos + 1)[0] if bitmap else None)
         pos = _skip_fill_style(data, pos, code)
     lines = []
+    line_bitmaps = []
     count, pos = _fill_style_count(data, pos, code)
     for _ in range(count):
         (width,) = struct.unpack_from("<H", data, pos)
@@ -1030,11 +1038,18 @@ def _style_arrays(data: bytes, pos: int, code: int):
             if (flags >> 4) & 0x03 == 2:
                 pos += 2
             if flags & 0x08:
-                raise ValueError("a filled line style has no one colour")
+                bitmap = data[pos] in BITMAP_FILL_TYPES
+                line_bitmaps.append(
+                    struct.unpack_from("<H", data, pos + 1)[0] if bitmap else None
+                )
+                pos = _skip_fill_style(data, pos, code)
+                lines.append((width, None))
+                continue
         color = tuple(data[pos : pos + 4]) if rgba else (*data[pos : pos + 3], 255)
         pos += 4 if rgba else 3
         lines.append((width, color))
-    return tuple(fills), tuple(bitmaps), tuple(lines), pos
+        line_bitmaps.append(None)
+    return tuple(fills), tuple(bitmaps), tuple(lines), tuple(line_bitmaps), pos
 
 
 def drop_shadow(record: bytes) -> DropShadow:

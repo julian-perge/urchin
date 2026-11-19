@@ -509,5 +509,6 @@ def test_shape_styles_reads_each_style_set_and_what_its_edges_use():
             line_bounds={1: (-10, -10, 190, 90)},
             paths=((-10, -10, 190, 90),),
             bitmaps=(None,),
+            line_bitmaps=(None,),
         ),
     ]

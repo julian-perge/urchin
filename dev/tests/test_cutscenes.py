@@ -19,6 +19,7 @@ from urchin_dev.swf.extract.cutscenes import (
 from urchin_dev.swf.label_xref import OUT
 from urchin_dev.swf.swf_index import (
     TAG_DEFINE_SHAPE3,
+    TAG_DEFINE_SHAPE4,
     TAG_DEFINE_SPRITE,
     TAG_END,
     TAG_SHOW_FRAME,
@@ -144,3 +145,32 @@ def test_a_missing_bitmap_fill_counts_only_when_an_edge_paints_with_it():
     )
     index = parse_swf(swf(*shapes, sprite, tag(TAG_SHOW_FRAME)))
     assert find_broken_bitmap_fill_cids(index, 9) == {2, 4, 6}
+
+
+def test_a_line_that_bitmap_65535_paints_counts_only_when_an_edge_strokes_it():
+    # A DefineShape4 line can carry a fill style in place of a colour. Shape 1
+    # strokes its one edge with such a line, and shape 2 has the same line and
+    # an edge that strokes nothing.
+    missing = bytes([0x43]) + struct.pack("<H", 65535) + IDENTITY_MATRIX
+
+    def shape4(cid: int, line: int) -> bytes:
+        filled_line = struct.pack("<H", 20) + bytes([0x08, 0]) + missing
+        # Two empty RECTs, the flags byte, no fills, the line, then 0 bits for
+        # fill indices and 1 bit for line indices.
+        styles = b"\0\0\0" + bytes([0]) + bytes([1]) + filled_line + bytes([0x01])
+        records = bits(
+            (0, 1), (0b01000, 5), (line, 1),
+            (1, 1), (1, 1), (0, 4), (0, 1), (0, 1), (1, 2),
+            (0, 1), (0, 5),
+        )  # fmt: skip
+        return tag(TAG_DEFINE_SHAPE4, struct.pack("<H", cid) + styles + records)
+
+    placed = place2(1, cid=1) + place2(2, cid=2)
+    sprite = tag(
+        TAG_DEFINE_SPRITE,
+        struct.pack("<HH", 9, 1) + placed + tag(TAG_SHOW_FRAME) + tag(TAG_END),
+    )
+    index = parse_swf(
+        swf(shape4(1, line=1), shape4(2, line=0), sprite, tag(TAG_SHOW_FRAME))
+    )
+    assert find_broken_bitmap_fill_cids(index, 9) == {1}
