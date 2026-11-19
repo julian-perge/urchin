@@ -64,6 +64,17 @@ STILL_IN_USE_AT_EXIT = PASSED + (
 )
 
 
+# The last lines of a run on 2026-11-19 whose before_all compiled a shader with
+# an unknown identifier. GUT fails a test only for an error logged while that
+# test runs, so every test passed and GUT exited 0 (julian-perge/urchin#426).
+SHADER_ERROR = PASSED + (
+    "SHADER ERROR: Unknown identifier in expression: 'undefined_thing'.\n"
+    "          at: (null) (:23)\n"
+    "ERROR: Shader compilation failed.\n"
+    "   at: shader_set_code (servers/rendering/dummy/storage/material_storage.cpp:192)\n"
+)
+
+
 class FakeGodot:
     def __init__(self, *results: tuple[int, str]):
         self.results = list(results)
@@ -106,6 +117,10 @@ def test_a_test_file_that_does_not_parse_fails_although_gut_exits_0(project):
 
 def test_a_run_where_no_test_matched_fails_although_gut_exits_0(project):
     assert run_gut([], project, project, FakeGodot((0, NO_TEST_MATCHED))) == 1
+
+
+def test_a_run_that_logs_a_shader_error_fails_although_gut_exits_0(project):
+    assert run_gut([], project, project, FakeGodot((0, SHADER_ERROR))) == 1
 
 
 def test_a_run_that_leaks_objects_at_exit_fails_although_gut_exits_0(project):
