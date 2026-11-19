@@ -43,7 +43,7 @@ All numbers are Stage px from `timeline.frames()` of the web build, at the label
 
 ## Answers to the open questions
 
-1. **Does `MANUALEX[0]` still match how the port plays?** Yes. It says "Make sure that you have the tutorial level enabled". The port's new game settings have the Tutorial Level choice (`OptionsPanel/TutorialToggle` in `main_menu.tscn`), and START runs the tutorial fight when it is on (`main_menu.gd`, `_on_start_new_game`). The text stays word for word.
+1. **Does `MANUALEX[0]` still match how the port plays?** Yes. It says "Make sure that you have the tutorial level enabled". The port's new game settings have the Tutorial Level choice (`TutorialButton` in `scenes/ui/menu/options_panel.tscn`), and START runs the tutorial fight when it is on (`main_menu.gd`, `_on_start_new_game`). The text stays word for word.
 2. **Does `MANUALEX[4]` stay word for word?** Yes. It sends the player to "the Sonny forums on ArmorGames". It is the game's own text and not a link, as `GOTIP[0]` and `ENDING` are. ADR 0002 keeps that kind of sentence ("What the port shows"), so the text stays and ADR 0002 gains one sentence that names it. No new ADR.
 
 ## Replacements
