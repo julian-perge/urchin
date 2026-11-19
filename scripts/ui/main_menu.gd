@@ -16,8 +16,9 @@
 #      rest and colored on hover, each at the position and size the original
 #      places it at. The class name under each card is a Label, because the
 #      original fills a separate text field from KrinLang at runtime.
-#   6. "Please configure your settings:" - Difficulty, Tutorial Level,
-#      Sound, Autosave (Effects/Graphics skipped), then Click here to START!
+#   6. The new-game settings (root frame 93,
+#      scenes/ui/menu/options_panel.tscn): Difficulty, Tutorial Level, Sound
+#      and Autosave, then START. ADR 0011 leaves out Effects and Graphics.
 # All screens sit on the original blue splatter background. The card art, the
 # card rects in the scene and the background all come from
 # dev/urchin_dev/swf/extract/start_screens.py.
@@ -47,10 +48,6 @@ const NAME_PROMPT: String = "< Enter Name Here >"
 var _slot_mode: SlotMode = SlotMode.LOAD_GAME
 var _selected_slot: int = 1
 var _selected_class: PlayerSave.PlayerClass = PlayerSave.PlayerClass.BIOLOGICAL
-var _selected_difficulty: CombatUnit.Difficulty = CombatUnit.Difficulty.EASY
-var _tutorial_enabled: bool = true
-var _sound_enabled: bool = true
-var _autosave_enabled: bool = true
 var _card_fades: Dictionary = {}  # card node name -> its running color fade
 
 @onready var title_panel: TitlePanel = $TitlePanel
@@ -60,10 +57,9 @@ var _card_fades: Dictionary = {}  # card node name -> its running color fade
 @onready var slot_panel: SlotPanel = $SlotPanel
 @onready var credits_panel: CreditsPanel = $CreditsPanel
 @onready var new_game_panel: Control = $NewGamePanel  # class-select screen
-@onready var options_panel: Control = $OptionsPanel   # settings screen
+@onready var options_panel: OptionsPanel = $OptionsPanel
 @onready var class_picker: Control = $NewGamePanel/ClassPicker
 @onready var name_input: LineEdit = $NamePanel/NameInput
-@onready var difficulty_picker: HBoxContainer = $OptionsPanel/DifficultyPicker
 
 
 func _ready():
@@ -233,33 +229,11 @@ func _fade_card(card: TextureButton, to_alpha: float, duration: float) -> void:
 
 func _on_class_picked(class_id: PlayerSave.PlayerClass) -> void:
 	_selected_class = class_id
-	new_game_panel.hide()
-	options_panel.show()
+	options_panel.open()
+	_show_screen(options_panel)
 
 
 # --- screen 6: settings -------------------------------------------------------
-
-func _on_difficulty_selected(index: CombatUnit.Difficulty) -> void:
-	_selected_difficulty = index
-
-
-func _on_tutorial_toggled(pressed: bool) -> void:
-	$OptionsPanel/TutorialToggle.text = "Yeah, sure!" if pressed else "No thanks"
-	_tutorial_enabled = pressed
-
-
-func _on_sound_toggled(pressed: bool) -> void:
-	$OptionsPanel/SoundToggle.text = "On" if pressed else "Off"
-	_sound_enabled = pressed
-	# DefineButton2_2774 on(release) only flips Krin.sound, so the music that
-	# plays now goes on, and nothing starts while it is off.
-	AudioManagerAuto.sound_enabled = pressed
-
-
-func _on_autosave_toggled(pressed: bool) -> void:
-	$OptionsPanel/AutosaveToggle.text = "On" if pressed else "Off"
-	_autosave_enabled = pressed
-
 
 # The new game is not saved here. In the original only the Save button
 # (DefineButton2_3183) and the autosave on a victory's Proceed
@@ -277,10 +251,10 @@ func _on_autosave_toggled(pressed: bool) -> void:
 # ZoneProgression.FIRST_STORY_FIGHT).
 func _on_start_new_game() -> void:
 	GameData.new_game(_selected_slot, name_input.text, _selected_class)
-	GameData.current_save.difficulty = _selected_difficulty
-	GameData.current_save.autosave = _autosave_enabled
-	GameData.current_save.sound = _sound_enabled
-	if _tutorial_enabled:
+	GameData.current_save.difficulty = options_panel.difficulty
+	GameData.current_save.autosave = options_panel.autosave
+	GameData.current_save.sound = options_panel.sound
+	if options_panel.tutorial:
 		ZoneManager.request_tutorial_fight()
 	else:
 		ZoneManager.request_new_game_fight()

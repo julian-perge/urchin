@@ -118,9 +118,9 @@ const STARTING_STATE_FILE: String = "res://dev/converted_json/starting_state.jso
 @export var difficulty: int = 1  # CombatUnit.Difficulty
 @export var sound: bool = true
 @export var graphics: bool = true
-@export var auto_saver: bool = true
 @export var qual: String = "HIGH"
-# New-game options screen: autosave on Proceed after victories.
+# Krin.autoSaver. The new-game settings and the Options Window set it, and a
+# victory's Proceed saves the game when it is on.
 @export var autosave: bool = true
 
 static func new_game(player_name: String, new_player_class: PlayerClass = PlayerClass.BIOLOGICAL) -> PlayerSave:

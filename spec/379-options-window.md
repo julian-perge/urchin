@@ -82,5 +82,5 @@ scripts/ui/menu/options_window.gd      fill, Sound and Autosave (proposed)
 
 ## Out of scope
 
-- The new-game settings screen's own layout (root frame 93). It is hand-placed today and is not rebuilt here.
+- The new-game settings screen's own layout (root frame 93). [#433](https://github.com/julian-perge/urchin/issues/433) rebuilds it ([spec](433-new-game-settings.md)).
 - The Re-Spec button ([#380](https://github.com/julian-perge/urchin/issues/380)).
