@@ -456,9 +456,15 @@ def test_a_signal_name_prints_its_declaration_connects_and_emits(
 
 
 def test_a_voice_cue_connect_names_its_target(as_records, gd_records):
+    source = (REPO_ROOT / "scripts" / "battle" / "battle_scene.gd").read_text()
+    (line,) = [
+        n
+        for n, text in enumerate(source.splitlines(), start=1)
+        if "presenter.voice_cue.connect(" in text
+    ]
     _, out = run("voice_cue", as_records, gd_records)
     assert any(
-        row.startswith("  scripts/battle/battle_scene.gd:402  ")
+        row.startswith(f"  scripts/battle/battle_scene.gd:{line}  ")
         and "presenter.voice_cue -> AudioManagerAuto.voice" in row
         for row in section(out, "connects")
     )
