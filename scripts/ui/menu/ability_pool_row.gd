@@ -1,6 +1,6 @@
 # ability_pool_row.gd
 # One row of the ability pool list (icon + move name). abilities_window.gd
-# instances 5 of these into the PoolRows VBoxContainer and calls populate()/
+# instances 5 of these into the Pool/Mask/Rows VBoxContainer and calls populate()/
 # clear() as the visible window scrolls - the row itself has no move_id
 # state, the parent tracks that via its own _pool_move_ids/_pool_scroll.
 extends Button

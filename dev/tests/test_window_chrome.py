@@ -26,6 +26,7 @@ OWN_SPRITE = {
     "victory_row": "sprite 3002",
     "bar_shade": "sprite 2877",
     "party_frame": "sprite 2979",
+    "pool_frame": "sprite 3120",
 }
 
 # Each piece's shape box on the stage in design px, (x, y, w, h), from the hub

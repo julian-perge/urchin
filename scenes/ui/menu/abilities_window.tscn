@@ -5,6 +5,8 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/window/shell_panel.tscn" id="3_panel"]
 [ext_resource type="Script" path="res://scripts/ui/float_box.gd" id="4_floatbox"]
 [ext_resource type="PackedScene" path="res://scenes/ui/menu/ability_pool_row.tscn" id="7_poolrow"]
+[ext_resource type="Texture2D" path="res://assets/ui/window/pool_frame.png" id="8_poolframe"]
+[ext_resource type="PackedScene" path="res://scenes/ui/menu/pool_shadow.tscn" id="9_poolshadow"]
 
 [node name="AbilitiesWindow" type="Control" groups=["abilities_window", "menu_screen"]]
 layout_mode = 3
@@ -349,54 +351,82 @@ theme_override_colors/font_color = Color(0.36862746, 0.36862746, 0.36862746, 1)
 theme_override_font_sizes/font_size = 13
 horizontal_alignment = 1
 
-[node name="PoolBackdrop" type="ColorRect" parent="."]
+[node name="Pool" type="Control" parent="."]
 layout_mode = 0
 offset_left = 523.6
 offset_top = 274.2
-offset_right = 737.6
-offset_bottom = 402.2
+offset_right = 740.95
+offset_bottom = 407.25
 mouse_filter = 2
-color = Color(0.06, 0.06, 0.065, 1)
 
-[node name="PoolRows" type="VBoxContainer" parent="."]
+[node name="Mask" type="Control" parent="Pool"]
+clip_contents = true
 layout_mode = 0
-offset_left = 526.6
-offset_top = 277.2
-offset_right = 712.6
-offset_bottom = 387.2
+offset_right = 217.35
+offset_bottom = 133.05
+mouse_filter = 2
+
+[node name="Backing" type="ColorRect" parent="Pool/Mask"]
+layout_mode = 0
+offset_left = -0.05
+offset_top = -0.5
+offset_right = 217.35
+offset_bottom = 132.5
+mouse_filter = 2
+color = Color(0.11764706, 0.11764706, 0.11764706, 1)
+
+[node name="Rows" type="VBoxContainer" parent="Pool/Mask"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 3.0
+offset_right = 189.0
+offset_bottom = 113.0
 mouse_filter = 2
 theme_override_constants/separation = 3
 
-[node name="PoolRow0" parent="PoolRows" instance=ExtResource("7_poolrow")]
+[node name="PoolRow0" parent="Pool/Mask/Rows" instance=ExtResource("7_poolrow")]
 layout_mode = 2
 
-[node name="PoolRow1" parent="PoolRows" instance=ExtResource("7_poolrow")]
+[node name="PoolRow1" parent="Pool/Mask/Rows" instance=ExtResource("7_poolrow")]
 layout_mode = 2
 
-[node name="PoolRow2" parent="PoolRows" instance=ExtResource("7_poolrow")]
+[node name="PoolRow2" parent="Pool/Mask/Rows" instance=ExtResource("7_poolrow")]
 layout_mode = 2
 
-[node name="PoolRow3" parent="PoolRows" instance=ExtResource("7_poolrow")]
+[node name="PoolRow3" parent="Pool/Mask/Rows" instance=ExtResource("7_poolrow")]
 layout_mode = 2
 
-[node name="PoolRow4" parent="PoolRows" instance=ExtResource("7_poolrow")]
+[node name="PoolRow4" parent="Pool/Mask/Rows" instance=ExtResource("7_poolrow")]
 layout_mode = 2
 
-[node name="ScrollUpButton" type="Button" parent="."]
+[node name="Frame" type="TextureRect" parent="Pool"]
 layout_mode = 0
-offset_left = 715.6
-offset_top = 277.2
-offset_right = 734.6
-offset_bottom = 337.2
+offset_left = -0.55
+offset_top = -1.05
+offset_right = 217.95
+offset_bottom = 133.2
+mouse_filter = 2
+texture = ExtResource("8_poolframe")
+expand_mode = 1
+
+[node name="ScrollUpButton" type="Button" parent="Pool"]
+layout_mode = 0
+offset_left = 190.7
+offset_top = 2.95
+offset_right = 215.2
+offset_bottom = 64.0
 text = "^"
 
-[node name="ScrollDownButton" type="Button" parent="."]
+[node name="ScrollDownButton" type="Button" parent="Pool"]
 layout_mode = 0
-offset_left = 715.6
-offset_top = 339.2
-offset_right = 734.6
-offset_bottom = 399.2
+offset_left = 190.7
+offset_top = 66.9
+offset_right = 215.2
+offset_bottom = 127.95
 text = "v"
+
+[node name="Shadow" parent="Pool" instance=ExtResource("9_poolshadow")]
+layout_mode = 1
 
 [node name="TreeLines" type="Control" parent="."]
 layout_mode = 0
@@ -426,5 +456,5 @@ theme_override_font_sizes/font_size = 12
 [connection signal="pressed" from="PlusColumn/InstinctSlot/InstinctPlus" to="." method="_on_attribute_plus_pressed" binds=[2]]
 [connection signal="pressed" from="PlusColumn/SpeedSlot/SpeedPlus" to="." method="_on_attribute_plus_pressed" binds=[3]]
 [connection signal="draw" from="TreeLines" to="." method="_draw_tree_lines"]
-[connection signal="pressed" from="ScrollUpButton" to="." method="_on_pool_scrolled" binds=[-1]]
-[connection signal="pressed" from="ScrollDownButton" to="." method="_on_pool_scrolled" binds=[1]]
+[connection signal="pressed" from="Pool/ScrollUpButton" to="." method="_on_pool_scrolled" binds=[-1]]
+[connection signal="pressed" from="Pool/ScrollDownButton" to="." method="_on_pool_scrolled" binds=[1]]

@@ -3159,6 +3159,81 @@
       "distance": 5.0
      }
     },
+    "Pool": {
+     "kind": "shape",
+     "rect": [
+      523.6,
+      274.2,
+      217.35,
+      133.05
+     ]
+    },
+    "Pool/Frame": {
+     "kind": "art",
+     "rect": [
+      523.05,
+      273.15,
+      218.5,
+      134.25
+     ],
+     "size": [
+      874,
+      537
+     ],
+     "texture": "res://assets/ui/window/pool_frame.png",
+     "zoom": 4.0
+    },
+    "Pool/Mask": {
+     "kind": "shape",
+     "rect": [
+      523.6,
+      274.2,
+      217.35,
+      133.05
+     ]
+    },
+    "Pool/Mask/Backing": {
+     "fill": "1e1e1eff",
+     "kind": "box",
+     "rect": [
+      523.55,
+      273.7,
+      217.4,
+      133.0
+     ]
+    },
+    "Pool/ScrollDownButton": {
+     "kind": "button",
+     "rect": [
+      714.3,
+      341.1,
+      24.5,
+      61.05
+     ]
+    },
+    "Pool/ScrollUpButton": {
+     "kind": "button",
+     "rect": [
+      714.3,
+      277.15,
+      24.5,
+      61.05
+     ]
+    },
+    "Pool/Shadow": {
+     "kind": "inner_shadow",
+     "rect": [
+      523.6,
+      274.2,
+      217.35,
+      133.05
+     ],
+     "shadow": {
+      "angle": 45.0,
+      "blur": 5.0,
+      "distance": 5.0
+     }
+    },
     "PoolTitle": {
      "align": "center",
      "color": "5e5e5eff",
@@ -3782,10 +3857,7 @@
    },
    "port_only": [
     "StatusLabel",
-    "PoolBackdrop",
-    "PoolRows",
-    "ScrollUpButton",
-    "ScrollDownButton",
+    "Pool/Mask/Rows",
     "TreeNodes/Node0/IconRect",
     "TreeNodes/Node0/RankLabel",
     "TreeNodes/Node1/IconRect",

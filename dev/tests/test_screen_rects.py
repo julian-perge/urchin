@@ -129,6 +129,58 @@ def test_panel_record_refuses_a_shadow_the_shared_material_cannot_draw(change, m
         )
 
 
+# The ability pool: KRINMENU's skills frame places sprite 3120 at depth 9 with
+# this matrix, and its clip mask 3117 has these ShapeBounds.
+POOL_MATRIX = (1.0, 0.0, 0.0, 1.0, 2462, 1036)
+POOL_MASK_BOUNDS = (0, 0, 4347, 2661)
+
+
+def test_inner_shadow_record_is_the_mask_through_the_placement_with_the_shadow():
+    entry = screen_rects.inner_shadow_record(
+        POOL_MASK_BOUNDS, POOL_MATRIX, ORIGIN, shadow()
+    )
+    assert entry["kind"] == "inner_shadow"
+    assert entry["rect"] == pytest.approx([523.6, 274.2, 217.35, 133.05], abs=1e-4)
+    assert entry["shadow"] == {"angle": 45.0, "blur": 5.0, "distance": 5.0}
+
+
+@pytest.mark.parametrize(
+    "change, message",
+    [
+        ({"inner": False}, "inner"),
+        ({"knockout": True}, "knockout"),
+        ({"blur_y": 4.0}, "blur"),
+        ({"color": (0, 0, 0, 128)}, "colour"),
+        ({"strength": 2.0}, "strength"),
+    ],
+)
+def test_inner_shadow_record_refuses_a_shadow_the_ramp_cannot_draw(change, message):
+    with pytest.raises(ValueError, match=message):
+        screen_rects.inner_shadow_record(
+            POOL_MASK_BOUNDS, POOL_MATRIX, ORIGIN, shadow(**change)
+        )
+
+
+def test_an_inner_shadow_piece_in_a_sprite_with_no_drop_shadow_is_refused(monkeypatch):
+    from types import SimpleNamespace
+
+    identity = (1.0, 0.0, 0.0, 1.0, 0, 0)
+    pool = SimpleNamespace(
+        character_id=3120, matrix=POOL_MATRIX, filters=(), filter_records=()
+    )
+    mask = SimpleNamespace(character_id=3117, matrix=identity)
+    frames = {0: [{9: pool}], 3120: [{1: mask}]}
+    monkeypatch.setattr(screen_rects.timeline, "frame_of", lambda *_: 1)
+    monkeypatch.setattr(screen_rects.timeline, "frames", lambda _, owner: frames[owner])
+    monkeypatch.setattr(screen_rects, "art_sources", lambda: {})
+    monkeypatch.setattr(screen_rects, "character_kind", lambda *_: "shape")
+    scene = screen_rects.Scene(
+        0, "skills", {"Shadow": screen_rects.Piece("inner_shadow", 9, inner_depth=1)}
+    )
+    with pytest.raises(ValueError, match="DropShadow"):
+        screen_rects.scene_record(None, scene)
+
+
 def test_text_record_is_the_field_inside_its_gutter_with_its_size_and_colour():
     entry = screen_rects.text_record(
         field(), (1.0, 0.0, 0.0, 1.0, -7144, -2666), ORIGIN

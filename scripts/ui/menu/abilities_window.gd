@@ -58,7 +58,7 @@ var _tree_rank_labels: Array[Label] = []
 @onready var _tree_lines: Control = $TreeLines
 var _socket_buttons: Array[Button] = []
 @onready var _pool_rows: Array[AbilityPoolRow] = [
-	$PoolRows/PoolRow0, $PoolRows/PoolRow1, $PoolRows/PoolRow2, $PoolRows/PoolRow3, $PoolRows/PoolRow4,
+	$Pool/Mask/Rows/PoolRow0, $Pool/Mask/Rows/PoolRow1, $Pool/Mask/Rows/PoolRow2, $Pool/Mask/Rows/PoolRow3, $Pool/Mask/Rows/PoolRow4,
 ]
 var _pool_scroll: int = 0
 var _pool_move_ids: Array = []
