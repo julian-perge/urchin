@@ -9,6 +9,14 @@
 # for the slot it is on: the placement, the mirror that the right-hand bars give
 # `inner2`, the frame of `inner` that holds the text, and each part's rect.
 #
+# The battle frame puts a DropShadow on each p#BAR placement, so the shadow
+# falls under everything the bar draws: the art, the fills, the text and the
+# buff icons, which buffTicker attaches into p#BAR itself
+# (frame_42/DoAction_10.as:362). Clip is a CanvasGroup over all of them, and
+# scenes/drop_shadow.gdshader draws that one filter on it with the values in
+# top_bar.json. It runs while the game draws, because the fills, the mirror,
+# the buff icons and the death change what the shadow falls from.
+#
 # show_status() ports lifeBarUpdate (frame_42/DoAction_8.as:271-356). The first
 # call sets the life fill and its color with no smoother and leaves the Focus fill
 # at full, as the original does while its firstUpdate is true. Every later call
@@ -82,20 +90,21 @@ var _frames_due: float = 0.0
 var _dead: bool = false
 var _frames_since_death: int = 0
 
-@onready var inner: Control = $Inner
-@onready var inner2: Control = $Inner2
-@onready var name_label: Label = $Inner/PlayerName
-@onready var life_now_label: Label = $Inner/LifeNow
-@onready var life_max_label: Label = $Inner/LifeMax
-@onready var focus_now_label: Label = $Inner/FocusNow
-@onready var focus_max_label: Label = $Inner/FocusMax
-@onready var life_fill: TextureRect = $Inner2/LifeFill
-@onready var life_back: TextureRect = $Inner2/LifeBack
-@onready var focus_fill: TextureRect = $Inner2/FocusFill
-@onready var focus_back: TextureRect = $Inner2/FocusBack
-@onready var life_band: TextureRect = $Inner2/LifeSmoother
-@onready var focus_band: TextureRect = $Inner2/FocusSmoother
-@onready var buff_row: Control = $BuffRow
+@onready var clip: CanvasGroup = $Clip
+@onready var inner: Control = $Clip/Inner
+@onready var inner2: Control = $Clip/Inner2
+@onready var name_label: Label = $Clip/Inner/PlayerName
+@onready var life_now_label: Label = $Clip/Inner/LifeNow
+@onready var life_max_label: Label = $Clip/Inner/LifeMax
+@onready var focus_now_label: Label = $Clip/Inner/FocusNow
+@onready var focus_max_label: Label = $Clip/Inner/FocusMax
+@onready var life_fill: TextureRect = $Clip/Inner2/LifeFill
+@onready var life_back: TextureRect = $Clip/Inner2/LifeBack
+@onready var focus_fill: TextureRect = $Clip/Inner2/FocusFill
+@onready var focus_back: TextureRect = $Clip/Inner2/FocusBack
+@onready var life_band: TextureRect = $Clip/Inner2/LifeSmoother
+@onready var focus_band: TextureRect = $Clip/Inner2/FocusSmoother
+@onready var buff_row: Control = $Clip/BuffRow
 
 
 # Returns what top_bar.json holds. It reads the file once, the first time
@@ -116,15 +125,17 @@ func _ready() -> void:
 	var mirror = placement["inner2_xscale"]
 	inner2.scale.x = float(mirror) / FULL_PERCENT if mirror != null else 1.0
 	var frame: Dictionary = bar["inner"]["frames"][placement["inner_frame"] if placement["inner_frame"] != null else "first"]
-	_place_art($Inner/Backing, frame["art"])
+	_place_art($Clip/Inner/Backing, frame["art"])
 	var fields: Dictionary = {}
 	for field: Dictionary in frame["fields"]:
 		fields[field["variable"]] = field
-	_place_field(name_label, fields["playerName"], bar["shadow"])
-	_place_field(life_now_label, fields["lifeNow"], bar["shadow"])
-	_place_field(life_max_label, fields["lifeMax"], bar["shadow"])
-	_place_field(focus_now_label, fields["focusNow"], bar["shadow"])
-	_place_field(focus_max_label, fields["focusMax"], bar["shadow"])
+	_place_field(name_label, fields["playerName"])
+	_place_field(life_now_label, fields["lifeNow"])
+	_place_field(life_max_label, fields["lifeMax"])
+	_place_field(focus_now_label, fields["focusNow"])
+	_place_field(focus_max_label, fields["focusMax"])
+	_set_shadow(bar["shadow"])
+	get_viewport().size_changed.connect(_fit_shadow)
 	for part: String in ["Shade", "Black", "Frame"]:
 		_place_art(inner2.get_node(part), bar["inner2"]["art"][part])
 	_life_width = _place_fill([life_fill, life_back], bar["bars"]["life"], bar["art"])
@@ -468,6 +479,33 @@ func _share(now: float, maximum: float) -> float:
 	return clampf(now / maximum, 0.0, 1.0)
 
 
+# Gives Clip's shader the bar's DropShadow, in the uniforms that
+# screen_rects.bar_filter_record() names for the rect test.
+func _set_shadow(shadow: Dictionary) -> void:
+	var material := clip.material as ShaderMaterial
+	material.set_shader_parameter("shadow_color", Color.html(shadow["color"]))
+	material.set_shader_parameter("blur", Vector2(float(shadow["blur_x"]), float(shadow["blur_y"])))
+	material.set_shader_parameter("distance", float(shadow["distance"]))
+	material.set_shader_parameter("angle", float(shadow["angle"]))
+	material.set_shader_parameter("strength", float(shadow["strength"]))
+	_fit_shadow()
+
+
+# Sets what depends on the window's scale. Flash measures a filter in stage px,
+# so the shader needs the screen px for each stage px. A CanvasGroup's margins
+# are in screen px (docs/agents/godot.md). The shadow reaches its distance plus
+# half its blur past the art, so fit_margin grows the group's rect that far,
+# and clear_margin clears as far again around it, where the shader's samples
+# for the rect's outer pixels land.
+func _fit_shadow() -> void:
+	var shadow: Dictionary = record()["shadow"]
+	var stage_scale: float = get_viewport().get_final_transform().get_scale().x
+	var reach: float = float(shadow["distance"]) + maxf(float(shadow["blur_x"]), float(shadow["blur_y"])) / 2.0
+	(clip.material as ShaderMaterial).set_shader_parameter("stage_scale", stage_scale)
+	clip.fit_margin = ceilf(reach * stage_scale) + 1.0
+	clip.clear_margin = ceilf(reach * stage_scale) + 1.0
+
+
 # Sets a TextureRect to an art entry of the record: the PNG and its rect.
 func _place_art(node: TextureRect, entry: Dictionary) -> void:
 	node.texture = load(TEXTURE_DIR + str(entry["file"]))
@@ -493,20 +531,11 @@ func _place_fill(nodes: Array, bar: Dictionary, art: Dictionary) -> float:
 	return float(entry["rect"][2]) * scale_x
 
 
-# Lays out one text field: its rect, size, color and alignment. The bar's
-# DropShadow shadows every field in it. A Label's shadow is a whole number of px
-# and has no blur, so the offset is rounded.
-func _place_field(label: Label, field: Dictionary, shadow: Dictionary) -> void:
+# Lays out one text field: its rect, size, color and alignment. The Label draws
+# no shadow of its own, because Clip's DropShadow falls under the text too.
+func _place_field(label: Label, field: Dictionary) -> void:
 	label.position = Vector2(float(field["rect"][0]), float(field["rect"][1]))
 	label.size = Vector2(float(field["rect"][2]), float(field["rect"][3]))
 	label.horizontal_alignment = ALIGNMENTS[field["align"]]
 	label.add_theme_font_size_override("font_size", roundi(float(field["font_size"])))
 	label.add_theme_color_override("font_color", Color.html(field["color"]))
-	var angle: float = deg_to_rad(float(shadow["angle"]))
-	label.add_theme_constant_override("shadow_offset_x", roundi(float(shadow["distance"]) * cos(angle)))
-	label.add_theme_constant_override("shadow_offset_y", roundi(float(shadow["distance"]) * sin(angle)))
-	# A Label has no strength either, so it goes into the shadow's alpha, rounded
-	# to a whole 8-bit value as Flash's color transform is.
-	var shadow_color := Color.html(shadow["color"])
-	shadow_color.a = minf(roundf(shadow_color.a * 255.0 * float(shadow["strength"])), 255.0) / 255.0
-	label.add_theme_color_override("font_shadow_color", shadow_color)

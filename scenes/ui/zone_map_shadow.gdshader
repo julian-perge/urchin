@@ -10,6 +10,8 @@
 shader_type canvas_item;
 render_mode unshaded;
 
+#include "res://scenes/box_blur.gdshaderinc"
+
 uniform vec4 shadow_color : source_color = vec4(0.0, 0.0, 0.0, 1.0);
 // The blur box in stage px, and the screen px for each stage px.
 uniform vec2 blur = vec2(0.0);
@@ -17,20 +19,8 @@ uniform float strength = 1.0;
 uniform float stage_scale = 1.0;
 uniform sampler2D lines : hint_screen_texture, repeat_disable, filter_linear;
 
-// Each sample sits at the centre of one cell of a 5 by 5 grid over the box, as
-// in scenes/doll_body.gdshader, so the samples cover a box exactly as wide as
-// the blur.
-const int SAMPLES = 5;
-
 void fragment() {
 	vec2 stage_pixel = SCREEN_PIXEL_SIZE * stage_scale;
-	float sum = 0.0;
-	for (int i = 0; i < SAMPLES; i++) {
-		for (int j = 0; j < SAMPLES; j++) {
-			vec2 offset = (vec2(float(i), float(j)) + 0.5) / float(SAMPLES) - 0.5;
-			sum += texture(lines, SCREEN_UV + offset * blur * stage_pixel).a;
-		}
-	}
-	float cover = sum / float(SAMPLES * SAMPLES);
+	float cover = box_alpha(lines, SCREEN_UV, blur * stage_pixel);
 	COLOR = vec4(shadow_color.rgb, shadow_color.a * clamp(cover * strength, 0.0, 1.0));
 }

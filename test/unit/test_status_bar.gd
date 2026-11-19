@@ -33,6 +33,48 @@ func _life_color(frame: int) -> Color:
 	return Color.html(StatusBar.record()["life_colors"][frame])
 
 
+# The battle frame puts the DropShadow on the p#BAR placement, and buffTicker
+# attaches the buff icons into p#BAR, so every part of the bar lies inside the
+# CanvasGroup that draws the shadow.
+func test_every_part_of_the_bar_lies_inside_the_clip_that_draws_the_shadow() -> void:
+	var bar: StatusBar = _bar(1)
+	assert_true(bar.clip is CanvasGroup, "Clip is a CanvasGroup")
+	for part: Node in [bar.inner, bar.inner2, bar.buff_row]:
+		assert_true(bar.clip.is_ancestor_of(part), "%s lies inside Clip" % part.name)
+	var material: ShaderMaterial = bar.clip.material
+	assert_eq(material.shader.resource_path, "res://scenes/drop_shadow.gdshader")
+
+
+func test_the_clip_takes_the_drop_shadow_of_the_bars_placement() -> void:
+	var shadow: Dictionary = StatusBar.record()["shadow"]
+	var material: ShaderMaterial = _bar(2).clip.material
+	assert_eq(material.get_shader_parameter("shadow_color"), Color.html(shadow["color"]))
+	assert_eq(material.get_shader_parameter("blur"), Vector2(shadow["blur_x"], shadow["blur_y"]))
+	assert_almost_eq(float(material.get_shader_parameter("distance")), float(shadow["distance"]), 0.0001)
+	assert_almost_eq(float(material.get_shader_parameter("angle")), float(shadow["angle"]), 0.0001)
+	assert_almost_eq(float(material.get_shader_parameter("strength")), float(shadow["strength"]), 0.0001)
+
+
+# The shadow reaches its distance plus half its blur past the art, in stage px,
+# and the group's margins are in screen px.
+func test_the_clip_margins_reach_as_far_as_the_shadow_at_the_windows_scale() -> void:
+	var bar: StatusBar = _bar(1)
+	var shadow: Dictionary = StatusBar.record()["shadow"]
+	var stage_scale: float = bar.get_viewport().get_final_transform().get_scale().x
+	var reach: float = (float(shadow["distance"]) + float(shadow["blur_x"]) / 2.0) * stage_scale
+	assert_gte(bar.clip.fit_margin, reach)
+	assert_gte(bar.clip.clear_margin, reach)
+	assert_almost_eq(float((bar.clip.material as ShaderMaterial).get_shader_parameter("stage_scale")), stage_scale, 0.0001)
+
+
+# Clip's shadow falls under the text, so a Label that drew its own shadow would
+# draw the text's shadow twice.
+func test_the_labels_draw_no_shadow_of_their_own() -> void:
+	var bar: StatusBar = _bar(1)
+	for label: Label in [bar.name_label, bar.life_now_label, bar.life_max_label, bar.focus_now_label, bar.focus_max_label]:
+		assert_eq(label.get_theme_color("font_shadow_color").a, 0.0, "%s draws a shadow" % label.name)
+
+
 func test_a_bar_at_rest_shows_both_fills_at_full_width() -> void:
 	var bar: StatusBar = _bar(1)
 	assert_almost_eq(bar.life_fill.size.x, _full_width("life"), 0.001)
