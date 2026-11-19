@@ -147,9 +147,9 @@ func _drag_payload() -> Dictionary:
 func _build_drag_preview() -> Control:
 	var preview := TextureRect.new()
 	preview.texture = item_icon.texture
-	preview.custom_minimum_size = MenuTheme.SLOT_SIZE
-	preview.size = MenuTheme.SLOT_SIZE
 	preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	preview.custom_minimum_size = size
+	preview.size = size
 	preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	preview.modulate = Color(1, 1, 1, 0.75)
 	preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
