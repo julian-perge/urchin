@@ -97,6 +97,52 @@ _global.__forinSynthetic = function() {
    log("push_in_for_in_order_of_that_copy", pushed);
 };
 _global.__forinSynthetic();
+_global.__forinSharedObject = function() {
+   var log = _global.__forinLog;
+   var so = SharedObject.getLocal("urchin_forin_probe");
+   if(so.data.saved == undefined)
+   {
+      trace("FORIN\tso_disk_saved_copy\tnone");
+   }
+   else
+   {
+      log("so_disk_saved_copy", so.data.saved);
+      var loaded = new Array();
+      for(var k in so.data.saved)
+      {
+         if(so.data.saved[k] != undefined)
+         {
+            loaded[k] = so.data.saved[k];
+         }
+      }
+      log("so_disk_loaded_into_new_Array", loaded);
+   }
+   var src = new Array();
+   var i = 0;
+   while(i < 4)
+   {
+      src.push(70 + i);
+      i++;
+   }
+   log("so_source_push4", src);
+   so.data.saved = new Array();
+   for(k in src)
+   {
+      so.data.saved[k] = src[k];
+   }
+   log("so_memory_saved_copy", so.data.saved);
+   var mem = new Array();
+   for(k in so.data.saved)
+   {
+      if(so.data.saved[k] != undefined)
+      {
+         mem[k] = so.data.saved[k];
+      }
+   }
+   log("so_memory_loaded_into_new_Array", mem);
+   so.flush();
+};
+_global.__forinSharedObject();
 _global.__forinGame = function() {
    var log = _global.__forinLog;
    if(_root._currentframe <= 42)

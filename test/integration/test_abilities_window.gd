@@ -160,12 +160,13 @@ func test_an_empty_socket_tooltip_reads_strings_json() -> void:
 	assert_eq(socket.tooltip_text, "", "no native tooltip shows over the rich one")
 
 
-# -> the first ability a new game owns. The tests below read its copy limit,
-# KRINABILITY[8], from the move data.
-func _first_owned() -> int:
+# -> the ability that the first pool row shows in a new game. The pool walks
+# move_matrix2 from the end, so that is the last owned ability. The tests below
+# read its copy limit, KRINABILITY[8], from the move data.
+func _first_row_move() -> int:
 	var owned: Array = GameData.current_save.move_matrix2.filter(func(move_id): return int(move_id) != 0)
 	assert_gt(owned.size(), 0, "a new game owns an ability")
-	return int(owned[0])
+	return int(owned[-1])
 
 
 func _limit(move_id: int) -> int:
@@ -200,7 +201,7 @@ func _mouse_down() -> InputEventMouseButton:
 # (DefineButton2_3101 to 3108 on(release), frame_42/DoAction_11.as:11-32).
 func test_a_held_pool_ability_goes_to_the_socket_it_is_released_on() -> void:
 	var save: PlayerSave = GameData.current_save
-	var move_id: int = _first_owned()
+	var move_id: int = _first_row_move()
 	save.move_matrix.fill(0)
 	var window: Control = _window()
 	_hold_first_row(window)
@@ -219,7 +220,7 @@ func test_a_held_pool_ability_goes_to_the_socket_it_is_released_on() -> void:
 # either way (frame_42/DoAction_11.as:14-32).
 func test_a_copy_past_the_limit_shows_skillerror_and_leaves_the_ring() -> void:
 	var save: PlayerSave = GameData.current_save
-	var move_id: int = _first_owned()
+	var move_id: int = _first_row_move()
 	var limit: int = _limit(move_id)
 	assert_between(limit, 1, 7, "the limit leaves a free socket")
 	save.move_matrix.fill(0)
@@ -238,7 +239,7 @@ func test_a_copy_past_the_limit_shows_skillerror_and_leaves_the_ring() -> void:
 
 func test_a_copy_under_the_limit_goes_on_the_ring() -> void:
 	var save: PlayerSave = GameData.current_save
-	var move_id: int = _first_owned()
+	var move_id: int = _first_row_move()
 	var limit: int = _limit(move_id)
 	save.move_matrix.fill(0)
 	for i in limit - 1:
@@ -255,7 +256,7 @@ func test_a_copy_under_the_limit_goes_on_the_ring() -> void:
 # that already holds the last allowed copy is refused too.
 func test_the_count_includes_the_copy_in_the_target_socket() -> void:
 	var save: PlayerSave = GameData.current_save
-	var move_id: int = _first_owned()
+	var move_id: int = _first_row_move()
 	save.move_matrix.fill(0)
 	for i in _limit(move_id):
 		save.move_matrix[i] = move_id
@@ -270,7 +271,7 @@ func test_the_count_includes_the_copy_in_the_target_socket() -> void:
 # A release with nothing held empties the socket (frame_42/DoAction_11.as:7-10).
 func test_a_release_with_nothing_held_empties_the_socket() -> void:
 	var save: PlayerSave = GameData.current_save
-	save.move_matrix[2] = _first_owned()
+	save.move_matrix[2] = _first_row_move()
 	var window: Control = _window()
 	_socket(window, 2).pressed.emit()
 	assert_eq(int(save.move_matrix[2]), 0)
@@ -297,7 +298,7 @@ func test_a_mouse_down_on_a_socket_keeps_the_held_ability() -> void:
 	_socket(window, 1).mouse_entered.emit()
 	window._input(_mouse_down())
 	_socket(window, 1).pressed.emit()
-	assert_eq(int(save.move_matrix[1]), _first_owned())
+	assert_eq(int(save.move_matrix[1]), _first_row_move())
 	_socket(window, 1).mouse_exited.emit()
 
 
@@ -316,7 +317,7 @@ func test_reopening_the_window_drops_the_held_ability() -> void:
 # (DefineSprite_3142/frame_25/DoAction.as:35-44).
 func test_the_pool_lists_the_abilities_on_the_ring_too() -> void:
 	var save: PlayerSave = GameData.current_save
-	var move_id: int = _first_owned()
+	var move_id: int = _first_row_move()
 	save.move_matrix.fill(0)
 	save.move_matrix[0] = move_id
 	var window: Control = _window()
@@ -343,3 +344,27 @@ func test_the_close_button_hides_the_window() -> void:
 	var window: Control = _window()
 	(window.get_node("WindowShell") as WindowShell).close_pressed.emit()
 	assert_false(window.visible)
+
+
+# KrinCreateAbilityMatrix walks the push-built moveMatrix2 with for..in, which
+# goes from the last index down (DefineSprite_3142/frame_25/DoAction.as:37,
+# DECODED_ALGORITHMS.md "for..in order over arrays"). The learn button builds
+# moveMatrix2 as the two starting moves, then the learned nodes from node 37
+# down (DefineButton2_3096 on(release) lines 48-58), so the rows read the low
+# node, the high node, then the starting moves in reverse.
+func test_the_pool_rows_walk_move_matrix2_from_the_end() -> void:
+	var save: PlayerSave = GameData.current_save
+	save.skill_points = 2
+	var window: Control = _window()
+	for node_index: int in [0, 2]:
+		assert_false(TalentTree.is_passive(TalentTree.TREES[save.player_class][node_index]), "node %d is active" % node_index)
+		(window.get_node("TreeNodes/Node%d" % node_index) as Button).pressed.emit()
+	var starting: Array = TalentTree.STARTING_MOVES[save.player_class]
+	var expected: Array = [
+		int(save.skill_adder_matrix[0]), int(save.skill_adder_matrix[2]), int(starting[1]), int(starting[0]),
+	]
+	assert_does_not_have(expected, 0, "both nodes are learned")
+	for i in expected.size():
+		var row: AbilityPoolRow = window.get_node("Pool/Mask/Rows/PoolRow%d" % i)
+		assert_eq(row.name_label.text, MoveManagerAuto.get_move(expected[i]).display_name, "row %d" % i)
+	assert_false((window.get_node("Pool/Mask/Rows/PoolRow4") as AbilityPoolRow).visible, "row 4 is empty")

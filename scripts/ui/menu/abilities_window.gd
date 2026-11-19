@@ -349,10 +349,13 @@ func _refresh_pool(save: PlayerSave) -> void:
 	_pool_move_ids = []
 	# KrinCreateAbilityMatrix lists every owned ability, the ones on the ring
 	# too, so the player can take another copy up to the ability's limit
-	# (DefineSprite_3142/frame_25/DoAction.as:35-44).
-	for move_id in save.move_matrix2:
-		if int(move_id) != 0:
-			_pool_move_ids.append(int(move_id))
+	# (DefineSprite_3142/frame_25/DoAction.as:35-44). Its for..in walks the
+	# push-built moveMatrix2 from the last index down, in a new game and in a
+	# loaded one (DECODED_ALGORITHMS.md "for..in order over arrays").
+	for i in range(save.move_matrix2.size() - 1, -1, -1):
+		var move_id: int = int(save.move_matrix2[i])
+		if move_id != 0:
+			_pool_move_ids.append(move_id)
 	_pool_scroll = clamp(_pool_scroll, 0, max(0, _pool_move_ids.size() - POOL_VISIBLE_ROWS))
 	for i in _pool_rows.size():
 		var row: AbilityPoolRow = _pool_rows[i]
