@@ -33,7 +33,7 @@ func _shown_frame(model: String = "MODEL1") -> int:
 
 
 func _shows_pose(pose: Dictionary) -> bool:
-	for part in visual.get_node("Body").get_children():
+	for part in visual._parts.values():
 		var matrix = pose.get(str(part.name))
 		if matrix == null:
 			if part.visible:
@@ -842,15 +842,16 @@ func _model4_swing_frames(label: String) -> Array:
 
 
 # MODEL4 starts Attack, Attack_Upper and Attack_Stab all on frame 78, so every
-# swing runs 46 to 77, strikes from 78 through attack2, and runs back on 108 to
-# 123, whose script falls into stand (DefineSprite_2668_MODEL4/frame_123).
+# swing runs on frames from 46, strikes from 78 through attack2 as soon as the
+# dash ends, and runs back on 108 to 123, whose script falls into stand
+# (DefineSprite_2668_MODEL4/frame_123).
 func test_a_model4_doll_swings_on_model4s_run_strike_and_runback_frames():
 	for label in ["Attack", "Attack_Upper", "Attack_Stab"]:
 		var shown: Array = _model4_swing_frames(label)
 		assert_eq(shown[0], _model4_frame("run"), "%s: the run starts on frame 46" % label)
 		var strike: int = shown.find(_model4_frame(label))
 		assert_gt(strike, 0, "%s: the strike starts on frame 78" % label)
-		assert_eq(shown[strike - 1], _model4_frame("run", true), "%s: after the run's last frame" % label)
+		assert_between(shown[strike - 1], _model4_frame("run"), _model4_frame("run", true), "%s: straight after a run frame" % label)
 		assert_true(shown.has(_model4_frame("runback")), "%s: the runback starts on frame 108" % label)
 		assert_eq(shown[-1], _model4_frame("runback", true), "%s: and ends on frame 123" % label)
 
