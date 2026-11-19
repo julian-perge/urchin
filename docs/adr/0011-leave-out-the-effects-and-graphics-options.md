@@ -16,5 +16,5 @@ AS paths below are relative to `dev/source_files/action_script/`.
 ## Consequences
 
 - The port always draws as the original does with both switches on.
-- The in-game Options Window, when it is built, leaves out the same two rows.
+- The in-game Options Window (`spec/379-options-window.md`) leaves out the same two rows. Its rect record names their depths in `left_out`.
 - A player of the original will notice that the two rows are gone.

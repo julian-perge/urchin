@@ -1,0 +1,133 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/menu/options_window.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/ui/window/window_shell.tscn" id="2_shell"]
+[ext_resource type="PackedScene" path="res://scenes/ui/window/shell_panel.tscn" id="3_panel"]
+
+[node name="OptionsWindow" type="Control" groups=["menu_screen", "options_window"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_script")
+
+[node name="WindowShell" parent="." instance=ExtResource("2_shell")]
+layout_mode = 0
+
+[node name="TallPanel" parent="." instance=ExtResource("3_panel")]
+layout_mode = 0
+offset_left = 75.2669
+offset_top = 81.9672
+offset_right = 725.7638
+offset_bottom = 382.789
+mouse_filter = 2
+border = 2
+
+[node name="SoundLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 232.4
+offset_top = 137.85
+offset_right = 392.5
+offset_bottom = 164.7
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.8352941, 0.4, 0.4, 1)
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 2
+
+[node name="SoundValue" type="Label" parent="."]
+layout_mode = 0
+offset_left = 403.5
+offset_top = 137.85
+offset_right = 518.5
+offset_bottom = 164.7
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+
+[node name="SoundButton" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 305.9446
+offset_top = 134.8965
+offset_right = 466.4553
+offset_bottom = 156.7034
+focus_mode = 0
+
+[node name="Heading" type="Label" parent="."]
+layout_mode = 0
+offset_left = 197.55
+offset_top = 101.1
+offset_right = 603.5
+offset_bottom = 121.2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+
+[node name="AutosaveLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 232.4
+offset_top = 194.85
+offset_right = 392.5
+offset_bottom = 221.7
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.8352941, 0.4, 0.4, 1)
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 2
+
+[node name="AutosaveValue" type="Label" parent="."]
+layout_mode = 0
+offset_left = 403.5
+offset_top = 194.85
+offset_right = 520.5
+offset_bottom = 221.7
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+
+[node name="AutosaveButton" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 304.3946
+offset_top = 192.6465
+offset_right = 464.9053
+offset_bottom = 214.4534
+focus_mode = 0
+
+[node name="HelpText" type="Label" parent="."]
+layout_mode = 0
+offset_left = 112.5
+offset_top = 291.8
+offset_right = 694.8
+offset_bottom = 401.35
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_constants/line_spacing = -4
+autowrap_mode = 3
+
+[node name="DifficultyLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 232.4
+offset_top = 252.85
+offset_right = 392.5
+offset_bottom = 279.7
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.5529412, 0.5019608, 0.38039216, 1)
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 2
+
+[node name="DifficultyValue" type="Label" parent="."]
+layout_mode = 0
+offset_left = 403.5
+offset_top = 252.85
+offset_right = 520.5
+offset_bottom = 279.7
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.6745098, 0.627451, 0.5254902, 1)
+theme_override_font_sizes/font_size = 14
+
+[connection signal="close_pressed" from="WindowShell" to="." method="hide"]
+[connection signal="pressed" from="SoundButton" to="." method="_on_sound_pressed"]
+[connection signal="pressed" from="AutosaveButton" to="." method="_on_autosave_pressed"]
