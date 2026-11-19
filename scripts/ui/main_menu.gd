@@ -77,8 +77,10 @@ func _ready():
 	_setup_class_cards()
 	# Quit, the battle's Quit and the game over go to resetHere, which recreates
 	# Krin with the sound on (frame_41/DoAction_2.as:7-9). This screen stands in
-	# for resetHere, so it turns the sound back on.
+	# for resetHere, so it turns the sound back on and clears the landing sounds
+	# that Krin held.
 	AudioManagerAuto.sound_enabled = true
+	AudioManagerAuto.forget_landing_sounds()
 	AudioManagerAuto.play_menu_music()
 
 

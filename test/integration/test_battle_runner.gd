@@ -1175,6 +1175,220 @@ func test_a_buff_a_move_lands_on_its_caster_waits_for_the_casters_tick():
 	assert_eq(_live_buff_names(colonel), ["PERSECUTE", "HONORDUTY", "CHAINS"], "and sorts it ahead of Chains of Justice")
 
 
+# The original lands a move whose caster can't pay for it at dispatch when a buff
+# then ticks on the caster. The conductor sets its own moveBammer to false at
+# dispatch (line 354), but its failure branch writes _root.moveBammer instead
+# (lines 513-520), so the impact block on the next frame runs the bound move with
+# the last hit roll of any unit, _root.strikeSuccess (lines 12-19 and 376-385).
+# DECODED_ALGORITHMS.md, "A cost failure at dispatch can still land the move",
+# has the Trace logs of run D, which this test plays: Sonny is faster than
+# Veradux and casts Disrupt on him after Veradux picked Dux Electro (20 Focus).
+# Disrupt takes Veradux from 60 to 10 Focus, and Digitalis ticks on Veradux.
+func test_an_ally_drained_after_its_decision_lands_its_move_for_free_when_a_buff_ticks_on_it():
+	var runner: BattleRunner = _disrupted_veradux_runner()
+	var veradux: CombatUnit = runner.units[3]
+	var guard: CombatUnit = runner.units[2]
+	var guard_life_before: float = guard.life_n
+
+	var events: Array = runner.advance_half_turn({"target_slot": 3, "move_id": 110, "bar_index": -1})
+
+	var veradux_events: Array = events.filter(func(event): return event.get("caster_slot") == 3)
+	assert_eq(
+		veradux_events.map(func(event): return event["type"]),
+		[BattleRunner.EventType.MOVE_FAILED, BattleRunner.EventType.BUFF_TICK, BattleRunner.EventType.MOVE],
+		"Veradux fails his cost, his Digitalis ticks, and then his move lands"
+	)
+	if veradux_events.size() != 3:
+		return
+	var move: Dictionary = veradux_events[2]
+	assert_true(move.get("free", false), "the move lands for free")
+	assert_eq(move["move_id"], 10, "it is the Dux Electro he picked")
+	assert_eq(move["target_slot"], 2, "at the guard")
+	var tick: BuffTick = veradux_events[1]["tick"]
+	assert_eq(veradux.focus_n, tick.after.focus, "Veradux keeps the Focus his tick left him, so he paid nothing")
+	assert_lt(veradux.focus_n, 20.0, "which is less than the 20 Focus Dux Electro costs")
+	assert_eq((move["result"] as MoveResult).kind, MoveResult.Kind.DAMAGE, "Disrupt is a Shock, so the last roll was a hit")
+	assert_lt(guard.life_n, guard_life_before, "and the hit took the guard's life")
+
+
+# Run B of the same section: when the last hit roll missed, the bound move shows
+# a miss and executeMove does not run (the conductor, lines 105-109). Sonny can't
+# pay for Nuke, and his Digitalis ticks.
+func test_a_move_that_lands_after_its_cost_failed_misses_when_the_last_roll_missed():
+	var runner: BattleRunner = _sonny_holding(["IDIGITALIS"])
+	var player: CombatUnit = runner.units[1]
+	var guard: CombatUnit = runner.units[2]
+	player.focus_n = 0.0
+	BattleRunner.strike_success = false
+	var guard_life_before: float = guard.life_n
+
+	var events: Array = runner.advance_half_turn({"target_slot": 2, "move_id": 5})
+
+	var moves: Array = events.filter(func(event): return event["type"] == BattleRunner.EventType.MOVE)
+	assert_eq(moves.size(), 1, "the failed Nuke still resolves")
+	if moves.size() != 1:
+		return
+	assert_true(moves[0].get("free", false), "for free")
+	assert_eq((moves[0]["result"] as MoveResult).kind, MoveResult.Kind.MISS, "as a miss")
+	assert_eq(guard.life_n, guard_life_before, "that leaves the guard's life alone")
+
+
+# Run C of the same section: when no buff ticks on the caster, its move does not
+# land, and the conductor's moveBammer stays false. So the next action whose buff
+# tick does something without its own dispatch, such as a stun (lines 534-585),
+# lands its own bound move with the same last roll. Here Sonny fails Nuke with
+# no buffs on him, and on the next half-turn the guard is stunned with Digitalis
+# on it while it holds Shock Therapy on Sonny.
+func test_a_cost_failure_with_no_tick_lets_the_next_stunned_unit_land_its_move():
+	var runner: BattleRunner = _sonny_holding([])
+	var player: CombatUnit = runner.units[1]
+	var guard: CombatUnit = runner.units[2]
+	player.focus_n = 0.0
+	BattleRunner.strike_success = true
+
+	var failed_half: Array = runner.advance_half_turn({"target_slot": 2, "move_id": 5})
+	assert_true(
+		failed_half.filter(func(event): return event["type"] == BattleRunner.EventType.MOVE).is_empty(),
+		"Sonny's failed Nuke lands nothing, because no buff ticked on him"
+	)
+
+	guard.apply_buff(buffs_by_name["IDIGITALIS"], 1, player)
+	guard.apply_buff(buffs_by_name["APPREHEND"], 1, player)
+	guard.apply_changes()
+	var life_before: float = player.life_n
+	runner._execute_action({"caster_slot": 2, "target_slot": 1, "move_id": 434})
+
+	var moves: Array = runner.events.filter(func(event): return event["type"] == BattleRunner.EventType.MOVE)
+	assert_eq(moves.size(), 1, "the stunned guard's Shock Therapy lands")
+	if moves.size() != 1:
+		return
+	assert_true(moves[0].get("free", false), "for free")
+	assert_eq(moves[0]["caster_slot"], 2, "from the guard")
+	assert_lt(player.life_n, life_before, "and hits Sonny")
+
+	runner._execute_action({"caster_slot": 2, "target_slot": 1, "move_id": 434})
+	assert_eq(
+		runner.events.filter(func(event): return event["type"] == BattleRunner.EventType.MOVE).size(), 1,
+		"a move that landed closes the flag, so the next stun lands nothing"
+	)
+
+
+# The conductor's onClipEvent(load) never sets moveBammer, so it starts each
+# battle undefined, and undefined == false is false in ActionScript 2. A stunned
+# unit whose buff ticks before any move dispatches in the battle lands nothing.
+func test_a_stunned_unit_lands_nothing_before_any_move_has_dispatched():
+	var runner: BattleRunner = _sonny_holding(["IDIGITALIS", "APPREHEND"])
+	BattleRunner.strike_success = true
+
+	var events: Array = runner.advance_half_turn({"target_slot": 2, "move_id": 434})
+
+	assert_true(
+		events.filter(func(event): return event["type"] == BattleRunner.EventType.MOVE).is_empty(),
+		"Sonny is stunned, and his Shock Therapy does not land"
+	)
+
+
+# A move that dispatches and pays resolves at its impact, which sets the
+# conductor's moveBammer to true (lines 16-18), so a stunned unit after it lands
+# nothing. Shock Therapy (434) can't miss.
+func test_a_paid_move_leaves_no_move_for_a_stunned_unit_to_land():
+	var runner: BattleRunner = _sonny_holding([])
+	var player: CombatUnit = runner.units[1]
+	var guard: CombatUnit = runner.units[2]
+	runner._execute_action({"caster_slot": 1, "target_slot": 2, "move_id": 434})
+	guard.apply_buff(buffs_by_name["IDIGITALIS"], 1, player)
+	guard.apply_buff(buffs_by_name["APPREHEND"], 1, player)
+	guard.apply_changes()
+
+	runner._execute_action({"caster_slot": 2, "target_slot": 1, "move_id": 434})
+
+	var guard_moves: Array = runner.events.filter(
+		func(event): return event["type"] == BattleRunner.EventType.MOVE and event["caster_slot"] == 2
+	)
+	assert_true(guard_moves.is_empty(), "the stunned guard's Shock Therapy does not land")
+
+
+# Run C of DECODED_ALGORITHMS.md, "A cost failure at dispatch can still land the
+# move": after a cost failure whose tick did nothing, a pass whose tick does
+# something runs move 0 with its caster as the target, and the unit's life and
+# Focus do not change. Move 0 has no effect category, so executeMove runs none of
+# its branches (frame_42/DoAction_8.as:23-249).
+func test_a_pass_after_a_cost_failure_with_no_tick_lands_move_0_and_changes_nothing():
+	var runner: BattleRunner = _sonny_holding([])
+	var player: CombatUnit = runner.units[1]
+	player.focus_n = 0.0
+	BattleRunner.strike_success = true
+	runner._execute_action({"caster_slot": 1, "target_slot": 2, "move_id": 5})
+	player.apply_buff(buffs_by_name["IDIGITALIS"], 1, runner.units[2])
+	player.apply_changes()
+
+	runner._execute_action({"caster_slot": 1, "target_slot": 1, "move_id": 0})
+
+	var moves: Array = runner.events.filter(func(event): return event["type"] == BattleRunner.EventType.MOVE)
+	assert_eq(moves.size(), 1, "the pass lands its move 0")
+	if moves.size() != 1:
+		return
+	var tick: BuffTick = _ticks_in(runner.events)[-1]["tick"]
+	assert_eq(moves[0]["move_id"], 0, "move 0")
+	assert_eq(moves[0]["target_slot"], 1, "on Sonny himself")
+	assert_eq((moves[0]["result"] as MoveResult).kind, MoveResult.Kind.STATUS_ONLY, "with no damage, heal or Focus")
+	assert_eq(player.life_n, tick.after.life, "Sonny's life is what his tick left")
+	assert_eq(player.focus_n, tick.after.focus, "and so is his Focus")
+	assert_eq((moves[0]["result"] as MoveResult).buff_applied, "", "and no buff lands")
+
+
+# A dispatch whose target is no longer active fails the conductor's test at line
+# 350 and takes the stun path (lines 534-585), so after a cost failure whose tick
+# did nothing, its buff tick lands its bound move on the dead target. This is
+# read from the code, not run in the original.
+func test_a_move_at_a_dead_target_lands_on_it_after_a_cost_failure_with_no_tick():
+	var runner: BattleRunner = _sonny_holding([])
+	var player: CombatUnit = runner.units[1]
+	var guard: CombatUnit = runner.units[2]
+	player.focus_n = 0.0
+	BattleRunner.strike_success = true
+	runner._execute_action({"caster_slot": 1, "target_slot": 2, "move_id": 5})
+	guard.life_n = 0.0
+	guard.active = false
+	player.apply_buff(buffs_by_name["IDIGITALIS"], 1, guard)
+	player.apply_changes()
+
+	runner._execute_action({"caster_slot": 1, "target_slot": 2, "move_id": 434})
+
+	var moves: Array = runner.events.filter(func(event): return event["type"] == BattleRunner.EventType.MOVE)
+	assert_eq(moves.size(), 1, "Sonny's Shock Therapy lands")
+	if moves.size() != 1:
+		return
+	assert_true(moves[0].get("free", false), "for free")
+	assert_eq(moves[0]["target_slot"], 2, "on the dead guard")
+	assert_false((moves[0]["result"] as MoveResult).killed, "which it cannot kill again")
+
+
+# Sonny, fast enough to act first, with 100 Focus, and Veradux in slot 3 with only
+# Dux Electro to choose, 60 Focus and Digitalis on him, against a Prison Guard.
+func _disrupted_veradux_runner() -> BattleRunner:
+	var save: PlayerSave = PlayerSave.new_game("Sonny")
+	save.speed = 100.0
+	save.focus = 100.0
+	var player: CombatUnit = CombatUnit.from_player_save(save)
+	var veradux: CombatUnit = CombatUnit.from_character(unit_templates[4], 1, CombatUnit.Difficulty.HARD, 3)
+	veradux.move_pool_attack = [10]
+	veradux.cooldowns_attack = [0]
+	veradux.move_pool_defense = []
+	veradux.cooldowns_defense = []
+	veradux.move_pool_absolute = []
+	veradux.cooldowns_absolute = []
+	var guard: CombatUnit = CombatUnit.from_character(unit_templates[5], 1, CombatUnit.Difficulty.HARD, 2)
+	var runner := BattleRunner.new()
+	runner.setup({1: player, 2: guard, 3: veradux}, null, moves_by_id, buffs_by_id, buffs_by_name, [])
+	veradux.focus_n = 60.0
+	veradux.apply_buff(buffs_by_name["IDIGITALIS"], 1, guard)
+	veradux.apply_changes()
+	assert_true(runner.is_player_turn(), "Sonny's team opens")
+	assert_lt(player.team_adder, veradux.team_adder, "and Sonny acts before Veradux")
+	return runner
+
+
 # The conductor ticks a caster's buffs once after its action, and buffTicker nets
 # the unit's healing and every element's damage into one total
 # (frame_42/DoAction_10.as:14-40). Digitalis is Poison, and it deals "damage equal

@@ -61,11 +61,14 @@ static func execute_move(ability: Ability, caster: CombatUnit, target: CombatUni
 			_execute_heal(result, ability, caster, target, per_calc, focus_coef, speed_crit_calc)
 		"Focus":
 			_execute_focus(result, ability, target)
-		"Attack":
+		"Attack", "":
+			# Move 0, None, has no category. It lands only when a pass resolves a
+			# bound move (see BattleRunner._land_bound_move), and executeMove runs
+			# none of its branches for it either.
 			result.kind = MoveResult.Kind.STATUS_ONLY
 		_:
-			# The original also lands only the status here, but no move in the
-			# data has another category, so one showing up means a converter bug.
+			# The original also lands only the status here, but no other move in
+			# the data has another category, so one showing up means a converter bug.
 			push_warning("execute_move: unknown effect_category '%s' on move %s" % [ability.effect_category, ability.display_name])
 			result.kind = MoveResult.Kind.STATUS_ONLY
 

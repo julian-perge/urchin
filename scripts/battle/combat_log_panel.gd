@@ -47,6 +47,10 @@ func _unit_name(units: Dictionary, slot: int) -> String:
 
 func _format_line(event: Dictionary, units: Dictionary) -> String:
 	match event.get("type"):
+		BattleRunner.EventType.MOVE when int(event.get("move_id", -1)) == 0:
+			# Move 0 lands only when a pass resolves a bound move (see
+			# BattleRunner._land_bound_move). The original shows nothing for it.
+			return ""
 		BattleRunner.EventType.MOVE:
 			return _format_move_line(event, units)
 		BattleRunner.EventType.STUNNED:

@@ -3752,6 +3752,79 @@ func test_a_hit_plays_the_moves_own_sound():
 		assert_does_not_have(heard, "sfx_magicmiss", "and not the miss sound")
 
 
+# A move whose cost failed at dispatch lands for free when a buff then ticks on
+# its caster (see BattleRunner._land_bound_move). The conductor's impact block runs
+# it on the frame after the tick, and the tick holds the next Dispatch back as
+# any tick that did something does, 26 frames after the tick
+# (frame_217/PlaceObject2_3389_480 enterFrame, lines 12-19 and 112-138). The next
+# action is a Shock, so its number shows 1 frame after the next Dispatch.
+func test_a_free_move_lands_1_frame_after_its_tick_and_leaves_the_next_dispatch_where_the_tick_put_it():
+	var scene = await _battle_100_on_a_stepped_clock("FreeMove")
+	var shock: Ability = _first_move_of_type("Shock")
+	var free: Dictionary = _damage_event(scene, 3, 2, MoveManagerAuto.get_move(10), 12.0)  # Move 10 is Dux Electro.
+	free["free"] = true
+	var shown: Dictionary = _frames_texts_float(scene, [
+		{"type": BattleRunner.EventType.MOVE_FAILED, "caster_slot": 3, "move_id": 10, "reason": BattleRunner.FailReason.FOCUS},
+		_tick_event(scene, 3, MoveResult.Direction.HARM, 77.0),
+		free,
+		_damage_event(scene, BattleRunner.PLAYER_SLOT, 2, shock, 13.0),
+	], ["77", "12", "13"])
+	assert_eq(shown.get("12", -1) - shown.get("77", -1), 1, "the free move's number shows 1 frame after the tick's")
+	assert_eq(
+		shown.get("13", -1) - shown.get("77", -1), _attack_end_counter_limit() + 1 + SHOCK_LANDS_AFTER_DISPATCH,
+		"and the next action dispatches 26 frames after the tick"
+	)
+
+	GameData.current_save = null
+	ZoneManager.auto_switch_scenes = true
+
+
+# A free move plays only what the conductor's impact block plays: the sound that
+# the last paid move left in soundToMake for a hit, or in missToMake for a miss
+# (lines 19-21 and 105-109). A Missile leaves its own sound and sfx_magicmiss
+# (lines 412-416), and a Shock leaves undefined in both (lines 445-448). The free
+# move plays no sfx_cast, because it has no cast.
+func test_a_free_move_plays_the_landing_sound_the_last_paid_move_left():
+	var nuke: Ability = MoveManagerAuto.get_move(5)  # Move 5 is Nuke, a Missile.
+	var dux_electro: Ability = MoveManagerAuto.get_move(10)
+	var hit: MoveResult = _move_result(MoveResult.Kind.DAMAGE, MoveResult.Direction.HARM, 10.0)
+	var miss: MoveResult = _move_result(MoveResult.Kind.MISS, MoveResult.Direction.NONE, 0.0)
+	var after_nuke: Array = await _effects_heard_during_moves([[nuke, hit, false], [dux_electro, hit, true], [dux_electro, miss, true]])
+	# A hit also plays the target's hit voice, so these count the move sounds only.
+	assert_eq(after_nuke.count("sfx_cast"), 1, "only the paid Nuke casts")
+	assert_eq(after_nuke.count(nuke.sound_effect_name), 2, "a free hit after Nuke plays Nuke's sound")
+	assert_eq(after_nuke.count("sfx_magicmiss"), 1, "and a free miss plays sfx_magicmiss")
+
+	var shock: Ability = _first_move_of_type("Shock")
+	var after_shock: Array = await _effects_heard_during_moves([[shock, hit, false], [dux_electro, hit, true], [dux_electro, miss, true]])
+	assert_eq(after_shock.count(shock.sound_effect_name), 1, "only the paid Shock plays its sound")
+	assert_does_not_have(after_shock, "sfx_magicmiss", "and a free miss after a Shock plays nothing")
+
+
+# Plays each [move, result, free] as a move by the player on battle 100's enemy
+# and returns every effect that starts while they play, in the order they start.
+func _effects_heard_during_moves(moves: Array) -> Array:
+	GameData.current_save = PlayerSave.new_game("FreeMoveSounds", 0)
+	ZoneManager.auto_switch_scenes = false
+	ZoneManager.pending_battle = {}
+	var scene = add_child_autofree(BattleSceneRes.instantiate())
+	scene.animation_speed = 0.0
+	scene.start_battle({"battle_id": 100, "is_story_progress": true, "is_boss": false, "train_cap": 9})
+
+	var heard: Array = []
+	var listen: Callable = func(cue: String): heard.append(cue)
+	AudioManagerAuto.effect_played.connect(listen)
+	for entry in moves:
+		var event: Dictionary = _move_event(scene, BattleRunner.PLAYER_SLOT, 2, entry[0].id, entry[1])
+		event["free"] = entry[2]
+		await scene._play_move_event(event)
+	AudioManagerAuto.effect_played.disconnect(listen)
+
+	GameData.current_save = null
+	ZoneManager.auto_switch_scenes = true
+	return heard
+
+
 func test_missile_fire_spawns_a_bolt_and_its_impact_on_arrival():
 	# The one test that runs _fire_projectile for real. Every other test on
 	# this scene uses animation_speed 0, which returns from the top of that
