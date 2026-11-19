@@ -8,8 +8,8 @@ const ROWS: int = 7
 
 
 # frame_134/DoAction.as fills credit_1 to credit_7 from KrinLang.ENGLISH.MENU[92]
-# to MENU[98], which dev/converted_json/strings.json holds. The test reads the
-# file itself, so a role typed into the scene or the script fails it.
+# to MENU[98], which dev/converted_json/strings.json holds. The test reads that
+# file itself and does not call Strings, so a wrong index in the script fails it.
 func test_the_roles_come_from_menu_92_to_98() -> void:
 	var menu: Array = JSON.parse_string(FileAccess.get_file_as_string("res://dev/converted_json/strings.json"))["MENU"]
 	var panel: CreditsPanel = add_child_autofree(CreditsScene.instantiate())
