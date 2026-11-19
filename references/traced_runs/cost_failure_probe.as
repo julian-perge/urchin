@@ -9,8 +9,8 @@
 // buffTicker also calls, so a PAID line right after TICK_BEFORE is not a payment.
 // A: an enemy's Focus is set to -1 after it decides, and it gets Digitalis.
 // B: as A, and _root.strikeSuccess is set to false, as a missed earlier roll leaves it.
-// C: the ally's Focus is set to -1 and it has no buff that ticks, then the player passes.
-// D: the ally's move is refiled as Dux Electro (20 Focus) with Focus 60, the player
+// C: the Companion's Focus is set to -1 and it has no buff that ticks, then the player passes.
+// D: the Companion's move is refiled as Dux Electro (20 Focus) with Focus 60, the player
 //    casts Disrupt (110) on it, and the two swap teamAdder so the player acts first.
 _global.zzT = 0;
 _global.zzStep = 0;
