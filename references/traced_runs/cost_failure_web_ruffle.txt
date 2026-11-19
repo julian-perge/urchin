@@ -1,0 +1,266 @@
+COST	wrapped
+COST	menu_frame	45
+COST	options_frame	93	difficulty_was	0
+COST	ROLL	KRSO=76	caster=undefined	frame=72
+COST	ROLL	KRSO=49	caster=undefined	frame=243
+COST	ROLL	KRSO=97	caster=undefined	frame=243
+COST	ROLL	KRSO=56	caster=undefined	frame=243
+COST	HALF	1	TeamMoveNow=1	turnBased=false	frame=245
+COST	PAID	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=undefined	strikeSuccess=undefined	BAM=false	FOCUSN=100	LIFEN=627	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=245
+COST	ROLL	KRSO=41	caster=3	frame=245
+COST	EXEC_BEFORE	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=undefined	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=627	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=271	target=2	targetLife=250	a1=Dux Leading Strike,9,0,1,0,0,0,0	a2_13=PREPARED_DUX	targetFocus=100
+COST	ROLL	KRSO=40	caster=3	frame=271
+COST	EXEC_AFTER	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=undefined	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=627	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=271	target=2	targetLife=206	targetFocus=100
+COST	TICK_BEFORE	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=undefined	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=627	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=296
+COST	TICK_AFTER	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=undefined	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=627	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=296	buffTickChecker=0
+COST	TICK_BEFORE	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=undefined	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=297	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=297
+COST	PAID	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=undefined	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=297	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=297
+COST	TICK_AFTER	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=undefined	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=297	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=297	buffTickChecker=0
+COST	ROLL	KRSO=94	caster=5	frame=300
+COST	ROLL	KRSO=21	caster=5	frame=300
+COST	HALF	2	TeamMoveNow=2	turnBased=false	frame=301
+COST	PAID	unit=2	team=2	clipMoveBammer=false	rootMoveBammer=undefined	strikeSuccess=true	BAM=false	FOCUSN=85	LIFEN=250	mCaster=2	mTarget=1	moveId=523	focusCost=15	frame=301
+COST	ROLL	KRSO=1	caster=2	frame=301
+COST	MISS	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=undefined	strikeSuccess=false	BAM=false	FOCUSN=85	LIFEN=250	mCaster=2	mTarget=1	moveId=0	focusCost=15	frame=327	who=player1
+COST	TICK_BEFORE	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=undefined	strikeSuccess=false	BAM=false	FOCUSN=85	LIFEN=250	mCaster=2	mTarget=1	moveId=0	focusCost=15	frame=352
+COST	TICK_AFTER	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=undefined	strikeSuccess=false	BAM=false	FOCUSN=85	LIFEN=250	mCaster=2	mTarget=1	moveId=0	focusCost=15	frame=352	buffTickChecker=0
+COST	ROLL	KRSO=73	caster=4	frame=474
+COST	ROLL	KRSO=3	caster=4	frame=474
+COST	HALF	3	TeamMoveNow=1	turnBased=false	frame=476
+COST	PAID	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=undefined	strikeSuccess=false	BAM=false	FOCUSN=80	LIFEN=627	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=476
+COST	ROLL	KRSO=24	caster=3	frame=476
+COST	EXEC_BEFORE	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=undefined	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=627	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=493	target=2	targetLife=250	a1=Dux Electro,10,0,1,0,20,0,3	a2_13=0	targetFocus=85
+COST	ROLL	KRSO=76	caster=3	frame=493
+COST	EXEC_AFTER	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=undefined	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=627	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=493	target=2	targetLife=149	targetFocus=85
+COST	TICK_BEFORE	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=undefined	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=627	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=518
+COST	TICK_AFTER	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=undefined	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=627	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=518	buffTickChecker=0
+COST	TICK_BEFORE	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=undefined	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=297	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=519
+COST	PAID	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=undefined	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=297	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=519
+COST	TICK_AFTER	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=undefined	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=297	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=519	buffTickChecker=0
+COST	ROLL	KRSO=7	caster=5	frame=522
+COST	ROLL	KRSO=86	caster=5	frame=522
+COST	ROLL	KRSO=42	caster=5	frame=522
+COST	DRAIN_A	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=undefined	strikeSuccess=true	BAM=false	FOCUSN=-1	LIFEN=250	mCaster=5	mTarget=5	moveId=15	focusCost=undefined	frame=522	hadBuff=false	DOT=0,0,0,0,0,0,0,11,0,0
+COST	HALF	4	TeamMoveNow=2	turnBased=false	frame=523
+COST	TICK_BEFORE	unit=2	team=2	clipMoveBammer=false	rootMoveBammer=undefined	strikeSuccess=true	BAM=false	FOCUSN=-1	LIFEN=250	mCaster=2	mTarget=3	moveId=0	focusCost=0	frame=523
+COST	PAID	unit=2	team=2	clipMoveBammer=false	rootMoveBammer=undefined	strikeSuccess=true	BAM=false	FOCUSN=0	LIFEN=238	mCaster=2	mTarget=3	moveId=0	focusCost=0	frame=523
+COST	TICK_AFTER	unit=2	team=2	clipMoveBammer=false	rootMoveBammer=undefined	strikeSuccess=true	BAM=false	FOCUSN=0	LIFEN=238	mCaster=2	mTarget=3	moveId=0	focusCost=0	frame=523	buffTickChecker=12
+COST	EXEC_BEFORE	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=0	LIFEN=238	mCaster=2	mTarget=3	moveId=0	focusCost=0	frame=524	target=3	targetLife=627	a1=Heavy Punishment,15,0,1,0,0,0,3	a2_13=HEAVYPUNISHMENT	targetFocus=80
+COST	ROLL	KRSO=58	caster=2	frame=524
+COST	EXEC_AFTER	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=0	LIFEN=238	mCaster=2	mTarget=3	moveId=0	focusCost=0	frame=524	target=3	targetLife=597	targetFocus=80
+COST	ROLL	KRSO=48	caster=4	frame=670
+COST	ROLL	KRSO=97	caster=4	frame=670
+COST	ROLL	KRSO=84	caster=4	frame=670
+COST	HALF	5	TeamMoveNow=1	turnBased=false	frame=672
+COST	PAID	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=627	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=672
+COST	ROLL	KRSO=18	caster=3	frame=672
+COST	EXEC_BEFORE	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=627	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=698	target=2	targetLife=250	a1=Dux Leading Strike,9,0,1,0,0,0,0	a2_13=PREPARED_DUX	targetFocus=0
+COST	ROLL	KRSO=91	caster=3	frame=698
+COST	EXEC_AFTER	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=627	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=698	target=2	targetLife=206	targetFocus=0
+COST	TICK_BEFORE	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=627	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=723
+COST	TICK_AFTER	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=624	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=723	buffTickChecker=3
+COST	TICK_BEFORE	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=297	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=749
+COST	PAID	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=297	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=749
+COST	TICK_AFTER	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=297	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=749	buffTickChecker=0
+COST	ROLL	KRSO=83	caster=5	frame=752
+COST	ROLL	KRSO=89	caster=5	frame=752
+COST	ROLL	KRSO=39	caster=5	frame=752
+COST	DRAIN_A	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=-1	LIFEN=250	mCaster=5	mTarget=5	moveId=15	focusCost=undefined	frame=752	hadBuff=true	DOT=0,0,0,0,0,0,0,11,0,0
+COST	HALF	6	TeamMoveNow=2	turnBased=false	frame=753
+COST	TICK_BEFORE	unit=2	team=2	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=-1	LIFEN=250	mCaster=2	mTarget=3	moveId=0	focusCost=0	frame=753
+COST	PAID	unit=2	team=2	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=0	LIFEN=238	mCaster=2	mTarget=3	moveId=0	focusCost=0	frame=753
+COST	TICK_AFTER	unit=2	team=2	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=0	LIFEN=238	mCaster=2	mTarget=3	moveId=0	focusCost=0	frame=753	buffTickChecker=12
+COST	EXEC_BEFORE	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=0	LIFEN=238	mCaster=2	mTarget=3	moveId=0	focusCost=0	frame=754	target=3	targetLife=627	a1=Heavy Punishment,15,0,1,0,0,0,3	a2_13=HEAVYPUNISHMENT	targetFocus=100
+COST	ROLL	KRSO=24	caster=2	frame=754
+COST	EXEC_AFTER	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=0	LIFEN=238	mCaster=2	mTarget=3	moveId=0	focusCost=0	frame=754	target=3	targetLife=597	targetFocus=100
+COST	ROLL	KRSO=15	caster=4	frame=900
+COST	ROLL	KRSO=1	caster=4	frame=900
+COST	HALF	7	TeamMoveNow=1	turnBased=false	frame=902
+COST	PAID	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=627	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=902
+COST	ROLL	KRSO=7	caster=3	frame=902
+COST	EXEC_BEFORE	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=627	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=928	target=2	targetLife=250	a1=Dux Leading Strike,9,0,1,0,0,0,0	a2_13=PREPARED_DUX	targetFocus=0
+COST	ROLL	KRSO=79	caster=3	frame=928
+COST	EXEC_AFTER	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=627	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=928	target=2	targetLife=206	targetFocus=0
+COST	TICK_BEFORE	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=627	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=953
+COST	TICK_AFTER	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=621	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=953	buffTickChecker=6
+COST	TICK_BEFORE	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=297	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=979
+COST	PAID	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=297	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=979
+COST	TICK_AFTER	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=297	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=979	buffTickChecker=0
+COST	ROLL	KRSO=94	caster=5	frame=982
+COST	ROLL	KRSO=69	caster=5	frame=982
+COST	ROLL	KRSO=7	caster=5	frame=982
+COST	DRAIN_B_STALE_MISS	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=false	BAM=false	FOCUSN=-1	LIFEN=250	mCaster=5	mTarget=5	moveId=15	focusCost=undefined	frame=982	hadBuff=true	DOT=0,0,0,0,0,0,0,11,0,0
+COST	HALF	8	TeamMoveNow=2	turnBased=false	frame=983
+COST	TICK_BEFORE	unit=2	team=2	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=false	BAM=false	FOCUSN=-1	LIFEN=250	mCaster=2	mTarget=3	moveId=0	focusCost=0	frame=983
+COST	PAID	unit=2	team=2	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=false	BAM=false	FOCUSN=0	LIFEN=238	mCaster=2	mTarget=3	moveId=0	focusCost=0	frame=983
+COST	TICK_AFTER	unit=2	team=2	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=false	BAM=false	FOCUSN=0	LIFEN=238	mCaster=2	mTarget=3	moveId=0	focusCost=0	frame=983	buffTickChecker=12
+COST	MISS	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=false	BAM=false	FOCUSN=0	LIFEN=238	mCaster=2	mTarget=3	moveId=0	focusCost=0	frame=984	who=player3
+COST	ROLL	KRSO=73	caster=4	frame=1130
+COST	ROLL	KRSO=18	caster=4	frame=1130
+COST	HALF	9	TeamMoveNow=1	turnBased=false	frame=1132
+COST	PAID	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=false	BAM=false	FOCUSN=80	LIFEN=627	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=1132
+COST	ROLL	KRSO=27	caster=3	frame=1132
+COST	EXEC_BEFORE	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=627	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=1149	target=2	targetLife=250	a1=Dux Electro,10,0,1,0,20,0,3	a2_13=0	targetFocus=0
+COST	ROLL	KRSO=41	caster=3	frame=1149
+COST	EXEC_AFTER	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=627	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=1149	target=2	targetLife=149	targetFocus=0
+COST	TICK_BEFORE	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=627	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=1174
+COST	TICK_AFTER	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=621	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=1174	buffTickChecker=6
+COST	TICK_BEFORE	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=297	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=1200
+COST	PAID	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=297	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=1200
+COST	TICK_AFTER	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=297	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=1200	buffTickChecker=0
+COST	ROLL	KRSO=66	caster=5	frame=1203
+COST	ROLL	KRSO=39	caster=5	frame=1203
+COST	DRAIN_B_STALE_MISS	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=false	BAM=false	FOCUSN=-1	LIFEN=250	mCaster=5	mTarget=5	moveId=15	focusCost=undefined	frame=1203	hadBuff=true	DOT=0,0,0,0,0,0,0,11,0,0
+COST	HALF	10	TeamMoveNow=2	turnBased=false	frame=1204
+COST	TICK_BEFORE	unit=2	team=2	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=false	BAM=false	FOCUSN=-1	LIFEN=250	mCaster=2	mTarget=1	moveId=0	focusCost=0	frame=1204
+COST	PAID	unit=2	team=2	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=false	BAM=false	FOCUSN=0	LIFEN=238	mCaster=2	mTarget=1	moveId=0	focusCost=0	frame=1204
+COST	TICK_AFTER	unit=2	team=2	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=false	BAM=false	FOCUSN=0	LIFEN=238	mCaster=2	mTarget=1	moveId=0	focusCost=0	frame=1204	buffTickChecker=12
+COST	MISS	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=false	BAM=false	FOCUSN=0	LIFEN=238	mCaster=2	mTarget=1	moveId=0	focusCost=0	frame=1205	who=player1
+COST	ROLL	KRSO=30	caster=4	frame=1351
+COST	ROLL	KRSO=61	caster=4	frame=1351
+COST	DRAIN_C_ALLY	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=-1	LIFEN=627	mCaster=4	mTarget=4	moveId=9	focusCost=undefined	frame=1351	playerHadBuff=false	allyDOT=0,0,0,6,0,0,0,0,0,0
+COST	HALF	11	TeamMoveNow=1	turnBased=false	frame=1353
+COST	TICK_BEFORE	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=-1	LIFEN=627	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=1353
+COST	PAID	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=0	LIFEN=621	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=1353
+COST	TICK_AFTER	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=0	LIFEN=621	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=1353	buffTickChecker=6
+COST	EXEC_BEFORE	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=0	LIFEN=621	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=1354	target=2	targetLife=250	a1=Dux Leading Strike,9,0,1,0,0,0,0	a2_13=PREPARED_DUX	targetFocus=0
+COST	ROLL	KRSO=3	caster=3	frame=1354
+COST	EXEC_AFTER	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=0	LIFEN=621	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=1354	target=2	targetLife=192	targetFocus=0
+COST	TICK_BEFORE	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=297	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=1379
+COST	PAID	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=283	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=1379
+COST	TICK_AFTER	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=283	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=1379	buffTickChecker=14
+COST	ROLL	KRSO=69	caster=5	frame=1407
+COST	ROLL	KRSO=4	caster=5	frame=1407
+COST	HALF	12	TeamMoveNow=2	turnBased=false	frame=1408
+COST	PAID	unit=2	team=2	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=0	LIFEN=250	mCaster=2	mTarget=1	moveId=15	focusCost=0	frame=1408
+COST	ROLL	KRSO=46	caster=2	frame=1408
+COST	EXEC_BEFORE	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=0	LIFEN=250	mCaster=2	mTarget=1	moveId=0	focusCost=0	frame=1434	target=1	targetLife=297	a1=Heavy Punishment,15,0,1,0,0,0,3	a2_13=HEAVYPUNISHMENT	targetFocus=100
+COST	ROLL	KRSO=32	caster=2	frame=1434
+COST	EXEC_AFTER	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=0	LIFEN=250	mCaster=2	mTarget=1	moveId=0	focusCost=0	frame=1434	target=1	targetLife=266	targetFocus=100
+COST	TICK_BEFORE	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=0	LIFEN=250	mCaster=2	mTarget=1	moveId=0	focusCost=0	frame=1459
+COST	TICK_AFTER	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=0	LIFEN=250	mCaster=2	mTarget=1	moveId=0	focusCost=0	frame=1459	buffTickChecker=0
+COST	ROLL	KRSO=1	caster=4	frame=1581
+COST	ROLL	KRSO=45	caster=4	frame=1581
+COST	DRAIN_C_ALLY	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=-1	LIFEN=627	mCaster=4	mTarget=4	moveId=9	focusCost=undefined	frame=1581	playerHadBuff=true	allyDOT=0,0,0,3,0,0,0,0,0,-35
+COST	HALF	13	TeamMoveNow=1	turnBased=false	frame=1583
+COST	TICK_BEFORE	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=-1	LIFEN=627	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=1583
+COST	PAID	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=34	LIFEN=624	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=1583
+COST	TICK_AFTER	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=34	LIFEN=624	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=1583	buffTickChecker=3
+COST	EXEC_BEFORE	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=34	LIFEN=624	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=1584	target=2	targetLife=250	a1=Dux Leading Strike,9,0,1,0,0,0,0	a2_13=PREPARED_DUX	targetFocus=0
+COST	ROLL	KRSO=5	caster=3	frame=1584
+COST	EXEC_AFTER	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=34	LIFEN=624	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=1584	target=2	targetLife=192	targetFocus=0
+COST	TICK_BEFORE	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=297	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=1609
+COST	PAID	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=279	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=1609
+COST	TICK_AFTER	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=279	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=1609	buffTickChecker=18
+COST	ROLL	KRSO=59	caster=5	frame=1637
+COST	ROLL	KRSO=5	caster=5	frame=1637
+COST	HALF	14	TeamMoveNow=2	turnBased=false	frame=1638
+COST	PAID	unit=2	team=2	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=0	LIFEN=250	mCaster=2	mTarget=1	moveId=2	focusCost=0	frame=1638
+COST	ROLL	KRSO=17	caster=2	frame=1638
+COST	EXEC_BEFORE	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=0	LIFEN=250	mCaster=2	mTarget=1	moveId=0	focusCost=0	frame=1664	target=1	targetLife=297	a1=Auto Swing,2,0,1,0,0,0,0	a2_13=AUTOREGEN	targetFocus=100
+COST	ROLL	KRSO=31	caster=2	frame=1664
+COST	EXEC_AFTER	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=0	LIFEN=250	mCaster=2	mTarget=1	moveId=0	focusCost=0	frame=1664	target=1	targetLife=259	targetFocus=100
+COST	TICK_BEFORE	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=0	LIFEN=250	mCaster=2	mTarget=1	moveId=0	focusCost=0	frame=1689
+COST	TICK_AFTER	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=8	LIFEN=250	mCaster=2	mTarget=1	moveId=0	focusCost=0	frame=1689	buffTickChecker=0
+COST	ROLL	KRSO=13	caster=4	frame=1811
+COST	ROLL	KRSO=86	caster=4	frame=1811
+COST	ROLL	KRSO=86	caster=4	frame=1811
+COST	DRAIN_C_ALLY	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=-1	LIFEN=627	mCaster=4	mTarget=4	moveId=9	focusCost=undefined	frame=1811	playerHadBuff=true	allyDOT=0,0,0,0,0,0,0,0,0,-35
+COST	HALF	15	TeamMoveNow=1	turnBased=false	frame=1813
+COST	TICK_BEFORE	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=-1	LIFEN=627	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=1813
+COST	PAID	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=34	LIFEN=627	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=1813
+COST	TICK_AFTER	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=34	LIFEN=627	mCaster=3	mTarget=2	moveId=9	focusCost=0	frame=1813	buffTickChecker=0
+COST	TICK_BEFORE	unit=1	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=297	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=1814
+COST	PAID	unit=1	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=279	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=1814
+COST	TICK_AFTER	unit=1	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=279	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=1814	buffTickChecker=18
+COST	EXEC_BEFORE	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=279	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=1815	target=1	targetLife=279	a1=None,0,undefined,undefined,undefined,undefined,undefined,undefined	a2_13=0	targetFocus=100
+COST	EXEC_AFTER	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=100	LIFEN=279	mCaster=1	mTarget=1	moveId=0	focusCost=undefined	frame=1815	target=1	targetLife=279	targetFocus=100
+COST	ROLL	KRSO=72	caster=5	frame=1842
+COST	ROLL	KRSO=11	caster=5	frame=1842
+COST	HALF	16	TeamMoveNow=2	turnBased=false	frame=1843
+COST	PAID	unit=2	team=2	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=8	LIFEN=250	mCaster=2	mTarget=1	moveId=2	focusCost=0	frame=1843
+COST	ROLL	KRSO=58	caster=2	frame=1843
+COST	EXEC_BEFORE	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=8	LIFEN=250	mCaster=2	mTarget=1	moveId=0	focusCost=0	frame=1869	target=1	targetLife=297	a1=Auto Swing,2,0,1,0,0,0,0	a2_13=AUTOREGEN	targetFocus=100
+COST	ROLL	KRSO=69	caster=2	frame=1869
+COST	EXEC_AFTER	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=8	LIFEN=250	mCaster=2	mTarget=1	moveId=0	focusCost=0	frame=1869	target=1	targetLife=259	targetFocus=100
+COST	TICK_BEFORE	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=8	LIFEN=250	mCaster=2	mTarget=1	moveId=0	focusCost=0	frame=1894
+COST	TICK_AFTER	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=16	LIFEN=250	mCaster=2	mTarget=1	moveId=0	focusCost=0	frame=1894	buffTickChecker=0
+COST	ROLL	KRSO=4	caster=4	frame=2016
+COST	ROLL	KRSO=92	caster=4	frame=2016
+COST	ROLL	KRSO=72	caster=4	frame=2016
+COST	SETUP_D_DISRUPT	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=60	LIFEN=627	mCaster=4	mTarget=4	moveId=110	focusCost=undefined	frame=2016	allyHadBuff=false	meSPEEDU=11	allySPEEDU=19	meTeamAdder=0	allyTeamAdder=1
+COST	DATA	110	Disrupt,110,0,1,1,20,0,3,4,1,Shock,0xFFCC00,Krin.Electrobolt,BOOM3,Focus,1,0,Disrupt,sfx_trauma	B	Lightning,0,0,0,0,0,0,0,1,-50,1,0,0,DISRUPT,1,Physical,Magic,Ice,Fire,Lightning,Shadow,Poison,1,Shocks the target, and destroys 50 Focus. Also attempts to dispel 1 buff(s) from the target of any element except Earth. Also causes the target to regenerate 30 Focus over time. ,Costs 20 Focus. (CD: 3),1,0,0,1,Physical,0,1
+COST	DATA	10	Dux Electro,10,0,1,0,20,0,3,4,1,Missile,0xFFCC00,Krin.Electrobolt,BOOM3,Full Damage,1,0,Disrupt,sfx_shock
+COST	HALF	17	TeamMoveNow=1	turnBased=false	frame=2018
+COST	PAID	unit=1	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=297	mCaster=1	mTarget=3	moveId=110	focusCost=20	frame=2018
+COST	EXEC_BEFORE	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=297	mCaster=1	mTarget=3	moveId=110	focusCost=20	frame=2019	target=3	targetLife=627	a1=Disrupt,110,0,1,1,20,0,3	a2_13=DISRUPT	targetFocus=60
+COST	EXEC_AFTER	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=297	mCaster=1	mTarget=3	moveId=110	focusCost=20	frame=2019	target=3	targetLife=627	targetFocus=10
+COST	TICK_BEFORE	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=297	mCaster=1	mTarget=3	moveId=110	focusCost=20	frame=2044
+COST	TICK_AFTER	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=279	mCaster=1	mTarget=3	moveId=110	focusCost=20	frame=2044	buffTickChecker=18
+COST	TICK_BEFORE	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=10	LIFEN=627	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=2070
+COST	PAID	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=16	LIFEN=615	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=2070
+COST	TICK_AFTER	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=16	LIFEN=615	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=2070	buffTickChecker=12
+COST	EXEC_BEFORE	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=16	LIFEN=615	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=2071	target=2	targetLife=250	a1=Dux Electro,10,0,1,0,20,0,3	a2_13=0	targetFocus=16
+COST	ROLL	KRSO=59	caster=3	frame=2071
+COST	EXEC_AFTER	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=16	LIFEN=615	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=2071	target=2	targetLife=149	targetFocus=16
+COST	ROLL	KRSO=71	caster=5	frame=2098
+COST	ROLL	KRSO=99	caster=5	frame=2098
+COST	ROLL	KRSO=40	caster=5	frame=2098
+COST	HALF	18	TeamMoveNow=2	turnBased=false	frame=2099
+COST	PAID	unit=2	team=2	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=1	LIFEN=250	mCaster=2	mTarget=3	moveId=523	focusCost=15	frame=2099
+COST	ROLL	KRSO=78	caster=2	frame=2099
+COST	EXEC_BEFORE	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=1	LIFEN=250	mCaster=2	mTarget=3	moveId=0	focusCost=15	frame=2125	target=3	targetLife=627	a1=Gouge,523,0,1,0,15,0,2	a2_13=BREAK	targetFocus=16
+COST	ROLL	KRSO=92	caster=2	frame=2125
+COST	EXEC_AFTER	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=1	LIFEN=250	mCaster=2	mTarget=3	moveId=0	focusCost=15	frame=2125	target=3	targetLife=597	targetFocus=16
+COST	TICK_BEFORE	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=1	LIFEN=250	mCaster=2	mTarget=3	moveId=0	focusCost=15	frame=2150
+COST	TICK_AFTER	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=1	LIFEN=250	mCaster=2	mTarget=3	moveId=0	focusCost=15	frame=2150	buffTickChecker=0
+COST	ROLL	KRSO=25	caster=4	frame=2272
+COST	ROLL	KRSO=44	caster=4	frame=2272
+COST	SETUP_D_DISRUPT	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=60	LIFEN=627	mCaster=4	mTarget=4	moveId=110	focusCost=undefined	frame=2272	allyHadBuff=true	meSPEEDU=11	allySPEEDU=19	meTeamAdder=0	allyTeamAdder=1
+COST	DATA	110	Disrupt,110,0,1,1,20,0,3,4,1,Shock,0xFFCC00,Krin.Electrobolt,BOOM3,Focus,1,0,Disrupt,sfx_trauma	B	Lightning,0,0,0,0,0,0,0,1,-50,1,0,0,DISRUPT,1,Physical,Magic,Ice,Fire,Lightning,Shadow,Poison,1,Shocks the target, and destroys 50 Focus. Also attempts to dispel 1 buff(s) from the target of any element except Earth. Also causes the target to regenerate 30 Focus over time. ,Costs 20 Focus. (CD: 3),1,0,0,1,Physical,0,1
+COST	DATA	10	Dux Electro,10,0,1,0,20,0,3,4,1,Missile,0xFFCC00,Krin.Electrobolt,BOOM3,Full Damage,1,0,Disrupt,sfx_shock
+COST	HALF	19	TeamMoveNow=1	turnBased=false	frame=2274
+COST	PAID	unit=1	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=297	mCaster=1	mTarget=3	moveId=110	focusCost=20	frame=2274
+COST	EXEC_BEFORE	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=297	mCaster=1	mTarget=3	moveId=110	focusCost=20	frame=2275	target=3	targetLife=627	a1=Disrupt,110,0,1,1,20,0,3	a2_13=DISRUPT	targetFocus=60
+COST	EXEC_AFTER	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=297	mCaster=1	mTarget=3	moveId=110	focusCost=20	frame=2275	target=3	targetLife=627	targetFocus=10
+COST	TICK_BEFORE	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=297	mCaster=1	mTarget=3	moveId=110	focusCost=20	frame=2300
+COST	TICK_AFTER	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=293	mCaster=1	mTarget=3	moveId=110	focusCost=20	frame=2300	buffTickChecker=4
+COST	TICK_BEFORE	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=10	LIFEN=627	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=2326
+COST	PAID	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=16	LIFEN=615	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=2326
+COST	TICK_AFTER	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=16	LIFEN=615	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=2326	buffTickChecker=12
+COST	EXEC_BEFORE	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=16	LIFEN=615	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=2327	target=2	targetLife=250	a1=Dux Electro,10,0,1,0,20,0,3	a2_13=0	targetFocus=1
+COST	ROLL	KRSO=10	caster=3	frame=2327
+COST	EXEC_AFTER	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=16	LIFEN=615	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=2327	target=2	targetLife=84	targetFocus=1
+COST	ROLL	KRSO=93	caster=5	frame=2354
+COST	ROLL	KRSO=51	caster=5	frame=2354
+COST	ROLL	KRSO=13	caster=5	frame=2354
+COST	HALF	20	TeamMoveNow=2	turnBased=false	frame=2355
+COST	PAID	unit=2	team=2	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=1	LIFEN=250	mCaster=2	mTarget=3	moveId=15	focusCost=0	frame=2355
+COST	ROLL	KRSO=7	caster=2	frame=2355
+COST	MISS	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=false	BAM=false	FOCUSN=1	LIFEN=250	mCaster=2	mTarget=3	moveId=0	focusCost=0	frame=2381	who=player3
+COST	TICK_BEFORE	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=false	BAM=false	FOCUSN=1	LIFEN=250	mCaster=2	mTarget=3	moveId=0	focusCost=0	frame=2406
+COST	TICK_AFTER	unit=2	team=2	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=false	BAM=false	FOCUSN=1	LIFEN=250	mCaster=2	mTarget=3	moveId=0	focusCost=0	frame=2406	buffTickChecker=0
+COST	ROLL	KRSO=78	caster=4	frame=2528
+COST	ROLL	KRSO=72	caster=4	frame=2528
+COST	ROLL	KRSO=30	caster=4	frame=2528
+COST	SETUP_D_DISRUPT	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=false	BAM=false	FOCUSN=60	LIFEN=627	mCaster=4	mTarget=4	moveId=110	focusCost=undefined	frame=2528	allyHadBuff=true	meSPEEDU=11	allySPEEDU=19	meTeamAdder=0	allyTeamAdder=1
+COST	DATA	110	Disrupt,110,0,1,1,20,0,3,4,1,Shock,0xFFCC00,Krin.Electrobolt,BOOM3,Focus,1,0,Disrupt,sfx_trauma	B	Lightning,0,0,0,0,0,0,0,1,-50,1,0,0,DISRUPT,1,Physical,Magic,Ice,Fire,Lightning,Shadow,Poison,1,Shocks the target, and destroys 50 Focus. Also attempts to dispel 1 buff(s) from the target of any element except Earth. Also causes the target to regenerate 30 Focus over time. ,Costs 20 Focus. (CD: 3),1,0,0,1,Physical,0,1
+COST	DATA	10	Dux Electro,10,0,1,0,20,0,3,4,1,Missile,0xFFCC00,Krin.Electrobolt,BOOM3,Full Damage,1,0,Disrupt,sfx_shock
+COST	HALF	21	TeamMoveNow=1	turnBased=false	frame=2530
+COST	PAID	unit=1	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=false	BAM=false	FOCUSN=80	LIFEN=297	mCaster=1	mTarget=3	moveId=110	focusCost=20	frame=2530
+COST	EXEC_BEFORE	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=297	mCaster=1	mTarget=3	moveId=110	focusCost=20	frame=2531	target=3	targetLife=627	a1=Disrupt,110,0,1,1,20,0,3	a2_13=DISRUPT	targetFocus=60
+COST	EXEC_AFTER	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=297	mCaster=1	mTarget=3	moveId=110	focusCost=20	frame=2531	target=3	targetLife=627	targetFocus=10
+COST	TICK_BEFORE	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=297	mCaster=1	mTarget=3	moveId=110	focusCost=20	frame=2556
+COST	TICK_AFTER	unit=1	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=80	LIFEN=297	mCaster=1	mTarget=3	moveId=110	focusCost=20	frame=2556	buffTickChecker=0
+COST	TICK_BEFORE	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=10	LIFEN=627	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=2557
+COST	PAID	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=16	LIFEN=615	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=2557
+COST	TICK_AFTER	unit=3	team=1	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=16	LIFEN=615	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=2557	buffTickChecker=12
+COST	EXEC_BEFORE	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=16	LIFEN=615	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=2558	target=2	targetLife=250	a1=Dux Electro,10,0,1,0,20,0,3	a2_13=0	targetFocus=1
+COST	ROLL	KRSO=20	caster=3	frame=2558
+COST	EXEC_AFTER	unit=3	team=1	clipMoveBammer=true	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=16	LIFEN=615	mCaster=3	mTarget=2	moveId=10	focusCost=20	frame=2558	target=2	targetLife=84	targetFocus=1
+COST	done
+COST	ROLL	KRSO=18	caster=5	frame=2585
+COST	ROLL	KRSO=77	caster=5	frame=2585
+COST	ROLL	KRSO=81	caster=5	frame=2585
+COST	PAID	unit=2	team=2	clipMoveBammer=false	rootMoveBammer=true	strikeSuccess=true	BAM=false	FOCUSN=1	LIFEN=250	mCaster=2	mTarget=1	moveId=2	focusCost=0	frame=2586
+COST	ROLL	KRSO=24	caster=2	frame=2586
