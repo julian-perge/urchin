@@ -236,5 +236,18 @@
     "bar": 1
    }
   }
+ },
+ "status_bars": {
+  "scene": "res://scenes/battle_scene.tscn",
+  "modes": {
+   "alpha": {
+    "nodes": [
+     "TopStatusBar/Bar1/Clip",
+     "TopStatusBar/Bar3/Clip",
+     "TopStatusBar/Bar5/Clip"
+    ],
+    "bar": 35
+   }
+  }
  }
 }
