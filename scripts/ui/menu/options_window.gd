@@ -28,14 +28,14 @@ func _ready() -> void:
 # Fills the values from the save, as the frame's script does each time the
 # menu clip goes to the options label (DefineSprite_3142/frame_39/DoAction.as).
 # The difficulty is MENU[79] for Easy, MENU[80] for Challenging and MENU[81]
-# for Heroic.
+# for Heroic, which the frame's last else branch shows for any value above 1.
 func refresh() -> void:
 	var save: PlayerSave = GameData.current_save
 	if save == null:
 		return
 	_sound_value.text = _on_off(save.sound)
 	_autosave_value.text = _on_off(save.autosave)
-	_difficulty_value.text = Strings.menu(79 + save.difficulty)
+	_difficulty_value.text = Strings.menu(79 + mini(save.difficulty, 2))
 
 
 func _on_off(on: bool) -> String:
