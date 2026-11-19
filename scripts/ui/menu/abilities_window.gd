@@ -20,7 +20,6 @@
 extends Control
 
 const TalentNodeScene: PackedScene = preload("res://scenes/ui/menu/talent_node.tscn")
-const ICON_DIR: String = "res://assets/ui/abilities/"
 
 # Where the frame places 'talenttreefull', and the st0 to st27 placements
 # inside it, row by row.
@@ -58,6 +57,13 @@ var _tree_buttons: Array[Button] = []
 var _tree_rank_labels: Array[Label] = []
 @onready var _tree_lines: Control = $TreeLines
 var _socket_buttons: Array[Button] = []
+# The colour each socket's disc took when the socket last went from empty to an
+# ability, or null while it is empty. A socket that goes from one ability
+# straight to another keeps its disc, because the icon clip stays on frames
+# that hold it and the disc's load script does not run again. Measured in the
+# Flash debug player for #439. Opening the window makes the ring again, which
+# clears every colour.
+var _socket_disc_colors: Array = []
 @onready var _pool_rows: Array[AbilityPoolRow] = [
 	$Pool/Mask/Rows/PoolRow0, $Pool/Mask/Rows/PoolRow1, $Pool/Mask/Rows/PoolRow2, $Pool/Mask/Rows/PoolRow3, $Pool/Mask/Rows/PoolRow4,
 ]
@@ -115,6 +121,7 @@ func _ready():
 	visibility_changed.connect(func():
 		_set_held(0)
 		if visible:
+			_socket_disc_colors.fill(null)
 			_hint_steps.open(GameData.current_save)
 			refresh())
 
@@ -153,19 +160,6 @@ func _style_plus_buttons() -> void:
 		_plus_buttons[i].add_theme_stylebox_override("focus", StyleBoxEmpty.new())
 
 
-static func _sanitize_icon_key(label: String) -> String:
-	var result: String = ""
-	var last_was_sep: bool = false
-	for c in label:
-		if (c >= "A" and c <= "Z") or (c >= "a" and c <= "z") or (c >= "0" and c <= "9"):
-			result += c
-			last_was_sep = false
-		elif not last_was_sep:
-			result += "_"
-			last_was_sep = true
-	return result.strip_edges().lstrip("_").rstrip("_")
-
-
 func _build_tree_panel() -> void:
 	var tree: Array = TalentTree.TREES.get(_player_class(), TalentTree.TREES[PlayerSave.PlayerClass.BIOLOGICAL])
 	for node_index in tree.size():
@@ -202,6 +196,7 @@ func _build_wheel_panel() -> void:
 		_style_circle_button(socket, Color(0.09, 0.09, 0.1), Color(0.22, 0.22, 0.24), WHEEL_SHADOW)
 		add_child(socket)
 		_socket_buttons.append(socket)
+		_socket_disc_colors.append(null)
 
 
 func _style_circle_button(button: Button, bg: Color, border: Color, shadow: Dictionary) -> void:
@@ -256,8 +251,7 @@ func _refresh_tree(save: PlayerSave) -> void:
 		)
 		_tree_rank_labels[node_index].text = "%d/%d" % [rank, int(node["max_rank"])]
 		var icon_rect: TextureRect = button.get_node("IconRect")
-		var icon_path: String = "%s%s.png" % [ICON_DIR, _tree_node_icon_key(node)]
-		icon_rect.texture = load(icon_path) if ResourceLoader.exists(icon_path) else null
+		icon_rect.texture = _tree_node_icon(node)
 
 
 func _node_color(_save: PlayerSave, _node_index: int, node: Dictionary) -> Color:
@@ -279,9 +273,17 @@ func _node_color(_save: PlayerSave, _node_index: int, node: Dictionary) -> Color
 # differs by rank, not the icon or display name).
 func _tree_node_icon_key(node: Dictionary) -> String:
 	if TalentTree.is_passive(node):
-		return _sanitize_icon_key(str(node["buff_family"]))
+		return AbilityIcon.key(str(node["buff_family"]))
 	var move: Ability = MoveManagerAuto.get_move(int(node["move_id"]))
-	return _sanitize_icon_key(move.display_name) if move != null else ""
+	return AbilityIcon.key(move.display_name) if move != null else ""
+
+
+# krinRemakeTree gives a node's disc the element of its ID's move. A passive
+# node's ID is 0, so its disc takes move 0's element
+# (DefineSprite_3142/frame_25/PlaceObject3_3100_153 load, lines 51-57).
+func _tree_node_icon(node: Dictionary) -> Texture2D:
+	var move: Ability = MoveManagerAuto.get_move(int(node["move_id"]))
+	return AbilityIcon.texture(_tree_node_icon_key(node), AbilityIcon.element_color(move))
 
 
 func _on_tree_node_hovered(node_index: int) -> void:
@@ -305,9 +307,7 @@ func _on_tree_node_hovered(node_index: int) -> void:
 			next_move = MoveManagerAuto.get_move(TalentTree.granted_move_id(node, rank + 1))
 	var button: Button = _tree_buttons[node_index]
 	var result: Dictionary = AbilityTooltipBuilder.build_sections(node, save, move, next_move)
-	var icon_path: String = "%s%s.png" % [ICON_DIR, _tree_node_icon_key(node)]
-	var icon: Texture2D = load(icon_path) if ResourceLoader.exists(icon_path) else null
-	GameTooltip.show_sections(result["sections"], button, icon, result["icon_color"], TooltipTheme.TEXT_WIDTH_ABILITY, "", true)
+	GameTooltip.show_sections(result["sections"], button, _tree_node_icon(node), result["icon_color"], TooltipTheme.TEXT_WIDTH_ABILITY, "", true)
 
 
 func _refresh_wheel(save: PlayerSave) -> void:
@@ -316,12 +316,14 @@ func _refresh_wheel(save: PlayerSave) -> void:
 		var move_id: int = int(save.move_matrix[i]) if i < save.move_matrix.size() else 0
 		if move_id == 0:
 			socket.icon = null
+			_socket_disc_colors[i] = null
 			_style_circle_button(socket, Color(0.09, 0.09, 0.1), Color(0.22, 0.22, 0.24), WHEEL_SHADOW)
 			continue
 		var move: Ability = MoveManagerAuto.get_move(move_id)
 		var color: Color = _move_color(move)
-		var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(move.display_name if move != null else "")]
-		socket.icon = load(icon_path) if ResourceLoader.exists(icon_path) else null
+		if move != null and _socket_disc_colors[i] == null:
+			_socket_disc_colors[i] = AbilityIcon.element_color(move)
+		socket.icon = AbilityIcon.texture(AbilityIcon.key(move.display_name), _socket_disc_colors[i]) if move != null else null
 		socket.expand_icon = true
 		socket.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		_style_circle_button(socket, color.darkened(0.45), color, WHEEL_SHADOW)
@@ -340,9 +342,7 @@ func _on_socket_hovered(socket_index: int) -> void:
 	if move == null:
 		return
 	var result: Dictionary = AbilityTooltipBuilder.build_sections({}, save, move)
-	var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(move.display_name)]
-	var icon: Texture2D = load(icon_path) if ResourceLoader.exists(icon_path) else null
-	GameTooltip.show_sections(result["sections"], button, icon, result["icon_color"], TooltipTheme.TEXT_WIDTH_ABILITY, "", true)
+	GameTooltip.show_sections(result["sections"], button, button.icon, result["icon_color"], TooltipTheme.TEXT_WIDTH_ABILITY, "", true)
 
 
 func _refresh_pool(save: PlayerSave) -> void:
@@ -364,8 +364,7 @@ func _refresh_pool(save: PlayerSave) -> void:
 			row.clear()
 			continue
 		var move: Ability = MoveManagerAuto.get_move(_pool_move_ids[pool_index])
-		var icon_key: String = _sanitize_icon_key(move.display_name if move != null else "")
-		row.populate(move, "%s%s.png" % [ICON_DIR, icon_key])
+		row.populate(move, AbilityIcon.for_move(move) if move != null else null)
 
 
 func _on_pool_row_hovered(row_index: int) -> void:
@@ -378,9 +377,7 @@ func _on_pool_row_hovered(row_index: int) -> void:
 	var save: PlayerSave = GameData.current_save
 	var row: Button = _pool_rows[row_index]
 	var result: Dictionary = AbilityTooltipBuilder.build_sections({}, save, move)
-	var icon_path: String = "%s%s.png" % [ICON_DIR, _sanitize_icon_key(move.display_name)]
-	var icon: Texture2D = load(icon_path) if ResourceLoader.exists(icon_path) else null
-	GameTooltip.show_sections(result["sections"], row, icon, result["icon_color"], TooltipTheme.TEXT_WIDTH_ABILITY, "", true)
+	GameTooltip.show_sections(result["sections"], row, AbilityIcon.for_move(move), result["icon_color"], TooltipTheme.TEXT_WIDTH_ABILITY, "", true)
 
 
 func _move_color(move: Ability) -> Color:
@@ -475,7 +472,7 @@ func _on_pool_row_held(row_index: int) -> void:
 func _set_held(move_id: int) -> void:
 	_held_move_id = move_id
 	var move: Ability = MoveManagerAuto.get_move(move_id) if move_id != 0 else null
-	_held_icon.texture = RadialMenu.icon_texture(move) if move != null else null
+	_held_icon.texture = AbilityIcon.for_move(move) if move != null else null
 	_held_icon.visible = move != null
 	set_process(move != null)
 	if move != null:
