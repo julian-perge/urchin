@@ -3,9 +3,9 @@
 # that starts slow and ACCELERATES (SpeedConst compounds by krinBoltIncrease
 # every original frame) rather than moving at constant speed. The per-frame
 # step is a fixed fraction of the distance measured at spawn (distance over
-# krinBoltTime, never recomputed against the bolt's current position), and arrival is a
-# coordinate-crossing test (has the bolt's x passed the target's x) rather
-# than a distance threshold or a fixed duration - see DECODED_ALGORITHMS.md.
+# krinBoltTime, never recomputed against the bolt's current position), and
+# arrival is a coordinate-crossing test (has the bolt's x passed the target's
+# x) rather than a distance threshold or a fixed duration - see DECODED_ALGORITHMS.md.
 #
 # Bolt/Trail art come from per-clip generated scenes
 # (dev/urchin_dev/swf/extract/vfx_scenes.py's own output, under
@@ -32,8 +32,9 @@ signal reached_target
 # once it is far enough past the target on a miss.
 signal flight_ended
 
-# krinBoltTime, krinBoltSpeed and krinBoltIncrease, which frame_42/DoAction_4.as
-# sets at lines 213-215. extract_krin_settings writes them to this file.
+# krinBoltMake reads krinBoltTime, krinBoltSpeed and krinBoltIncrease, which
+# frame_42/DoAction_4.as sets at lines 213-215. extract_krin_settings writes
+# them to this file.
 const KRIN_SETTINGS_PATH: String = "res://assets/battle/krin_settings.json"
 static var _krin: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(KRIN_SETTINGS_PATH))
 # The bolt's onEnterFrame adds a step to its _alpha while the alpha is under 100

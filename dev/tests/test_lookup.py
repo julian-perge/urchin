@@ -103,8 +103,14 @@ def test_tick_buffs_prints_location_source_callers_and_calls(as_records, gd_reco
     )
     assert f"{definition['start']:>5}  {first}" in out
     callers = section(out, "callers")
+    call_line = 1 + (
+        REPO_ROOT / "scripts/battle/battle_runner.gd"
+    ).read_text().splitlines().index(
+        "\t\tvar tick: BuffTick = caster.tick_buffs(buffs_by_id)"
+    )
     assert any(
-        row.startswith("  scripts/battle/battle_runner.gd:247  ") for row in callers
+        row.startswith(f"  scripts/battle/battle_runner.gd:{call_line}  ")
+        for row in callers
     )
     assert any("caster.tick_buffs" in row for row in callers)
     assert "calls" in out.splitlines()

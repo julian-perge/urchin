@@ -6,11 +6,8 @@ extends GutTest
 
 const AlphaSteps = preload("res://test/alpha_steps.gd")
 const ProjectileScene = preload("res://scenes/battle/projectile.tscn")
-# krinBoltMake's settings, as extract_krin_settings read them out of
-# frame_42/DoAction_4.as.
-const KRIN_SETTINGS_PATH: String = "res://assets/battle/krin_settings.json"
 
-var _krin: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(KRIN_SETTINGS_PATH))
+var _krin: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(Projectile.KRIN_SETTINGS_PATH))
 
 
 # Each frame krinBoltMake moves the bolt by the distance it measured at the

@@ -195,7 +195,12 @@ def test_tick_buffs_is_in_combat_unit_and_has_a_caller_in_battle_runner(records)
         for c in r["calls"]
         if c["name"] == "tick_buffs"
     ]
-    assert ("scripts/battle/battle_runner.gd", 247) in callers
+    call_line = 1 + (
+        REPO_ROOT / "scripts/battle/battle_runner.gd"
+    ).read_text().splitlines().index(
+        "\t\tvar tick: BuffTick = caster.tick_buffs(buffs_by_id)"
+    )
+    assert ("scripts/battle/battle_runner.gd", call_line) in callers
 
 
 def test_a_voice_cue_connect_is_recorded_with_its_target(records):
