@@ -900,6 +900,9 @@ SCENES[INVENTORY_SCENE] = Scene(
             for node in SCENES["res://scenes/ui/window/right_column.tscn"].port_only
         ),
     ),
+    # ffdec draws the doll clips with blades that reach outside the doll's
+    # rect, so the compare tool takes the whole doll out of its reference.
+    compare_strip=tuple(DOLL_CHARACTERS),
 )
 
 

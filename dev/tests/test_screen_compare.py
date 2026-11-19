@@ -531,6 +531,20 @@ def test_a_steam_reference_renders_each_run_on_its_own_with_the_strip(monkeypatc
     assert all(job.strip == (2837,) for job, _ in jobs)
 
 
+def test_a_steam_reference_needs_the_steam_build(monkeypatch):
+    monkeypatch.setattr(screen_compare, "reference_job", lambda *_: None)
+    hub = screen_compare.Entry(
+        "res://hub.tscn",
+        0,
+        "Navigation",
+        {"chrome": screen_compare.Mode(None, ())},
+        steam=((126, 126),),
+    )
+
+    with pytest.raises(screen_compare.CompareError, match="no Steam build"):
+        screen_compare.reference_jobs("web", hub, "chrome", None)
+
+
 def test_a_reference_with_no_steam_piece_is_one_render(monkeypatch):
     from types import SimpleNamespace
 

@@ -125,7 +125,9 @@ def panel_depths(
     return tuple(depths)
 
 
-def steam_pairs(scene: screen_rects.Scene, where: str) -> tuple:
+def steam_pairs(
+    scene: screen_rects.Scene, where: str
+) -> tuple[tuple[int | str, int | str], ...]:
     """-> (web, steam) for each piece of `scene` with a Steam placement, once
     for each pair."""
     pairs = []
@@ -450,6 +452,10 @@ def reference_jobs(
         raise CompareError(
             f"{entry.frame}: a KRINMENU reference renders through the Hub frame,"
             " and it cannot move a Steam piece"
+        )
+    if steam_index is None:
+        raise CompareError(
+            f"{entry.frame}: the entry has Steam pieces, and no Steam build was given"
         )
     frame = timeline.frame_of(index, entry.timeline, entry.frame)
     layers = timeline.frames(index, entry.timeline)[frame - 1]
