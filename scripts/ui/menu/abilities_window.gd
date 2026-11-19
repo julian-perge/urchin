@@ -13,10 +13,10 @@
 # - right: the Combat Action Bar wheel ('selector' sprite 3109) with 8
 #   sockets, and the Ability Pool list ('talentPool' sprite 3120).
 #
-# A press on a pool ability holds it, and its icon follows the mouse. A
-# release on a ring socket puts the held ability there, unless the ring already
-# holds its limit of copies, and a release with nothing held empties the
-# socket. A mouse-down anywhere but on a socket drops the held ability.
+# A press on a pool ability holds it, and its icon follows the mouse. A click
+# on a ring socket puts the held ability there, unless the ring already holds
+# its limit of copies, and a click with nothing held empties the socket. A
+# mouse-down anywhere but on a socket drops the held ability.
 extends Control
 
 const TalentNodeScene: PackedScene = preload("res://scenes/ui/menu/talent_node.tscn")
