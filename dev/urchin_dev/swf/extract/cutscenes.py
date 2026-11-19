@@ -187,10 +187,10 @@ DURATION_TOLERANCE_S = 2.0
 NOISE_RESIDUAL_THRESHOLD = 20.0
 NOISE_RATIO_THRESHOLD = 0.35
 NOISE_SAMPLE_INTERVAL_S = 1.0
-# Sprite 3960's real corruption hit 11/478 sampled frames - a wide, contiguous
-# run. A clip may have up to this many sampled frames read as static before
-# the export fails loudly, so an isolated glitch does not block it and a real
-# widespread corruption run still gets caught.
+# A clip may have up to this many sampled frames read as static before the
+# export fails, so a short burst passes and a long run of static stops it.
+# CS_CUT3 shows the original's own TV static on frames 467 to 477, and one
+# sampled frame lands on it.
 MAX_TOLERATED_NOISE_FRAMES = 2
 # CS_INTRO2 (sprite 3643) ends on a motorcycle jumping a prison yard behind
 # chain-link fence and razor wire. That fine detail reads as static, and three
@@ -417,9 +417,9 @@ def _frame_noise(png_path: Path) -> tuple[float, float]:
     there.
 
     Both numbers are needed, because either one alone misreads these frames.
-    Measured on sprite 3960's cropped 533x300 box: ffdec's rendered static for
-    the broken tail frames reads (43.6, 0.48), while the fixed version of
-    those same frames - a nearly flat dark gradient - reads (2.8, 0.50). The
+    Measured on sprite 3960's cropped 533x300 box: the TV static on frames
+    467 to 477 reads (43.6, 0.48), and the same frames with the static shapes
+    stripped, a nearly flat dark gradient, read (2.8, 0.50). The
     ratios are indistinguishable, because a frame with barely any variance to
     begin with hands almost all of what little it has to the residual. On the
     absolute number the two are 15x apart. The busiest genuine frame sampled
@@ -449,11 +449,10 @@ def verify_output(
     OUT_W x OUT_H the wrapper's mask and the stage layout imply - the check
     that would have caught the whole first round of exports, which shipped
     four different aspect ratios, none of them the stage's - the container's
-    reported duration is within tolerance of expected_frames/30fps, and - the
-    check that would have actually caught sprite 3960's corrupted tail before it
-    shipped - a sweep of frames sampled roughly once per second across the
-    FULL duration (not just a start/midpoint spot check) for suspiciously
-    high-frequency noise via _frame_noise().
+    reported duration is within tolerance of expected_frames/30fps, and a
+    sweep of frames sampled roughly once per second across the FULL duration
+    (not just a start/midpoint spot check) for high-frequency noise via
+    _frame_noise(), which catches a render that comes out as static.
 
     The noise sweep crops back down to the cutscene box before measuring,
     since the surrounding letterbox is flat black and would otherwise dilute
@@ -542,7 +541,7 @@ def verify_output(
         if len(bad_frames) > tolerated:
             raise RuntimeError(
                 f"{label}: {len(bad_frames)}/{n_samples} sampled frame(s) look like "
-                f"corrupted static/noise rather than real content: {detail}"
+                f"static noise: {detail}"
             )
         print(
             f"{label}: tolerating {len(bad_frames)}/{n_samples} sampled frame(s) "
