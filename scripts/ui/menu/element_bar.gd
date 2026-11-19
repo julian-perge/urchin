@@ -77,7 +77,6 @@ func show_value(allocation: float, level: int) -> void:
 	_tooltip = tooltip_text(_kind, _element, value, x, _math)
 
 
-# The tooltip of the bar the last show_value() set: {"title", "body"}.
 func element() -> int:
 	return _element
 
@@ -86,6 +85,7 @@ func kind() -> Kind:
 	return _kind
 
 
+# The tooltip of the bar the last show_value() set: {"title", "body"}.
 func tooltip() -> Dictionary:
 	return _tooltip
 

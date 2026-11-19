@@ -461,13 +461,13 @@ func cast(move: Ability) -> void:
 # Returns where the original's rig stands, the clip that dressChar puts the doll
 # in. That is the doll's own spot but for the 10 px that dressChar moves a
 # MODEL5 doll down inside its rig (frame_217/DoAction_2.as:19-24).
+func rig_position() -> Vector2:
+	return position + _doll.position - _doll_offset
+
+
 # -> the top status bar entry that setup() gave this presenter to write to.
 func status_bar() -> StatusBar:
 	return _status_bar
-
-
-func rig_position() -> Vector2:
-	return position + _doll.position - _doll_offset
 
 
 # Returns the rig's _width and _height, which is the size of the box around
