@@ -48,10 +48,11 @@ const WHEEL_SHADOW: Dictionary = {"size": 6, "offset": Vector2(2.8284, 2.8284), 
 
 const POOL_VISIBLE_ROWS: int = 5
 
-# The black disc, "bfilter", that each tree icon holds over its art. extract_ability_icons
-# renders it and writes where it sits on the icon, and extract_fade_steps writes
-# the alpha krinRemakeTree gives it on a node with no point
-# (DefineSprite_3142/frame_25/PlaceObject3_3100_153 load, lines 59-67).
+# Each tree icon holds a black disc, "bfilter", over its art.
+# extract_ability_icons renders the disc and writes where it sits on the icon.
+# extract_fade_steps writes the alpha that krinRemakeTree gives it on a node
+# with no point (DefineSprite_3142/frame_25/PlaceObject3_3100_153 load, lines
+# 59-67).
 const COVER_LAYOUT_PATH: String = "res://assets/ui/abilities/cooldown.json"
 const COVER_PATH: String = "res://assets/ui/abilities/cooldown_cover.png"
 const TALENT_COVER_PATH: String = "res://assets/ui/abilities/talent_cover.json"
