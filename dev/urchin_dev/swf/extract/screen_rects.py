@@ -558,9 +558,9 @@ SCENES: dict[str, Scene] = {
         # The compare tool scores the panels and the pool's chrome. The tree
         # 3100, the ring 3109, the plus buttons 3068 to 3071 with their colour
         # plates statColor 3075, and the scroll buttons 3114 and 3115 are left
-        # to the rect test. The port draws them
-        # as native Buttons and code-drawn nodes with a look of its own (ADR
-        # 0007), and the capture hides them.
+        # to the rect test. The port draws them as native Buttons and
+        # code-drawn nodes with a look of its own (ADR 0007), and the capture
+        # hides them.
         compare_strip=(3100, 3109, 3068, 3069, 3070, 3071, 3075, 3114, 3115),
     ),
     # The background that every menu frame from mainMenu to endMenu places at

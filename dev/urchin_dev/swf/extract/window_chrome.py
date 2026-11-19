@@ -81,10 +81,11 @@
 # its depth 7 above its rows. It is not a plain outline: it strokes a 1 px black
 # line around the pool and fills it with a linear gradient that is opaque black
 # at the top and bottom edges and clear from ratio 53 to 197, so the rows fade
-# into the frame's top and bottom 28 px. It is rendered from inside 3120, with
-# no DropShadow, because the pool's inner shadow is on 3120's placement and the
-# port draws it as an overlay (julian-perge/urchin#190). The Abilities Window
-# is the only place it appears, but its rect is measured from 3120's origin.
+# out over about the top 30 px and the bottom 27 px of the pool. It is rendered
+# from inside 3120, with no DropShadow, because the pool's inner shadow is on
+# 3120's placement and the port draws it as an overlay (julian-perge/urchin#190).
+# The Abilities Window is the only place it appears, but its rect is measured
+# from 3120's origin.
 #
 # WHAT RECTS MEAN. A piece rendered as a sprite of its own has a rect measured
 # from that sprite's origin, "relative_to": "sprite <id>", because the game
