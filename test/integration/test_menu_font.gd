@@ -396,6 +396,10 @@ func test_tooltips_wrap_onto_as_many_lines_as_the_reference_captures():
 	var abilities = add_child_autofree(load("res://scenes/ui/menu/abilities_window.tscn").instantiate())
 	abilities.refresh()
 	abilities._on_socket_hovered(0)
+	# The socket's tooltip shows the title alone first, as the original's
+	# ability icon does, so the test steps past that delay.
+	assert_false(GameTooltip._sections.get_child(1).visible, "the socket's tooltip waits before its details")
+	GameTooltip._process(1.0)
 	await wait_process_frames(2)
 	var description: Label = _tooltip_labels()[2]
 	assert_string_starts_with(description.text, "Attack the enemy for 170% of your Strength", "socket 0 holds Leading Strike")

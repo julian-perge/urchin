@@ -135,8 +135,6 @@ offset_left = 165.8
 offset_top = 286.825
 offset_right = 197.05
 offset_bottom = 318.075
-tooltip_text = "Sell Item
-Select an item, then click here to sell it for 15% of its price."
 theme_override_styles/normal = SubResource("StyleBoxEmpty_flat")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_flat")
 theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
@@ -160,8 +158,6 @@ offset_left = 204.05
 offset_top = 286.825
 offset_right = 235.05
 offset_bottom = 318.075
-tooltip_text = "Destroy Item
-Select an item, then click here to destroy it permanently."
 theme_override_styles/normal = SubResource("StyleBoxEmpty_flat")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_flat")
 theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
