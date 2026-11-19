@@ -219,10 +219,11 @@ func _box_shadow_problems(path: String, node: Control, shadow: Dictionary) -> Ar
 
 
 # A doll is a CharacterVisual, whose art is a set of rotated and scaled parts, so
-# no rect holds it. The record holds the position and scale that put it where the
-# SWF's 31 part clips sit, and the union rect of the art of the unequipped male
-# doll. The union rect is held to the same 0.5 px as every other rect, because
-# the port draws MODEL1's exact frame 1 matrices.
+# no rect holds it. The record holds the position and scale that put it where
+# one set of the SWF's part clips sits, the male set or the _f set, and the
+# union rect of the art of the record's look, unequipped. The union rect is held
+# to the same 0.5 px as every other rect, because the port draws the exact frame
+# 1 matrices of the model that the set holds, MODEL1 or MODEL4.
 
 
 # A drop_shadow piece is a CanvasGroup whose scenes/drop_shadow.gdshader draws the
@@ -1041,6 +1042,24 @@ func test_control_an_inventory_doll_moved_20_px_fails() -> void:
 	assert_eq(found.size(), 2, str(found))
 	for problem: String in found:
 		assert_string_starts_with(problem, INVENTORY_DOLL + ":")
+
+
+func test_control_an_inventory_female_doll_moved_20_px_fails() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	(root.get_node(INVENTORY_DOLL + "F") as Node2D).position.x += 20.0
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][INVENTORY_SCENE])
+	assert_eq(found.size(), 2, str(found))
+	for problem: String in found:
+		assert_string_starts_with(problem, INVENTORY_DOLL + "F:")
+
+
+func test_control_an_inventory_female_doll_in_the_male_pose_fails() -> void:
+	var root: Control = await _laid_out(INVENTORY_SCENE)
+	var female: CharacterVisual = root.get_node(INVENTORY_DOLL + "F")
+	female.start_clip("MODEL1")
+	var found: Array[String] = _scene_problems(root, _record()["scenes"][INVENTORY_SCENE])
+	assert_eq(found.size(), 1, str(found))
+	assert_string_contains(found[0] if found else "", "union rect")
 
 
 func test_control_an_inventory_doll_facing_the_other_way_fails() -> void:

@@ -1163,24 +1163,37 @@ DOLL_OFFSETS = {
     "M_SHEAD_ONE": {"x": -10.0, "y": -20.0, "w": 20.0, "h": 24.0},
     "HAIR_ONE": {"x": -12.0, "y": -30.0, "w": 24.0, "h": 20.0},
     "M_SARM_ONE": {"x": 0.0, "y": 0.0, "w": 10.0, "h": 30.0},
+    "F_SHEAD_FEL": {"x": -8.0, "y": -22.0, "w": 16.0, "h": 26.0},
+    "F_SARM_FEL": {"x": 0.0, "y": 0.0, "w": 8.0, "h": 28.0},
 }
+# A female rig whose stand pose differs from the male one, as MODEL4's does
+# from MODEL1's.
+FEMALE_RIG = {
+    "head": [0.95, 0.1, -0.1, 0.95, 3.0, -36.0],
+    "arm1": [0.7, 0.3, -0.3, 0.7, -5.0, -18.0],
+    "weapon1": [0.6, 0.8, -0.8, 0.6, 11.0, 15.0],
+}
+FEMALE_LOOK = {"gender": "F", "skin": "FEL", "hair": ""}
 
 
-def mirrored_doll(scale, x0, y0, rig=DOLL_RIG):
+def mirrored_doll(scale, x0, y0, rig=DOLL_RIG, female=None):
     """-> the layers of a frame that places the rig mirrored and scaled by
     `scale`, with its origin at (x0, y0) px: each part, its _f twin and the
-    ground shadow."""
+    ground shadow. `female` is (rig, (sx, sy), (x0, y0)) for an _f set that
+    places another rig with its own x and y scale and origin. Without it, the
+    _f set is the same as the male set."""
     layers = {}
     depth = 912
     layers[depth] = timeline.Layer(143)
-    for suffix in ("", "_f"):
-        for name, (a, b, c, d, tx, ty) in rig.items():
+    male = (rig, (-scale, scale), (x0, y0))
+    for suffix, (pose, (sx, sy), (ox, oy)) in (("", male), ("_f", female or male)):
+        for name, (a, b, c, d, tx, ty) in pose.items():
             depth += 1
             layers[depth] = timeline.Layer(
                 121,
                 name + suffix,
-                (-scale * a, scale * b, -scale * c, scale * d,
-                 round((x0 - scale * tx) * 20), round((y0 + scale * ty) * 20)),
+                (sx * a, sy * b, sx * c, sy * d,
+                 round((ox + sx * tx) * 20), round((oy + sy * ty) * 20)),
             )  # fmt: skip
     return layers
 
@@ -1292,6 +1305,53 @@ def test_a_frame_that_places_the_female_set_is_refused_when_none_is_expected():
             ORIGIN,
             female_set=False,
         )
+
+
+def test_a_female_doll_record_fits_the_f_set_to_its_rig_with_its_own_x_and_y_scale():
+    layers = mirrored_doll(
+        1.5, -200.0, -10.0, female=(FEMALE_RIG, (-1.4, 1.25), (-195.0, -12.0))
+    )
+    record = screen_rects.doll_record(
+        layers,
+        DOLL_PARTS,
+        FEMALE_RIG,
+        DOLL_OFFSETS,
+        ORIGIN,
+        female=True,
+        look=FEMALE_LOOK,
+    )
+    assert record["scale"] == [-1.4, 1.25]
+    assert record["position"] == pytest.approx([400.5 - 195.0, 222.4 - 12.0], abs=0.05)
+    assert record["look"] == FEMALE_LOOK
+    # Felicity's look has no hair, so the head holds its skin alone.
+    xs, ys = [], []
+    for name, key in (("head", "F_SHEAD_FEL"), ("arm1", "F_SARM_FEL")):
+        a, b, c, d, tx, ty = FEMALE_RIG[name]
+        box = DOLL_OFFSETS[key]
+        for x in (box["x"], box["x"] + box["w"]):
+            for y in (box["y"], box["y"] + box["h"]):
+                xs.append(400.5 - 195.0 + -1.4 * (a * x + c * y + tx))
+                ys.append(222.4 - 12.0 + 1.25 * (b * x + d * y + ty))
+    x, y, w, h = record["rect"]
+    assert (x, y, x + w, y + h) == pytest.approx(
+        (min(xs), min(ys), max(xs), max(ys)), abs=0.05
+    )
+
+
+def test_the_female_set_is_refused_against_the_male_rig():
+    layers = mirrored_doll(
+        1.5, -200.0, -10.0, female=(FEMALE_RIG, (-1.4, 1.25), (-195.0, -12.0))
+    )
+    with pytest.raises(ValueError, match="is not the rig's stand pose"):
+        screen_rects.doll_record(
+            layers, DOLL_PARTS, DOLL_RIG, DOLL_OFFSETS, ORIGIN, female=True
+        )
+
+
+def test_a_doll_that_is_not_mirrored_is_refused():
+    layers = mirrored_doll(-1.5, -200.0, -10.0)
+    with pytest.raises(ValueError, match="not mirrored"):
+        screen_rects.doll_record(layers, DOLL_PARTS, DOLL_RIG, DOLL_OFFSETS, ORIGIN)
 
 
 def test_a_frame_with_another_count_of_doll_clips_is_refused():

@@ -162,19 +162,23 @@ KRINMENU = 3142
 HUB_FRAME = "Navigation"
 # The Inventory frame places its doll as 31 loose clips with the characters 121
 # to 143: 15 male parts, the same 15 with an _f suffix for a female doll, and
-# the ground shadow 143. The menu script shows one of the two sets
-# (updateDoll) and attaches the art at run time.
+# the ground shadow 143. The menu script shows the male set for a male member
+# and the _f set for any other (updateDoll), and attaches the art at run time.
 DOLL_CHARACTERS = range(121, 144)
 DOLL_SCRIPT = f"DefineSprite_{KRINMENU}/frame_1/DoAction.as"
-# The rig's part origins and the art's bounds, which the port's CharacterVisual
-# reads. The rig's stand label starts on its first frame, and that frame is
-# the pose the menu doll holds.
+# The rigs' part origins and the art's bounds, which the port's CharacterVisual
+# reads. Each rig's stand label starts on its first frame. The male set holds
+# MODEL1's first frame and the _f set holds MODEL4's.
 RIG_ANIMATIONS = REPO_ROOT / "resources" / "sprites" / "model1_animations.json"
+FEMALE_RIG_ANIMATIONS = REPO_ROOT / "resources" / "sprites" / "model4_animations.json"
 DOLL_OFFSETS = REPO_ROOT / "resources" / "sprites" / "doll_offsets.json"
 # The player's look, which the record's union rect is drawn for: male, skin
 # ONE and hair ONE (combat_unit.gd gives the player ["MODEL1", "ONE", "ONE",
 # "M"], from the seeds in frame_42).
 DOLL_LOOK = {"gender": "M", "skin": "ONE", "hair": "ONE"}
+# Felicity's look, which the female record's union rect is drawn for (party.gd
+# gives her ["MODEL4", "FEL", "", "F"]). Her hair is part of F_SHEAD_FEL.
+FEMALE_DOLL_LOOK = {"gender": "F", "skin": "FEL", "hair": ""}
 # How far a placed part's scale and rotation may be from the rig's stand pose
 # times the doll's mirrored scale, as a difference of matrix entries.
 DOLL_MATRIX_TOLERANCE = 0.005
@@ -218,6 +222,10 @@ class Piece:
     # For a "doll": whether the frame places the female set of the 15 parts
     # next to the male one. The Inventory frame does and the shop frame does not.
     female_set: bool = True
+    # For a "doll": whether the piece is the female set, which holds MODEL4's
+    # stand pose in FEMALE_DOLL_LOOK, instead of the male set, which holds
+    # MODEL1's in DOLL_LOOK.
+    female: bool = False
 
     def __post_init__(self) -> None:
         if (self.depth is None) == (self.instance is None):
@@ -1005,6 +1013,9 @@ SCENES[INVENTORY_SCENE] = Scene(
         "LeftPanel/Content/Header/NameRow/NameLabel": Piece("text", 1241),
         "LeftPanel/Content/Header/InfoRow/LevelLabel": Piece("text", 1242),
         "LeftPanel/Content/EquipDollView/Doll": Piece("doll", 912, character=143),
+        "LeftPanel/Content/EquipDollView/DollF": Piece(
+            "doll", 912, character=143, female=True
+        ),
         "ExperienceLabel": Piece("text", 1417),
         "ExpLeftBox": Piece("box", 1418),
         "ExpFill": Piece("art", 1419, art="xp_bar"),
@@ -1054,6 +1065,7 @@ SCENES[INVENTORY_SCENE] = Scene(
     port_only=(
         "LeftPanel/Content/StatusLabel",
         "LeftPanel/Content/EquipDollView/Doll/Body",
+        "LeftPanel/Content/EquipDollView/DollF/Body",
         *(
             f"LeftPanel/Content/EquipDollView/Slot{i}/{node}"
             for i in range(7)
@@ -2058,32 +2070,41 @@ def doll_parts(script: str) -> list[tuple[str, str]]:
     return list(zip(names, codes, strict=True))
 
 
-def _doll_scale(placed: dict[str, timeline.Layer], rig: dict) -> float:
-    """-> the scale s of the doll, where each placed part's matrix is the rig's
-    matrix for that part with x mirrored and everything scaled by s. It is the
-    least squares fit over every part. Raises when a part is a different
-    pose: another rotation, another scale, or no mirror."""
-    top = bottom = 0.0
+def _doll_scale(placed: dict[str, timeline.Layer], rig: dict) -> tuple[float, float]:
+    """-> the x and y scale (sx, sy) of the doll, where each placed part's
+    matrix is the rig's matrix for that part with its x row times sx and its y
+    row times sy. Each is the least squares fit over every part. The male set
+    has sx = -sy, and the _f set has a larger sx than sy. Raises when a part is
+    a different pose, another rotation or another scale, or when the doll is
+    not mirrored and upright."""
+    x_top = x_bottom = y_top = y_bottom = 0.0
     for name, layer in placed.items():
         a, b, c, d = layer.matrix[:4]
         ra, rb, rc, rd = rig[name][:4]
-        top += -a * ra - c * rc + b * rb + d * rd
-        bottom += ra * ra + rb * rb + rc * rc + rd * rd
-    scale = top / bottom
+        x_top += a * ra + c * rc
+        x_bottom += ra * ra + rc * rc
+        y_top += b * rb + d * rd
+        y_bottom += rb * rb + rd * rd
+    sx = x_top / x_bottom
+    sy = y_top / y_bottom
+    if sx >= 0 or sy <= 0:
+        raise ValueError(
+            f"the doll is not mirrored and upright: it is scaled by ({sx:.4f}, {sy:.4f})"
+        )
     misses = {}
     for name, layer in placed.items():
         ra, rb, rc, rd = rig[name][:4]
-        expected = (-scale * ra, scale * rb, -scale * rc, scale * rd)
+        expected = (sx * ra, sy * rb, sx * rc, sy * rd)
         misses[name] = max(
             abs(m - e) for m, e in zip(layer.matrix[:4], expected, strict=True)
         )
     name = max(misses, key=misses.__getitem__)
     if misses[name] > DOLL_MATRIX_TOLERANCE:
         raise ValueError(
-            f"the doll's {name} is not the rig's stand pose, mirrored and"
-            f" scaled by {scale:.4f}: a matrix entry is {misses[name]:.4f} away"
+            f"the doll's {name} is not the rig's stand pose, scaled by"
+            f" ({sx:.4f}, {sy:.4f}): a matrix entry is {misses[name]:.4f} away"
         )
-    return scale
+    return sx, sy
 
 
 def doll_record(
@@ -2093,11 +2114,14 @@ def doll_record(
     offsets: dict[str, dict],
     origin: tuple[float, float],
     female_set: bool = True,
+    female: bool = False,
+    look: dict[str, str] = DOLL_LOOK,
 ) -> dict:
     """-> the record of the doll that `layers` place as loose clips: where the
     rig's stand pose lands on the Stage, as the doll's position and scale, and
-    the union rect of the art of DOLL_LOOK's unequipped doll under the male
-    placements.
+    the union rect of the art of `look`'s unequipped doll under the
+    placements. The placements are the male set's, or the _f set's when
+    `female` is true.
 
     `rig` is the rig's stand pose as one [a, b, c, d, tx, ty] matrix in px for
     each part, and `offsets` the art bounds of doll_offsets.json. The scale is
@@ -2108,6 +2132,8 @@ def doll_record(
 
     The frame places the male parts, the ground shadow and, when `female_set`
     is true, the same parts again with an _f suffix."""
+    if female and not female_set:
+        raise ValueError("a female doll needs a frame that places the female set")
     held = [layer for layer in layers.values() if layer.character_id in DOLL_CHARACTERS]
     expected = (2 if female_set else 1) * len(parts) + 1
     if len(held) != expected:
@@ -2117,26 +2143,23 @@ def doll_record(
     for name in (*wanted, *(f"{name}_f" for name in wanted if female_set)):
         if name not in names:
             raise ValueError(f"the frame places no doll clip named {name}")
-    placed = {name: names[name] for name in wanted}
-    scale = _doll_scale(placed, rig)
+    suffix = "_f" if female else ""
+    placed = {name: names[name + suffix] for name in wanted}
+    sx, sy = _doll_scale(placed, rig)
     x0 = statistics.median(
-        layer.matrix[4] / render.TWIPS + scale * rig[name][4]
+        layer.matrix[4] / render.TWIPS - sx * rig[name][4]
         for name, layer in placed.items()
     )
     y0 = statistics.median(
-        layer.matrix[5] / render.TWIPS - scale * rig[name][5]
+        layer.matrix[5] / render.TWIPS - sy * rig[name][5]
         for name, layer in placed.items()
     )
     xs: list[float] = []
     ys: list[float] = []
     for name, code in parts:
-        art = (
-            []
-            if code == "WEAPON"
-            else [f"{DOLL_LOOK['gender']}_S{code}_{DOLL_LOOK['skin']}"]
-        )
-        if name == "head":
-            art.append(f"HAIR_{DOLL_LOOK['hair']}")
+        art = [] if code == "WEAPON" else [f"{look['gender']}_S{code}_{look['skin']}"]
+        if name == "head" and look["hair"]:
+            art.append(f"HAIR_{look['hair']}")
         a, b, c, d, tx, ty = placed[name].matrix
         for key in art:
             # A part the original leaves empty has no entry, as in the port.
@@ -2154,8 +2177,8 @@ def doll_record(
     return {
         "kind": "doll",
         "position": [round(origin[0] + x0, 4), round(origin[1] + y0, 4)],
-        "scale": [round(-scale, 4), round(scale, 4)],
-        "look": dict(DOLL_LOOK),
+        "scale": [round(sx, 4), round(sy, 4)],
+        "look": dict(look),
         "rect": [
             round(min(xs), 4),
             round(min(ys), 4),
@@ -2417,7 +2440,8 @@ def scene_record(
         elif piece.kind == "hit":
             pieces[path] = _hit(index, layer, piece_origin)
         elif piece.kind == "doll":
-            rig = json.loads(RIG_ANIMATIONS.read_text())
+            rig_file = FEMALE_RIG_ANIMATIONS if piece.female else RIG_ANIMATIONS
+            rig = json.loads(rig_file.read_text())
             stand = int(rig["labels"]["stand"]["start"]) - 1
             pieces[path] = doll_record(
                 layers,
@@ -2426,6 +2450,8 @@ def scene_record(
                 json.loads(DOLL_OFFSETS.read_text()),
                 piece_origin,
                 piece.female_set,
+                piece.female,
+                FEMALE_DOLL_LOOK if piece.female else DOLL_LOOK,
             )
         else:
             raise ValueError(f"{path}: unknown piece kind {piece.kind!r}")
