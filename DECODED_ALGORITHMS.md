@@ -973,6 +973,8 @@ Flash keeps a clip's `_alpha` as a whole number of 1/256 steps. A write stores t
 | Bolt | `frame_42/DoAction_4.as:161-164`, attached at 0, +10 under 100 | `Projectile._process` | 11, to 107.421875 |
 | Death fade | `DefineSprite_57_LifeBarSmoother/frame_38`, -5 | `StatusBar._advance_death` | 20 (see "A death") |
 
+`extract_fade_steps` reads the steps of the hover ring, the orb ring, the cutscene fade and the bolt out of these scripts, and the orb ring's cover alphas, 75 and 85. It also reads the 80 that `krinRemakeTree` gives the `bfilter` cover of a talent tree node with no point (`DefineSprite_3142/frame_25/PlaceObject3_3100_153` load, line 61), which Flash stores as 204/256. `AbilitiesWindow` draws that cover over each such node's icon (#465).
+
 ## for..in order over arrays (Flash 14 and Ruffle 0.7.1, #38)
 
 AS2 `for..in` walks an array's keys in the reverse of the order the keys were created. Index order does not matter. Writing to a key that already exists does not move it.

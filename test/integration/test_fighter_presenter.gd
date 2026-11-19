@@ -23,6 +23,9 @@ const SHIELD_CLIP_ART: String = "res://assets/ui/battle/shield_clip/%d.png"
 # DefineSprite 3416's frame scripts and frame_42/DoAction_3.as:117-130 and
 # 162-168.
 var _flash_layout: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/ui/battle/result_flash.json"))
+# The hover ring's steps, as extract_fade_steps writes them from
+# frame_217/PlaceObject3_3394_450 enterFrame.
+var _ring_fade: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(FighterPresenter.RING_FADE_PATH))
 var _hit_flash: Color = _flash_label_color("hit")
 var _heal_flash: Color = _flash_label_color("heal")
 var _focus_flash: Color = _flash_label_color("focus")
@@ -1058,7 +1061,7 @@ func test_leaving_mid_fade_turns_the_ring_around_from_where_it_is():
 	var climbed: int = _presenter._ring_alpha
 	_presenter.show_hover(false)
 	_presenter.step_ring_frame()
-	assert_eq(_presenter._ring_alpha, FlashAlpha.add(climbed, -FighterPresenter.RING_FADE_OUT_STEP), "one step down from the climb")
+	assert_eq(_presenter._ring_alpha, FlashAlpha.add(climbed, -float(_ring_fade["fade_out_step"])), "one step down from the climb")
 
 
 func test_hover_shows_the_level_in_the_relation_color():

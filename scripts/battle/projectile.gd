@@ -34,9 +34,11 @@ signal flight_ended
 
 const BOLT_TIME := 60.0       # krinBoltTime: step = distance / 60, fixed at spawn
 const BOLT_INCREASE := 1.15   # krinBoltIncrease: SpeedConst *= 1.15 every original frame
-# The bolt's onEnterFrame adds 10 to its _alpha while the alpha is under 100
-# (frame_42/DoAction_4.as:161-164).
-const BOLT_FADE_IN_STEP: float = 10.0
+# The bolt's onEnterFrame adds a step to its _alpha while the alpha is under 100
+# (frame_42/DoAction_4.as:161-164). extract_fade_steps writes the step to this
+# file.
+const BOLT_FADE_PATH: String = "res://assets/vfx/bolts/bolt_fade.json"
+static var _bolt_fade: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(BOLT_FADE_PATH))
 # Render deltas that add up to a whole SWF frame can fall short of it by a float
 # rounding error, so a frame counts as passed within this margin.
 const FRAME_EPSILON: float = 0.000001
@@ -154,7 +156,7 @@ func _process(delta: float) -> void:
 		_frame_accum -= 1.0
 		_ticks += 1
 		if FlashAlpha.to_percent(_alpha) < 100.0:
-			_alpha = FlashAlpha.add(_alpha, BOLT_FADE_IN_STEP)
+			_alpha = FlashAlpha.add(_alpha, float(_bolt_fade["fade_in_step"]))
 		position += _step * _speed_const
 		if not _trail_spawned:
 			_spawn_trail()

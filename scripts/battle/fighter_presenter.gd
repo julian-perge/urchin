@@ -22,12 +22,13 @@ const RING_COLORS: Dictionary[Relation, Color] = {
 	Relation.ALLY: Color(0.35, 0.9, 0.25),
 	Relation.ENEMY: Color(0.95, 0.25, 0.15),
 }
-# The ring's enterFrame adds 20 to its _alpha while the mouse is over the fighter
-# and the alpha is under 100, and takes 5 off while the mouse is off it and the
-# alpha is above 0 (frame_217/PlaceObject3_3394_450 and its 5 sibling files,
-# lines 2-17). The alpha is in Flash's 1/256 steps (FlashAlpha).
-const RING_FADE_IN_STEP: float = 20.0
-const RING_FADE_OUT_STEP: float = 5.0
+# The ring's enterFrame adds a step to its _alpha while the mouse is over the
+# fighter and the alpha is under 100, and takes a smaller step off while the
+# mouse is off it and the alpha is above 0 (frame_217/PlaceObject3_3394_450 and
+# its 5 sibling files, lines 2-17). extract_fade_steps writes the two steps to
+# this file. The alpha is in Flash's 1/256 steps (FlashAlpha).
+const RING_FADE_PATH: String = "res://assets/ui/battle/fighter_ring_fade.json"
+static var _ring_fade: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(RING_FADE_PATH))
 # Render deltas that add up to a whole SWF frame can fall short of it by a float
 # rounding error, so a frame counts as passed within this margin.
 const FRAME_EPSILON: float = 0.000001
@@ -397,9 +398,9 @@ func _process(delta: float) -> void:
 func step_ring_frame() -> void:
 	if _ring_hovered:
 		if FlashAlpha.to_percent(_ring_alpha) < 100.0:
-			_ring_alpha = FlashAlpha.add(_ring_alpha, RING_FADE_IN_STEP)
+			_ring_alpha = FlashAlpha.add(_ring_alpha, float(_ring_fade["fade_in_step"]))
 	elif _ring_alpha > 0:
-		_ring_alpha = FlashAlpha.add(_ring_alpha, -RING_FADE_OUT_STEP)
+		_ring_alpha = FlashAlpha.add(_ring_alpha, -float(_ring_fade["fade_out_step"]))
 	_overlay.ring.modulate.a = FlashAlpha.multiplier(_ring_alpha)
 
 
