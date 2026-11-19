@@ -1119,6 +1119,35 @@ EXEC_BEFORE unit=3 clipMoveBammer=true strikeSuccess=true FOCUSN=16 LIFEN=615 mo
 EXEC_AFTER unit=3 clipMoveBammer=true strikeSuccess=true FOCUSN=16 LIFEN=615 moveId=10 focusCost=20 target=2 targetLife=84 targetFocus=16 frame=2224
 ```
 
+## Left-behind globals in `AImoveAdder` (Flash 14 and Ruffle 0.7.1, #37)
+
+`AImoveAdder` (`frame_42/DoAction_9.as`) keeps its scratch values in `_root` globals and resets only some of them, so a call can read what an earlier call left. Nothing else writes them, and they live until the SWF reloads, so the first call of a battle reads what the last battle left. `BattleAI.choose_move` starts each call fresh. These are the values a call can read before it writes them:
+
+- `focusCheck`, `playerFocusCheck` and `numberLockKrin` are written only by the teammate scan (6-34), and only for a living teammate. A caster with no teammate keeps the last caller's values, and line 19 compares with the left `focusCheck` when slot `gMtYuIo` is empty. Lines 89-95 read them, line 403 sends a teammate-only move to `numberLockKrin`, and line 407 sends the move to `playerFocusCheck`.
+- `focusMove` is reset only at 84 and 296, which are on the non-absolute path. Line 405 also reads it on the absolute path, so an absolute move after a call that left it true goes to `playerFocusCheck`.
+- The `D_Array_*` lists are rebuilt only on the non-absolute path (134-139). On the absolute path the heal scan (197-247) reads the lists of the last non-absolute caller, and line 398 sends a self-and-teammate move to the unit that scan found and adds its heal guess to that slot's `healedThisTurn`.
+- `aliveEnemies` and `counterFilter1` are rebuilt only for a move that hits enemies (352-391). Line 413 passes the turn on an empty list, and lines 437-439 fall back to `aliveEnemies[counterFilter1]` when the target is still 0.
+
+What the runs showed. Each count is from `just aimove-report` on the logs below. A call is changed when its real move, target or heal-guess slot differs from a replay of the same call, with the same dice, in which every value above starts as `BattleAI` starts it. The fallback column counts the calls that reached lines 437-439.
+
+| Battle | Player | Calls | Absolute | Changed | Fallback |
+| --- | --- | --- | --- | --- | --- |
+| 109 | Ruffle | 184 | 36 | 0 | 3, each onto the caster |
+| 212 | Ruffle | 152 | 43 | 8 | 1, onto the caster |
+| 212 | Flash | 144 | 35 | 8 | 1, onto slot 6 |
+| 513 | Ruffle | 154 | 49 | 0 | 0 |
+| 307 | Ruffle | 60 | 15 | 0 | 0 |
+| 510 | Ruffle | 62 | 4 | 0 | 0 |
+| 703 | Ruffle | 146 | 2 | 0 | 0 |
+| 104 | Ruffle | 22 | 6 | 0 | 0 |
+
+- All 16 changed calls are the same decision. In phase 2 of battle 212 the ZPCI Medic (slot 4) picks Med Buff 1 (550, self and teammate) from its absolute pool. In 15 of them the lists left by a non-absolute call of another unit make the heal scan pick Captain Hunt (slot 2) or the Sniper (slot 6), so the buff and its heal guess go there. In the other one (Flash call 64) the lists were empty, so the target stayed 0 and line 439 took slot 6 from the `[6 4 2]` list that a caster on the player's side built. `BattleAI` keeps the target on the Medic. The Medic cast Med Buff 1 17 times, and 16 of those went to a teammate.
+- No absolute call started with `focusMove` true, so the line 405 retarget never ran. 28 calls started with it true, all in battle 703 and all on the non-absolute path, which resets it at line 84 before it reads it.
+- The teammate-scan values and `numberLockKrin` changed no decision. The fallback ran in 5 calls, and the left list gave the caster in 4 of them, which is what `BattleAI` does.
+- #475 ports the carry-over of every value above.
+
+Evidence: the Probe `dev/probes/aimove.as` wraps `_root.AImoveAdder` once frame 42 defines it. The real call runs unchanged. The Probe then replays the call from the globals it started with, once with nothing reset (`none`), once with every value above reset (`all`), and once for each group (`focus`, `fmove`, `darr`, `alive`, `lock`). Each replay sets `KRSC` back, so `KRRR` gives it the same dice, and a stub `krinAddMove` records the move. Then the Probe puts back every global the function writes. `none` matched the real call in all 924 calls. A throwaway Probe, kept as `references/traced_runs/aimove_drive_probe.as`, set Heroic and a four-member party on the main menu and started each battle through `LOADBATTLESCENE`. On Heroic the player's half-turn passes by itself, so only AI units chose moves, and most battles ended in a loss after one to five minutes. The lines are in `references/traced_runs/aimove_web_ruffle.txt` (runs 2 to 4) and `aimove_web_flash.txt` (run 5). The Steam build was not run.
+
 ## Approximation audit (2026-07-21) - port pieces NOT yet source-faithful
 
 Everything below still stands in for original behavior, except the rows marked DONE; the ActionScript truth is already located, so no re-decoding is needed:
