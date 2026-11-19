@@ -31,6 +31,10 @@ const FOCUS_SMOOTHER: String = "LifeBarSmoother2"
 # and the clip's frame number is the percent plus 1 (lifeBarUpdate,
 # frame_42/DoAction_8.as:339-340).
 const FULL_PERCENT: float = 100.0
+# Flash keeps _alpha in steps of 1/256 and drops what is left over on each write,
+# so frame 38's "_alpha -= 5" takes 13/256 off. Traced runs in the Flash debug
+# player and in Ruffle measured that (references/traced_runs/death_fade_web_flash.txt).
+const FLASH_ALPHA_STEPS: int = 256
 
 # Emitted on each frame from the clear on, with the alpha the bar fades to, and
 # once more when it hides.
@@ -329,12 +333,6 @@ func advance_frame() -> void:
 		_advance_death()
 	if _bands["life"].is_empty() and _bands["focus"].is_empty() and not _dead:
 		set_process(false)
-
-
-# Flash keeps _alpha in steps of 1/256 and drops what is left over on each write,
-# so frame 38's "_alpha -= 5" takes 13/256 off. Traced runs in the Flash debug
-# player and in Ruffle measured that (references/traced_runs/death_fade_web_flash.txt).
-const FLASH_ALPHA_STEPS := 256
 
 
 func _advance_death() -> void:

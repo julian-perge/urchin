@@ -719,9 +719,9 @@ func _overlay_alpha() -> float:
 
 # The bar's alpha on each frame of a death in a Traced run of the web build in
 # the Flash debug player, where frame 0 is the frame of the killing
-# lifeBarUpdate. Each line is the frame, the bar's _alpha and whether the bar's
-# inner2 clip is still visible. Ruffle logged the same values
-# (death_fade_web_ruffle.txt).
+# lifeBarUpdate. The test reads three fields of each frame line: the frame, the
+# bar's _alpha and whether the bar's inner2 clip is still visible. Ruffle logged
+# the same values (death_fade_web_ruffle.txt).
 const DEATH_FADE_LOG := "res://references/traced_runs/death_fade_web_flash.txt"
 
 
@@ -813,7 +813,7 @@ func test_a_unit_killed_from_under_half_a_percent_life_still_plays_its_death_voi
 	_presenter.show_result(_killing(_damage(4.0, 0.0)), null)
 	_step_frames(_clear_frame() + 10)
 	assert_eq(_cues, [VOICE_DIE], "the death voice")
-	assert_eq(_overlay_alpha(), 126.0 / 256.0, "and the bar halfway through its fade")
+	assert_eq(_overlay_alpha(), _traced_death_fade()[_clear_frame() + 10][1], "and the bar halfway through its fade, as the Traced run measured")
 
 
 # A death from a Buff tick has no Move result to move the bar. The original empties
