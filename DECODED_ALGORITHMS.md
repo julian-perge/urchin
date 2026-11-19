@@ -8,7 +8,7 @@ timeline.
 Implemented in `scripts/entities/character_visual.gd` (`play_melee`, `_animate_melee`). `FighterPresenter.melee` (`scripts/battle/fighter_presenter.gd`) gives the doll the target's
 rig position on every frame and the target's half-width.
 
-Constants (frame 42 globals):
+Constants (frame 42 globals). `just extract-krin-settings` (`dev/urchin_dev/swf/extract/krin_settings.py`) reads them out of `frame_42/DoAction_4.as:213-218` into `assets/battle/krin_settings.json`, and `CharacterVisual` reads that file:
 
 | Name | Value | Meaning |
 |---|---|---|
@@ -45,7 +45,7 @@ Attack label selection: each move's `addNewMove` param 12 (`Ability.animation_la
 
 Implemented in `scripts/battle/projectile.gd` (`Projectile`), fired from `scripts/battle/battle_scene.gd` (`_fire_projectile`).
 
-Constants (frame 42 globals):
+Constants (frame 42 globals). `just extract-krin-settings` reads them into `assets/battle/krin_settings.json`, and `Projectile` reads that file:
 
 | Name | Value | Meaning |
 |---|---|---|

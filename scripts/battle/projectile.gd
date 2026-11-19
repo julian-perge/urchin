@@ -1,11 +1,11 @@
 # projectile.gd
 # krinBoltMake port (frame_42/DoAction_4.as) for Missile-type moves: a bolt
-# that starts slow and ACCELERATES (SpeedConst compounds by BOLT_INCREASE
+# that starts slow and ACCELERATES (SpeedConst compounds by krinBoltIncrease
 # every original frame) rather than moving at constant speed. The per-frame
-# step is a fixed fraction of the distance measured at spawn (distance / 60,
-# never recomputed against the bolt's current position), and arrival is a
-# coordinate-crossing test (has the bolt's x passed the target's x) rather
-# than a distance threshold or a fixed duration - see DECODED_ALGORITHMS.md.
+# step is a fixed fraction of the distance measured at spawn (distance over
+# krinBoltTime, never recomputed against the bolt's current position), and
+# arrival is a coordinate-crossing test (has the bolt's x passed the target's
+# x) rather than a distance threshold or a fixed duration - see DECODED_ALGORITHMS.md.
 #
 # Bolt/Trail art come from per-clip generated scenes
 # (dev/urchin_dev/swf/extract/vfx_scenes.py's own output, under
@@ -32,8 +32,11 @@ signal reached_target
 # once it is far enough past the target on a miss.
 signal flight_ended
 
-const BOLT_TIME := 60.0       # krinBoltTime: step = distance / 60, fixed at spawn
-const BOLT_INCREASE := 1.15   # krinBoltIncrease: SpeedConst *= 1.15 every original frame
+# krinBoltMake reads krinBoltTime, krinBoltSpeed and krinBoltIncrease, which
+# frame_42/DoAction_4.as sets at lines 213-215. extract_krin_settings writes
+# them to this file.
+const KRIN_SETTINGS_PATH: String = "res://assets/battle/krin_settings.json"
+static var _krin: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(KRIN_SETTINGS_PATH))
 # The bolt's onEnterFrame adds a step to its _alpha while the alpha is under 100
 # (frame_42/DoAction_4.as:161-164). extract_fade_steps writes the step to this
 # file.
@@ -86,7 +89,7 @@ var _trail_base_scale: Vector2 = Vector2.ONE
 var _step: Vector2
 var _checker: float = 1.0
 var _target_x: float = 0.0
-var _speed_const: float = 1.0
+var _speed_const: float = 0.0
 # The bolt's _alpha in Flash's 1/256 steps (FlashAlpha). krinBoltMake attaches
 # it at 0.
 var _alpha: int = 0
@@ -106,7 +109,8 @@ func start(origin: Vector2, target: Vector2) -> void:
 	position = origin
 	_trail_start = origin
 	_target_x = target.x
-	_step = (target - origin) / BOLT_TIME
+	_step = (target - origin) / float(_krin["krinBoltTime"])
+	_speed_const = float(_krin["krinBoltSpeed"])
 	_checker = 1.0 if origin.x < target.x else -1.0
 	_load_bolt_sprite()
 	_load_trail_sprite()
@@ -168,7 +172,7 @@ func _process(delta: float) -> void:
 		if is_instance_valid(_trail_root) and _trail_root.visible:
 			_trail_growth += 0.083 * _step.length() * _speed_const
 			_trail_sprite.scale = Vector2(_trail_base_scale.x * _trail_growth, _trail_base_scale.y)
-		_speed_const *= BOLT_INCREASE
+		_speed_const *= float(_krin["krinBoltIncrease"])
 		if not _reached and (_target_x - position.x) * _checker <= 0.0:
 			_reached = true
 			reached_target.emit()

@@ -279,6 +279,11 @@ extract-hint-steps *args: (require "ffdec" "java")
 extract-fade-steps *args:
     uv run extract_fade_steps "$@"
 
+[doc('Run extract_krin_settings, which reads the ActionScript without ffdec')]
+[group('extract')]
+extract-krin-settings *args:
+    uv run extract_krin_settings "$@"
+
 [doc('Run extract_hub_fade, which reads the SWF without ffdec')]
 [group('extract')]
 extract-hub-fade *args:

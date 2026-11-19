@@ -90,9 +90,16 @@ const PIECE_SHADER: Shader = preload("res://scenes/doll_piece.gdshader")
 # The label that set_state() starts for each one-shot state, which a model's
 # clip can lack.
 const STATE_LABELS: Dictionary = {State.HIT: "hit", State.CAST: "cast", State.STUN: "stun"}
-const MELEE_STEP_SHARE: float = 10.0 / 60.0
-const MELEE_IMPACT_FRAMES: float = 15.0
-const MELEE_RUNBACK_FRAMES: float = 14.0
+# krinMelee reads krinBodyMove, krinBoltTime, krinMeleeAttackCD and
+# krinMeleeAttackEndCD, which frame_42/DoAction_4.as sets at lines 213-218.
+# extract_krin_settings writes them to this file.
+const KRIN_SETTINGS_PATH: String = "res://assets/battle/krin_settings.json"
+static var _krin: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(KRIN_SETTINGS_PATH))
+static var _melee_step_share: float = float(_krin["krinBodyMove"]) / float(_krin["krinBoltTime"])
+static var _melee_impact_frames: float = float(_krin["krinMeleeAttackCD"])
+# The end counter counts the frame of Impact, so the Runback starts one frame
+# before krinMeleeAttackEndCD frames have passed after Impact.
+static var _melee_runback_frames: float = float(_krin["krinMeleeAttackEndCD"]) - 1.0
 const MELEE_HOME_TOLERANCE: float = 0.000001
 
 const BODY_SHADER: Shader = preload("res://scenes/doll_body.gdshader")
@@ -925,10 +932,10 @@ func _animate_melee(delta: float) -> void:
 				# The run label plays on to its last frame, whose script runs stop()
 				# (DefineSprite_2631_MODEL7/frame_59), and holds it until the Runback.
 				_show_swing_frame(minf(_playhead + frames, _label_end_frame("run")))
-			if not _impact_fired and _strike_frames >= MELEE_IMPACT_FRAMES:
+			if not _impact_fired and _strike_frames >= _melee_impact_frames:
 				_impact_fired = true
 				attack_connected.emit()
-			if _strike_frames >= MELEE_IMPACT_FRAMES + MELEE_RUNBACK_FRAMES:
+			if _strike_frames >= _melee_impact_frames + _melee_runback_frames:
 				_melee_phase = MeleePhase.RUNBACK
 				_measure_from(_home_position)
 				_show_swing_frame(_label_start_frame("runback"), true)
@@ -952,7 +959,7 @@ func _go_rat() -> float:
 # steps back toward _origin.
 func _step_toward_target(coefficient: float, frames: float) -> void:
 	var target: Vector2 = _target_spot.call()
-	var share: float = coefficient * MELEE_STEP_SHARE * frames
+	var share: float = coefficient * _melee_step_share * frames
 	_rel_x += share * (target.x - _origin.x)
 	_rel_y += share * (target.y - _origin.y)
 	position = _origin + Vector2(_rel_x, _rel_y)
