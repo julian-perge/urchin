@@ -283,6 +283,8 @@ func _tree_node_icon_key(node: Dictionary) -> String:
 # (DefineSprite_3142/frame_25/PlaceObject3_3100_153 load, lines 51-57).
 func _tree_node_icon(node: Dictionary) -> Texture2D:
 	var move: Ability = MoveManagerAuto.get_move(int(node["move_id"]))
+	if move == null:
+		return null
 	return AbilityIcon.texture(_tree_node_icon_key(node), AbilityIcon.element_color(move))
 
 

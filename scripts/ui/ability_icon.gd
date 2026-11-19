@@ -15,6 +15,7 @@ const DISC_LIST_PATH: String = "res://assets/ui/abilities/disc.json"
 
 static var _tinted: Dictionary = {}
 static var _textures: Dictionary = {}
+static var _key_regex: RegEx = RegEx.create_from_string("[^A-Za-z0-9]+")
 
 
 # -> the icon for `move` with its disc in the move's element colour, or null
@@ -56,9 +57,7 @@ static func shows_disc(icon_key: String) -> bool:
 # (re.sub(r"[^A-Za-z0-9]+", "_", label).strip("_")), so a move name with
 # punctuation finds the file the extractor wrote.
 static func key(label: String) -> String:
-	var regex := RegEx.new()
-	regex.compile("[^A-Za-z0-9]+")
-	return regex.sub(label, "_", true).lstrip("_").rstrip("_")
+	return _key_regex.sub(label, "_", true).lstrip("_").rstrip("_")
 
 
 # setRGB keeps the disc's alpha and replaces its colour, and the icon's art
