@@ -751,7 +751,8 @@ Ported: `extract_cutscenes` bakes it into each clip. `cutscenes.camera_view` com
   800x575 stage with every root layer where the root places it. Five wrappers sit at (133.5, 137.5) px, and CS_CUT5's wrapper 4154 sits at (140.55, 141.55), 7 px right and 4 px down (#411).
 - Measured in a Traced run of the web build in the Flash debug player (#411), which logged the Cutscene camera and the animation on every frame up to CS_INTRO2 240, CS_CUT4 860 and CS_CUT5 1200
   (`references/traced_runs/cutscene_camera/camera_web_flash.txt`). On all 2297 frames, the Cutscene camera holds the placement of the animation's current frame when `camControl()` runs, so frame N shows the
-  Cutscene camera of frame N, with no one-frame lag. The wrapper positions above are the ones the run read.
+  Cutscene camera of frame N, with no one-frame lag. The wrapper positions above are the ones the run read. Each `CAM` line holds, in order: the label, the animation's `_currentframe`, the Cutscene camera's `_x`, `_y`,
+  `_width`, `_height`, `_xscale` and `_yscale`, the animation's `_x`, `_y`, `_xscale` and `_yscale`, its color transform as ra, rb, ga, gb, ba, bb, aa, ab, the wrapper's `_x` and `_y`, and the depths of the wrapper and the animation.
 - Flash reads the Cutscene camera's `_width` and `_height` in whole twips, and `cutscenes.camera_view()` uses the exact scale. So the extractor's zoom differs from the game's by at most 0.13%, and its translation
   by at most 3 twips (0.15 px). That is under a pixel, so the extractor keeps the exact scale.
 - The same run drew the stage with `BitmapData.draw(_root)` on CS_INTRO2 frame 240, CS_CUT4 frames 533, 590, 650, 761, 810 and 860, and CS_CUT5 frames 300 and 1200. Against frame N of the clips, outside the

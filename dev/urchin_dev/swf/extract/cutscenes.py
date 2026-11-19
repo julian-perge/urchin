@@ -70,10 +70,10 @@
 # playable MP3.
 #
 # The exported AVI stores frames as PNG-in-AVI, and one ffmpeg pass encodes
-# them as Theora and the MP3 as Vorbis, and writes the
-# Ogg file. ffmpeg needs libtheora and libvorbis for that, which Homebrew's
-# ffmpeg-full has. The settings match what the Theora and Vorbis
-# identification headers of the clips this replaced carry: Theora quality 38
+# them as Theora and the MP3 as Vorbis, and writes the Ogg file. ffmpeg
+# needs libtheora and libvorbis for that, which Homebrew's ffmpeg-full has.
+# The settings match what the Theora and Vorbis identification headers of
+# the clips this replaced carry: Theora quality 38
 # of 63, a keyframe at least every 64 frames, and Vorbis at a nominal
 # 80 kbps. Those clips went through ffmpeg2theora, which Homebrew deprecated,
 # by way of an x264 intermediate that only worked around ffmpeg2theora's
@@ -596,10 +596,10 @@ def verify_output(
     (not just a start/midpoint spot check) for high-frequency noise via
     _frame_noise(), which catches a render that comes out as static.
 
-    The noise sweep crops down to the cutscene box, whose top left corner is
-    box in whole pixels, before measuring, since the backdrop around it is
-    nearly flat and would otherwise dilute the measurement far enough to hide
-    real static.
+    The noise sweep crops each frame to the 533x300 cutscene box before it
+    measures. box is the top left corner of that box, rounded to whole pixels.
+    The backdrop around the box is nearly flat, so without the crop it would
+    dilute the measurement far enough to hide real static.
     """
     probe = run(
         [

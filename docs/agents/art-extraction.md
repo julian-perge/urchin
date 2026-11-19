@@ -83,7 +83,8 @@ extracting it.
      CS_INTRO2, because ffdec ignores the clip mask when it sizes a sprite.
      So the extractor exports the root timeline, which ffdec sizes to the
      stage, and keeps every root layer where the game places it. A Traced run
-     in the Flash debug player matched the clips frame for frame (#411).
+     in the Flash debug player matched nine captured frames of CS_INTRO2,
+     CS_CUT4 and CS_CUT5 against the clips (#411).
 - **Strip authoring-only characters through `dev/urchin_dev/swf/strip.py`.**
   Each extractor keeps its own `{characterId: reason}` and renders and
   measures from the one copy or hide list it gets back. Every battle hall
