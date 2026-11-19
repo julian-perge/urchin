@@ -39,6 +39,10 @@ const FOCUS_SMOOTHER: String = "LifeBarSmoother2"
 # and the clip's frame number is the percent plus 1 (lifeBarUpdate,
 # frame_42/DoAction_8.as:339-340).
 const FULL_PERCENT: float = 100.0
+# Flash keeps _alpha in steps of 1/256 and drops what is left over on each write,
+# so frame 38's "_alpha -= 5" takes 13/256 off. Traced runs in the Flash debug
+# player and in Ruffle measured that (references/traced_runs/death_fade_web_flash.txt).
+const FLASH_ALPHA_STEPS: int = 256
 
 # Emitted on each frame from the clear on, with the alpha the bar fades to, and
 # once more when it hides.
@@ -93,6 +97,8 @@ var fade: float = 1.0
 var _frames_due: float = 0.0
 var _dead: bool = false
 var _frames_since_death: int = 0
+# The bar's death alpha in Flash's 1/256 steps.
+var _death_alpha: int = FLASH_ALPHA_STEPS
 
 @onready var clip: CanvasGroup = $Clip
 @onready var inner: Control = $Clip/Inner
@@ -351,14 +357,19 @@ func _advance_death() -> void:
 	if frames_since_clear < 0:
 		return
 	clear_for_death()
-	var alpha_percent: int = 100 - int(death["fade_per_frame"]) * frames_since_clear
-	fade = maxi(alpha_percent, 0) / 100.0
-	(clip.material as ShaderMaterial).set_shader_parameter("fade", fade)
-	death_faded.emit(fade)
-	if alpha_percent < 0:
+	if frames_since_clear == 0:
+		_death_alpha = FLASH_ALPHA_STEPS
+	elif _death_alpha > 0:
+		var percent: float = _death_alpha * 100.0 / FLASH_ALPHA_STEPS - float(death["fade_per_frame"])
+		_death_alpha = int(percent * FLASH_ALPHA_STEPS / 100.0)
+	else:
 		hide()
 		_dead = false
 		death_hidden.emit()
+		return
+	fade = maxi(_death_alpha, 0) / float(FLASH_ALPHA_STEPS)
+	(clip.material as ShaderMaterial).set_shader_parameter("fade", fade)
+	death_faded.emit(fade)
 
 
 # Attaches the smoother of `kind` ("life" or "focus") for a change of `change`
