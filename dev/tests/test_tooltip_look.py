@@ -193,3 +193,15 @@ def test_first_gradient_reads_the_matrix_and_the_stops():
     matrix, stops = first_gradient(index, 7)
     assert matrix == (1.0, 1200 / 65536, -1200 / 65536, 1.0, 300, 300)
     assert stops == ((0, (255, 255, 255, 255)), (60, (170, 170, 170, 217)))
+
+
+SELL_LINE = 'x = MENU[4] + " €" + Math.ceil(_root["KRINITEM" + _root.Krin.mouseItem][5] * 0.15);'
+
+
+def test_sell_ratio_reads_the_share_both_scripts_use():
+    assert tooltip_look.sell_ratio(SELL_LINE, SELL_LINE) == 0.15
+
+
+def test_sell_ratio_raises_when_the_tooltip_and_the_press_differ():
+    with pytest.raises(ValueError, match="names 0.15"):
+        tooltip_look.sell_ratio(SELL_LINE, SELL_LINE.replace("0.15", "0.2"))

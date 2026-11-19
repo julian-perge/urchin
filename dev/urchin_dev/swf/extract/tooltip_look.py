@@ -10,8 +10,9 @@
 #
 # From the AS export: the add terms that krinChangeColor gives each rarity,
 # each layout's field width and its offsets from the mouse, how many frames
-# the ability icon shows the title alone, and the texts of the pass button's
-# tooltip. spec/107-tooltips.md describes each one.
+# the ability icon shows the title alone, the texts of the pass button's
+# tooltip, and the share of the price that the sell slot names and pays.
+# spec/107-tooltips.md describes each one.
 #
 # Run: uv run extract_tooltip_look
 from __future__ import annotations
@@ -55,6 +56,10 @@ PASS_SCRIPT = (
     / "PlaceObject2_2427_484"
     / "CLIPACTIONRECORD onClipEvent(load).as"
 )
+
+SELL_SCRIPTS = ACTION_SCRIPT / "DefineButton2_3015"
+SELL_ROLL_OVER = SELL_SCRIPTS / "BUTTONCONDACTION on(rollOver).as"
+SELL_PRESS = SELL_SCRIPTS / "BUTTONCONDACTION on(press).as"
 
 IDENTITY_MULTIPLY = (256, 256, 256, 256)
 
@@ -149,6 +154,22 @@ def pass_texts(script: str) -> dict[str, str]:
     }
 
 
+def sell_ratio(roll_over: str, press: str) -> float:
+    """-> the share of an item's price that the Store's sell slot names in its
+    tooltip and pays on a press. Raises unless each script reads it once and
+    both read the same share."""
+    pattern = (
+        r'Math\.ceil\(_root\["KRINITEM" \+ _root\.Krin\.mouseItem\]\[5\] \* ([\d.]+)\)'
+    )
+    shown = float(one(pattern, roll_over, "sell rollOver"))
+    paid = float(one(pattern, press, "sell press"))
+    if shown != paid:
+        raise ValueError(
+            f"the sell tooltip names {shown} of the price, the press pays {paid}"
+        )
+    return shown
+
+
 def _only_child(index: SwfIndex, sprite: int) -> int:
     """-> the one character a one-layer sprite shows, with no transform."""
     placed = [
@@ -169,7 +190,8 @@ def gloss_stops(index: SwfIndex) -> list[dict]:
         raise ValueError(f"shape {shape} is not filled with a linear gradient")
     (scale_x, skew0, skew1, scale_y, _tx, ty), stops = found
     _xmin, ymin, _xmax, ymax = shape_bounds(index, shape)
-    if scale_x or scale_y or skew0 <= 0 or round(skew0 * 32768) != ymax - ymin:
+    turned = not scale_x and not scale_y and skew0 > 0 and skew1 == -skew0
+    if not turned or round(skew0 * 32768) != ymax - ymin:
         raise ValueError(f"shape {shape}'s gradient does not run top to bottom")
     if ty * 2 != ymin + ymax:
         raise ValueError(f"shape {shape}'s gradient is not centred on the shape")
@@ -191,7 +213,11 @@ def backer_transforms(index: SwfIndex) -> tuple[dict, dict]:
         if name in ("fontBacker", "fontBacker2") and transform is not None:
             raise ValueError(f"{name} is placed with transform {transform}")
         if name == "fontBacker3":
-            label = next(k for k, v in frames.items() if v == placement.frame)
+            label = next((k for k, v in frames.items() if v == placement.frame), None)
+            if label is None:
+                raise ValueError(
+                    f"fontBacker3 is placed on unlabelled frame {placement.frame}"
+                )
             transform = transform or IDENTITY_MULTIPLY + (0, 0, 0, 0)
             if transform[:4] != IDENTITY_MULTIPLY or transform[7]:
                 raise ValueError(f"fontBacker3 at {label} has transform {transform}")
@@ -235,6 +261,10 @@ def tooltip_look(index: SwfIndex) -> dict:
         "next_rank": next_rank,
         "pass_button": pass_texts(PASS_SCRIPT.read_text(encoding="utf-8")),
         "rarity_add": rarity_add(CHANGE_COLOR_SCRIPT.read_text(encoding="utf-8")),
+        "sell_ratio": sell_ratio(
+            SELL_ROLL_OVER.read_text(encoding="utf-8"),
+            SELL_PRESS.read_text(encoding="utf-8"),
+        ),
         "subheader_add": subheader,
     }
 

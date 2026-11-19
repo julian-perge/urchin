@@ -19,6 +19,11 @@ func after_each() -> void:
 	GameTooltip.hide_tooltip()
 
 
+func _sell_ratio() -> float:
+	var look: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://dev/converted_json/tooltip_look.json"))
+	return float(look["sell_ratio"])
+
+
 func _menu(index: int) -> String:
 	return _strings["MENU"][index]
 
@@ -48,8 +53,8 @@ func test_the_sell_slot_with_no_item_shows_the_empty_text():
 	assert_eq(_tooltip_texts(), [_menu(3), _menu(5)])
 
 
-# MENU[3] over MENU[4] + " €" + Math.ceil(KRINITEM[5] * 0.15), for the item the
-# sell slot would sell: the selected one, when nothing is dragged.
+# MENU[3] over MENU[4] + " €" + Math.ceil(KRINITEM[5] * the sell ratio), for the
+# item the sell slot would sell: the selected one, when nothing is dragged.
 func test_the_sell_slot_names_the_selected_items_price():
 	var column: RightColumn = add_child_autofree(RightColumnScene.instantiate())
 	column.show_sell_button(true)
@@ -57,7 +62,7 @@ func test_the_sell_slot_names_the_selected_items_price():
 	column.populate([item])
 	column._on_slot_clicked(column.slots[0])
 	column.sell_button.mouse_entered.emit()
-	assert_eq(_tooltip_texts(), [_menu(3), "%s €%d" % [_menu(4), ceili(item.price * 0.15)]])
+	assert_eq(_tooltip_texts(), [_menu(3), "%s €%d" % [_menu(4), ceili(item.price * _sell_ratio())]])
 
 
 # DefineButton2_2985 on(rollOver) reads KRINITEM0 for an empty cell. Its type

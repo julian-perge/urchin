@@ -38,14 +38,16 @@ func _tooltip_texts() -> Array:
 
 
 # DefineButton2_3015 on(rollOver): MENU[3] over MENU[4] + " €" + the price,
-# which is Math.ceil(KRINITEM[5] * 0.15).
+# which is Math.ceil(KRINITEM[5] * the sell ratio in tooltip_look.json).
 func test_can_drop_data_over_sell_button_previews_price_and_accepts():
 	var panel: RightColumn = add_child_autofree(RightColumnScene.instantiate())
 	panel.show_sell_button(true)
 	var item: GameItem = _make_item(100.0)
 	var at_position: Vector2 = panel.sell_button.get_rect().get_center()
 	assert_true(panel._can_drop_data(at_position, {"item": item}))
-	assert_eq(_tooltip_texts(), [_menu(3), _menu(4) + " €15"], "15%% of 100, rounded up")
+	var look: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://dev/converted_json/tooltip_look.json"))
+	var price: int = ceili(100.0 * float(look["sell_ratio"]))
+	assert_eq(_tooltip_texts(), [_menu(3), "%s €%d" % [_menu(4), price]], "the sell ratio of 100, rounded up")
 
 
 func test_can_drop_data_outside_sell_button_rejects_and_shows_no_tooltip():
