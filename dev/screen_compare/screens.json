@@ -228,5 +228,13 @@
     "bar": 9
    }
   }
+ },
+ "settings": {
+  "scene": "res://test/fixtures/screen_rects/settings_screen.tscn",
+  "modes": {
+   "chrome": {
+    "bar": 1
+   }
+  }
  }
 }

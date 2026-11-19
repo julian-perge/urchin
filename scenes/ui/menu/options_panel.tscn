@@ -1,0 +1,194 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/menu/options_panel.gd" id="1_script"]
+
+[node name="OptionsPanel" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 800.0
+offset_bottom = 575.0
+mouse_filter = 2
+script = ExtResource("1_script")
+
+; The numbers below are root frame 93's, which test/unit/test_screen_rects.gd
+; checks against the rect record.
+[node name="Heading" type="Label" parent="."]
+layout_mode = 0
+offset_left = 197.05
+offset_top = 72.2
+offset_right = 603.0
+offset_bottom = 92.3
+mouse_filter = 2
+theme_type_variation = &"MenuCaption"
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+
+[node name="DifficultyLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 90.65
+offset_top = 116.95
+offset_right = 398.8
+offset_bottom = 142.65
+mouse_filter = 2
+theme_type_variation = &"MenuCaption"
+theme_override_colors/font_color = Color(1, 0.6, 0, 1)
+theme_override_font_sizes/font_size = 23
+horizontal_alignment = 2
+
+[node name="DifficultyValue" type="Label" parent="."]
+layout_mode = 0
+offset_left = 410.0
+offset_top = 116.95
+offset_right = 711.35
+offset_bottom = 142.65
+mouse_filter = 2
+theme_type_variation = &"MenuCaption"
+theme_override_colors/font_color = Color(1, 1, 0.2, 1)
+theme_override_font_sizes/font_size = 23
+
+[node name="TutorialLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 98.85
+offset_top = 152.6
+offset_right = 399.0
+offset_bottom = 179.45
+mouse_filter = 2
+theme_type_variation = &"MenuCaption"
+theme_override_colors/font_color = Color(1, 0.6, 0, 1)
+theme_override_font_sizes/font_size = 23
+horizontal_alignment = 2
+
+[node name="TutorialValue" type="Label" parent="."]
+layout_mode = 0
+offset_left = 410.0
+offset_top = 152.6
+offset_right = 711.7
+offset_bottom = 178.3
+mouse_filter = 2
+theme_type_variation = &"MenuCaption"
+theme_override_colors/font_color = Color(1, 1, 0.2, 1)
+theme_override_font_sizes/font_size = 23
+
+[node name="SoundLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 238.9
+offset_top = 189.8
+offset_right = 399.0
+offset_bottom = 216.65
+mouse_filter = 2
+theme_type_variation = &"MenuCaption"
+theme_override_colors/font_color = Color(0.6156863, 0.9333333, 0.4, 1)
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 2
+
+[node name="SoundValue" type="Label" parent="."]
+layout_mode = 0
+offset_left = 410.0
+offset_top = 189.8
+offset_right = 525.0
+offset_bottom = 216.65
+mouse_filter = 2
+theme_type_variation = &"MenuCaption"
+theme_override_font_sizes/font_size = 16
+
+[node name="AutosaveLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 238.9
+offset_top = 254.9
+offset_right = 399.0
+offset_bottom = 281.75
+mouse_filter = 2
+theme_type_variation = &"MenuCaption"
+theme_override_colors/font_color = Color(0.6156863, 0.9333333, 0.4, 1)
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 2
+
+[node name="AutosaveValue" type="Label" parent="."]
+layout_mode = 0
+offset_left = 410.0
+offset_top = 254.9
+offset_right = 527.0
+offset_bottom = 281.75
+mouse_filter = 2
+theme_type_variation = &"MenuCaption"
+theme_override_font_sizes/font_size = 16
+
+[node name="HelpText" type="Label" parent="."]
+layout_mode = 0
+offset_left = 121.45
+offset_top = 325.05
+offset_right = 676.6
+offset_bottom = 430.8
+mouse_filter = 2
+theme_type_variation = &"MenuCaption"
+theme_override_constants/line_spacing = -5
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 3
+
+[node name="StartCaption" type="Label" parent="."]
+layout_mode = 0
+offset_left = 161.55
+offset_top = 456.6
+offset_right = 638.5
+offset_bottom = 483.45
+mouse_filter = 2
+theme_type_variation = &"MenuCaption"
+theme_override_colors/font_color = Color(0.3764706, 0.9372549, 0.1294118, 1)
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+
+[node name="DifficultyButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 162.6518
+offset_top = 114.95
+offset_right = 602.2482
+offset_bottom = 144.95
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="TutorialButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 162.6518
+offset_top = 150.6
+offset_right = 602.2482
+offset_bottom = 180.6
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="SoundButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 275.8608
+offset_top = 187.8
+offset_right = 505.0393
+offset_bottom = 217.8
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="AutosaveButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 273.6108
+offset_top = 253.9
+offset_right = 502.7893
+offset_bottom = 283.9
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="StartButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 203.6861
+offset_top = 456.8001
+offset_right = 594.9138
+offset_bottom = 483.5999
+focus_mode = 0
+mouse_default_cursor_shape = 2
+flat = true
+
+[connection signal="pressed" from="DifficultyButton" to="." method="_on_difficulty_pressed"]
+[connection signal="pressed" from="TutorialButton" to="." method="_on_tutorial_pressed"]
+[connection signal="pressed" from="SoundButton" to="." method="_on_sound_pressed"]
+[connection signal="pressed" from="AutosaveButton" to="." method="_on_autosave_pressed"]
+[connection signal="pressed" from="StartButton" to="." method="_on_start_pressed"]
