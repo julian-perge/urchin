@@ -1348,6 +1348,22 @@ def test_the_female_set_is_refused_against_the_male_rig():
         )
 
 
+def test_a_male_doll_with_two_scales_is_refused():
+    layers = mirrored_doll(
+        1.5, -200.0, -10.0, female=(DOLL_RIG, (-1.4, 1.25), (-195.0, -12.0))
+    )
+    male_as_female = {
+        depth: replace(layer, name=layer.name[:-2])
+        if (layer.name or "").endswith("_f")
+        else replace(layer, name=(layer.name + "_f") if layer.name else None)
+        for depth, layer in layers.items()
+    }
+    with pytest.raises(ValueError, match="not one mirrored scale"):
+        screen_rects.doll_record(
+            male_as_female, DOLL_PARTS, DOLL_RIG, DOLL_OFFSETS, ORIGIN
+        )
+
+
 def test_a_doll_that_is_not_mirrored_is_refused():
     layers = mirrored_doll(-1.5, -200.0, -10.0)
     with pytest.raises(ValueError, match="not mirrored"):

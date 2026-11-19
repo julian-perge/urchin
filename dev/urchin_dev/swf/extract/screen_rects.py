@@ -2146,6 +2146,10 @@ def doll_record(
     suffix = "_f" if female else ""
     placed = {name: names[name + suffix] for name in wanted}
     sx, sy = _doll_scale(placed, rig)
+    if not female and abs(sx + sy) > DOLL_MATRIX_TOLERANCE:
+        raise ValueError(
+            f"the male doll is scaled by ({sx:.4f}, {sy:.4f}), not one mirrored scale"
+        )
     x0 = statistics.median(
         layer.matrix[4] / render.TWIPS - sx * rig[name][4]
         for name, layer in placed.items()

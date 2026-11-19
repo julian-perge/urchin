@@ -196,6 +196,8 @@ func _ready():
 	_body_material.shader = BODY_SHADER
 	_body.material = _body_material
 	add_child(_body)
+	if not CLIP_MODELS.has(rest_model):
+		push_error("%s: rest_model %s is not one of %s" % [get_path(), rest_model, CLIP_MODELS])
 	_model = rest_model if CLIP_MODELS.has(rest_model) else DEFAULT_MODEL
 	# A glow measures its blur in stage px, so a window that changes size changes
 	# what the buff glows ask of the shader.
