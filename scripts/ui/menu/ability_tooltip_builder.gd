@@ -1,8 +1,9 @@
 # ability_tooltip_builder.gd
 # Pure data builder for the abilities screen's rich tooltip (talent tree
 # node / action-bar wheel socket / ability pool row hover). No Node/scene
-# dependency on purpose - abilities_window.gd consumes build_sections()'s
-# output directly; GUT tests target this directly.
+# dependency on purpose - abilities_window.gd consumes the output of
+# build_sections() and pool_row_sections() directly; GUT tests target this
+# directly.
 class_name AbilityTooltipBuilder
 extends RefCounted
 
@@ -90,6 +91,19 @@ static func build_sections(
 	if not next_rank_text.is_empty():
 		sections.append({"bg_color": TooltipTheme.BG_NEXT_RANK, "lines": [{"text": next_rank_text, "color": TooltipTheme.TEXT_NEXT_RANK}]})
 	return {"sections": sections, "icon_color": element_color}
+
+
+# A pool row shows the move's description followed by SKILLTHRS1, the move's
+# action bar limit KRINABILITY[8] and SKILLTHRS2
+# (DefineSprite_3142/frame_25/DoAction.as:49). A ring socket shows the
+# description alone (line 74), so only the pool row calls this. The copy keeps
+# the shared Ability that MoveManagerAuto holds unchanged.
+static func pool_row_sections(move: Ability) -> Dictionary:
+	var pool_move: Ability = move.duplicate()
+	pool_move.tooltip_description += (
+		Strings.text("SKILLTHRS1") + str(move.hotbar_slot_limit) + Strings.text("SKILLTHRS2")
+	)
+	return build_sections({}, null, pool_move)
 
 
 # DefineSprite_3142/frame_25/DoAction.as:85-88 gives an empty socket SKILLNONE

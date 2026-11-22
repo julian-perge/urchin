@@ -425,9 +425,8 @@ func _on_pool_row_hovered(row_index: int) -> void:
 	var move: Ability = MoveManagerAuto.get_move(_pool_move_ids[pool_index])
 	if move == null:
 		return
-	var save: PlayerSave = GameData.current_save
 	var row: Button = _pool_rows[row_index]
-	var result: Dictionary = AbilityTooltipBuilder.build_sections({}, save, move)
+	var result: Dictionary = AbilityTooltipBuilder.pool_row_sections(move)
 	GameTooltip.show_sections(result["sections"], row, AbilityIcon.for_move(move), result["icon_color"], TooltipTheme.TEXT_WIDTH_ABILITY, "", true)
 
 

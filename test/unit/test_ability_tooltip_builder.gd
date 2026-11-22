@@ -142,7 +142,7 @@ func test_every_passive_node_has_text_for_all_of_its_ranks():
 
 func test_pool_row_hover_has_no_rank_prefix_or_next_rank_section():
 	var move: Ability = MoveManagerAuto.get_move(1)
-	var result: Dictionary = AbilityTooltipBuilder.build_sections({}, null, move)
+	var result: Dictionary = AbilityTooltipBuilder.pool_row_sections(move)
 	assert_has(_section_texts(result), move.display_name, "the bare name, with no (rank/tier)")
 	for section in result["sections"]:
 		assert_ne(
@@ -150,3 +150,39 @@ func test_pool_row_hover_has_no_rank_prefix_or_next_rank_section():
 			TooltipTheme.BG_NEXT_RANK,
 			"no rank progress to show outside a tree-node hover"
 		)
+
+
+func _body_text(result: Dictionary) -> String:
+	for section in result["sections"]:
+		if section["bg_color"] == TooltipTheme.BG_BODY:
+			return section["lines"][0]["text"]
+	return ""
+
+
+# A pool row's toolTip is the move's description, then SKILLTHRS1, the move's
+# action bar limit KRINABILITY[8] and SKILLTHRS2
+# (DefineSprite_3142/frame_25/DoAction.as:49). The text is typed here to check
+# that the tooltip shows the original's English words.
+func test_a_pool_row_with_a_limit_of_one_ends_its_description_with_the_limit():
+	var move: Ability = MoveManagerAuto.get_move(1)
+	assert_eq(move.hotbar_slot_limit, 1, "sanity: Leading Strike has a limit of 1")
+	assert_eq(
+		_body_text(AbilityTooltipBuilder.pool_row_sections(move)),
+		move.tooltip_description + " You are allowed to equip this move 1 time(s) on your action bar."
+	)
+
+
+func test_a_pool_row_with_a_higher_limit_shows_that_limit():
+	var move: Ability = MoveManagerAuto.get_move(100)
+	assert_eq(move.hotbar_slot_limit, 2, "sanity: Vicious Strike has a limit of 2")
+	assert_eq(
+		_body_text(AbilityTooltipBuilder.pool_row_sections(move)),
+		move.tooltip_description + " You are allowed to equip this move 2 time(s) on your action bar."
+	)
+
+
+# A ring socket's toolTip is the description alone
+# (DefineSprite_3142/frame_25/DoAction.as:74).
+func test_a_socket_hover_shows_the_description_without_the_limit():
+	var move: Ability = MoveManagerAuto.get_move(1)
+	assert_eq(_body_text(AbilityTooltipBuilder.build_sections({}, null, move)), move.tooltip_description)
