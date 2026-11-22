@@ -17,7 +17,7 @@ The user types each stage. Run one stage per session. When it ends, print the ne
 | `agent-skills claim <n>` | Assign the task to `@me` and make its branch from the default branch. |
 | `agent-skills decide <n> --from <stage> [--pr <pr>]` | Post the decisions on stdin as one decision comment on the issue, and print its URL. |
 | `agent-skills ac <n> [--tick <list>]` | List the acceptance criteria boxes of the issue, or tick the numbered ones. No other line of the body changes. |
-| `agent-skills next-cmd <stage> <n>` | The paste line that ends a stage: `review <pr>`, `build <parent>`, `plan <issue>` or `spec <issue>`. |
+| `agent-skills next-cmd <stage> <n>` | The paste line that ends a stage: `review <pr>`, `build <parent>` (the next task, or the whole plan with `--whole`), `plan <issue>` or `spec <issue>`. |
 | `agent-skills evidence <pr> [--add <image>...]` | Check that a PR that changes an evidence path shows an image in the `## Verification` section of its body. `--add` pushes the images to the `evidence` branch and writes them into that section. |
 | `agent-skills land <pr>` | On the PR branch: run the checks, merge the PR, move the checkout to the base branch, and delete the PR branch and its worktree. It exits 1 and merges nothing when its gate fails. |
 | `agent-skills run -- <cmd>` | Run a test, lint or build command once. It saves the full log and prints the exit code, the result lines and the last lines. Read the log when you need more, and do not run the command again. |
@@ -31,7 +31,7 @@ The user types each stage. Run one stage per session. When it ends, print the ne
 | Design | `/agent-skills:interview-me <issue>` | A settled design, as a comment on the issue. |
 | Spec | `/agent-skills:spec <issue>` | `spec/<issue>-<slug>.md`. |
 | Plan | `/agent-skills:plan <issue>` | One sub-issue per task. |
-| Build | `/agent-skills:build <task issue>` | One branch, one pull request. |
+| Build | `/agent-skills:build <issue>` | One branch and one pull request, for one task or for every task of a source issue. |
 | Bug | `/agent-skills:test <issue>` | A failing test, then the fix, on one branch with one pull request. |
 | Review | `/agent-skills:review issue #<task>, PR #<pr>, spec <spec file>, standard <standard file>` | Findings against the standards and the spec. |
 
@@ -71,13 +71,13 @@ Task body: `Parent`, `Spec` (the spec file's path), `What to build`, `Acceptance
 
 ## Build
 
-`/agent-skills:build` reads one argument, `auto`. Any other text selects single-task mode, so the task issue number you type is context. The plan is the open sub-issues of the source issue.
+`/agent-skills:build <n>` reads the issue. When `<n>` has open sub-issues, it is a source issue, and the build runs them on one branch: the whole plan. When it has none, `<n>` is one task. `/agent-skills:build one <n>` runs only the next task of a source issue. `auto` is the old word for the whole plan and still selects it. The plan is the open sub-issues of the source issue.
 
-Pick the task with `agent-skills frontier <source issue>`. Claim it with `agent-skills claim <n>`, which also makes the branch.
+For one task: pick it with `agent-skills frontier <source issue>`, and claim it with `agent-skills claim <n>`, which also makes the branch.
 
 One task, one branch, one pull request. Branch: `<type>/<issue>-<slug>`, or `retro/<name>` for retro work. Commit subject: `<type>: <summary> (#<issue>)`, with a conventional-commit type (`feat`, `fix`, `chore`, `docs`). PR title: a plain sentence. Put `Closes #<issue>` in the PR body. When `agent-skills frontier` shows that the task is the last open sub-issue of its source issue, also put `Closes #<source issue>` in the body, because GitHub does not close a parent when its last sub-issue closes. Bug tasks start with a failing test.
 
-`/agent-skills:build auto` runs every task of one spec on one branch, `<type>/<source issue>-<slug>`, with one commit per task. Its pull request closes every task issue and the source issue. `agent-skills claim <source issue> --no-assign` makes that branch, and `agent-skills claim <task> --no-branch` claims each task.
+The whole plan runs every task of one spec on one branch, `<type>/<source issue>-<slug>`, with one commit per task. It builds only the sub-issues that have the `ready-for-agent` label, and leaves out any other one and the tasks it blocks. Its pull request closes every task issue it built, and the source issue only when no sub-issue stays open. `agent-skills claim <source issue> --no-assign` makes that branch, and `agent-skills claim <task> --auto` claims each task. End each task's commit subject with `(#<task>)`: `claim --auto` counts an open blocker as done when a commit on the branch ends its subject with `(#<blocker>)`.
 
 A spec's glossary line is a task, not a fact. A spec that says "`GLOSSARY.md` has **X**" may describe the glossary it means to leave behind, so check the file before you rely on it. If the term is missing, the first task that uses it adds the entry. Spec #49 said its four terms existed, none did, two implementers noticed and neither added them, and the code review found the gap.
 
@@ -90,7 +90,7 @@ The review command is the session's last line, and `agent-skills next-cmd review
 ```
 
 - **Spec file**: the `Spec` line of the task body. When the task body has none, use the `spec/` path in the parent issue's body. When neither names one, leave out the `spec` part.
-- In `auto` mode, `<task>` is the source issue.
+- For a whole plan, `<task>` is the source issue.
 
 A Bug session ends with the same command.
 
