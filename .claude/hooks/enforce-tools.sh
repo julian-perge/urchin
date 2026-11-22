@@ -61,7 +61,7 @@ block_piped_suite() {
 
 require_ffdec_lock() {
   ((FFDEC_LOCKED)) && return
-  block "'$1' runs ffdec, and two ffdec processes must never run at once (docs/agents/art-extraction.md). Run it as 'lockf -k $FFDEC_LOCK $1 ...'. To hold the lock over a trace-swf, trace-run and log copy, wrap all three in one lockf with bash -c."
+  block "'$1' runs ffdec, and two ffdec processes must never run at once (docs/agents/art-extraction.md). Run it as 'lockf -k $FFDEC_LOCK $1 ...' on macOS or 'flock $FFDEC_LOCK $1 ...' on Linux. To hold the lock over a trace-swf, trace-run and log copy, wrap all three in one lockf or flock with bash -c."
 }
 
 check_just() {

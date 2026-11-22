@@ -205,7 +205,8 @@ extracting it.
   none was built. Two ffdec faults are known and left alone: `-select all:N`
   throws a NullPointerException at `CommandLineArgumentParser.java:1650`, and
   the launcher sets `-Xmx1024m` where one export runs in 192m. Run each ffdec
-  command under `lockf -k /tmp/urchin-ffdec.lock`, so that a second agent
+  command under `lockf -k /tmp/urchin-ffdec.lock` (`flock /tmp/urchin-ffdec.lock`
+  on Linux), so that a second agent
   waits for the first. Otherwise the Bash hook in the Hooks section of
   `AGENTS.md` blocks it.
 - **Measure a backdrop colour from the SWF, never from the port's art.** The

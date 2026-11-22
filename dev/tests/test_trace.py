@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import re
+from pathlib import Path
 
 import pytest
 from urchin_dev import ACTION_SCRIPT, CONVERTED_JSON
@@ -23,12 +24,14 @@ from urchin_dev.swf.trace import (
     Goto,
     diff,
     diff_main,
+    flash_files,
     parse,
     play_flash,
     play_ruffle,
     preflight,
     read_probes,
     report,
+    ruffle_env,
     run_main,
     with_probes,
 )
@@ -216,13 +219,91 @@ def fake_player(path, body):
     return path
 
 
-def test_preflight_stops_on_an_os_other_than_macos(tmp_path):
+def test_preflight_stops_on_an_os_other_than_macos_or_linux(tmp_path):
     binary = fake_player(tmp_path / "player", "exit 0")
 
     with pytest.raises(SystemExit) as stop:
-        preflight("ruffle", platform="linux", binary=binary, mm_cfg=tmp_path / "mm.cfg")
+        preflight("ruffle", platform="win32", binary=binary, mm_cfg=tmp_path / "mm.cfg")
 
-    assert stop.value.code == "error: trace-run needs macOS. This OS is linux."
+    assert stop.value.code == (
+        "error: trace-run needs macOS, or Linux on WSL2. This OS is win32."
+    )
+
+
+def test_preflight_passes_for_ruffle_on_linux(tmp_path):
+    binary = fake_player(tmp_path / "ruffle", "exit 0")
+
+    preflight("ruffle", platform="linux", binary=binary, mm_cfg=tmp_path / "none")
+
+
+def test_preflight_stops_for_a_flash_player_on_linux_that_is_not_a_windows_program(
+    tmp_path,
+):
+    binary = fake_player(tmp_path / "flashplayerdebugger", "exit 0")
+    mm_cfg = tmp_path / "mm.cfg"
+    mm_cfg.write_text("TraceOutputFileEnable=1\n")
+
+    with pytest.raises(SystemExit) as stop:
+        preflight("flash", platform="linux", binary=binary, mm_cfg=mm_cfg)
+
+    assert stop.value.code == (
+        f"error: {binary} is not a .exe. On Linux, trace-run plays Flash only in"
+        " the Windows debug player through WSL2. Set FLASH_DEBUG_PLAYER."
+    )
+
+
+def test_preflight_passes_for_the_windows_flash_player_on_linux(tmp_path):
+    binary = fake_player(
+        tmp_path / "flashplayer11_9r900_152_win_sa_debug.exe", "exit 0"
+    )
+    mm_cfg = tmp_path / "mm.cfg"
+    mm_cfg.write_text("ErrorReportingEnable=1\r\nTraceOutputFileEnable=1\r\n")
+
+    preflight("flash", platform="linux", binary=binary, mm_cfg=mm_cfg)
+
+
+def test_flash_files_of_a_windows_player_are_in_the_windows_profile(tmp_path):
+    folders = {
+        "USERPROFILE": tmp_path / "Users" / "Sam",
+        "APPDATA": tmp_path / "Users" / "Sam" / "AppData" / "Roaming",
+    }
+
+    mm_cfg, flashlog = flash_files(
+        Path("/mnt/c/Flash/flashplayer11_9r900_152_win_sa_debug.EXE"),
+        windows_folder=folders.__getitem__,
+    )
+
+    assert mm_cfg == folders["USERPROFILE"] / "mm.cfg"
+    assert flashlog == (
+        folders["APPDATA"] / "Macromedia" / "Flash Player" / "Logs" / "flashlog.txt"
+    )
+
+
+def test_flash_files_of_a_macos_player_are_in_the_home_folder():
+    def no_windows(variable):
+        raise AssertionError(f"asked Windows for {variable}")
+
+    mm_cfg, flashlog = flash_files(
+        Path("/Apps/Flash 14.app/Contents/MacOS/Flash Player Debugger"),
+        windows_folder=no_windows,
+    )
+
+    assert mm_cfg == Path.home() / "mm.cfg"
+    assert flashlog == (
+        Path.home() / "Library/Preferences/Macromedia/Flash Player/Logs/flashlog.txt"
+    )
+
+
+def test_ruffle_env_on_linux_leaves_out_wayland_display():
+    env = {"DISPLAY": ":0", "WAYLAND_DISPLAY": "wayland-0", "HOME": "/home/sam"}
+
+    assert ruffle_env("linux", env) == {"DISPLAY": ":0", "HOME": "/home/sam"}
+
+
+def test_ruffle_env_on_macos_is_the_environment_unchanged():
+    env = {"HOME": "/Users/sam", "WAYLAND_DISPLAY": "wayland-0"}
+
+    assert ruffle_env("darwin", env) == env
 
 
 def test_preflight_stops_and_names_a_player_binary_that_does_not_exist(tmp_path):
@@ -331,6 +412,21 @@ def test_play_ruffle_opens_a_copy_in_the_container_and_saves_its_stdout_and_stde
     assert dest.read_text() == (
         f"INFO avm_trace: on stdout\nopened {container / 'SONNY2.swf'} with swf bytes\n"
     )
+
+
+def test_play_ruffle_with_no_container_opens_the_traced_copy_in_the_given_env(tmp_path):
+    traced = tmp_path / "traced" / "sonny-2-2900.swf"
+    traced.parent.mkdir()
+    traced.write_bytes(b"swf bytes")
+    binary = fake_player(
+        tmp_path / "ruffle", 'echo "opened $1 on display $DISPLAY with $(cat "$1")"'
+    )
+    dest = tmp_path / "web_ruffle.txt"
+
+    play_ruffle(binary, traced, None, dest, env={"DISPLAY": ":0"})
+
+    assert dest.read_text() == f"opened {traced} on display :0 with swf bytes\n"
+    assert sorted(p.name for p in tmp_path.rglob("*.swf")) == ["sonny-2-2900.swf"]
 
 
 def test_report_prints_the_number_of_goto_lines(tmp_path, capsys):
