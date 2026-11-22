@@ -4,6 +4,7 @@
 extends GutTest
 
 const AlphaSteps = preload("res://test/alpha_steps.gd")
+const TooltipFrames = preload("res://test/tooltip_frames.gd")
 const RadialMenuScene = preload("res://scenes/battle/radial_menu.tscn")
 const ENEMY_SLOT: int = 2
 const CENTRE: Vector2 = Vector2(300, 300)
@@ -531,6 +532,16 @@ func test_an_orbs_tooltip_carries_the_moves_description():
 	assert_eq(_tooltip_lines(), ["Leading Strike", "This move costs nothing", "Attack the enemy.", "Cooldown: 3 turns"])
 	_menu.orbs[0].mouse_exited.emit()
 	assert_false(GameTooltip.is_showing(), "leaving the orb hides it")
+
+
+# The tooltip shows the title alone first, then every section. Each of these
+# two stages draws at its final size from its first frame (#491).
+func test_an_orbs_tooltip_draws_at_its_final_size_from_its_first_frame():
+	_moves[LEADING_STRIKE_ID].tooltip_description = "Attack the enemy with a blow that is long enough to wrap."
+	_open()
+	var frames: Array = await TooltipFrames.record(get_tree(), func(): _menu.orbs[0].mouse_entered.emit())
+	assert_eq(TooltipFrames.stages(frames), [false, true], "the title shows alone, then every section shows")
+	assert_eq(TooltipFrames.resized_frames(frames), [], "no frame draws a size that the tooltip does not keep")
 
 
 func test_an_orb_shows_the_moves_icon_art_not_initials():

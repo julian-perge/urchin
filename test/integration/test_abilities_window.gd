@@ -6,6 +6,7 @@ extends GutTest
 const SCENE: String = "res://scenes/ui/menu/abilities_window.tscn"
 const ROWS: Array[String] = ["Vitality", "Strength", "Instinct", "Speed"]
 const DiscReader = preload("res://test/disc_reader.gd")
+const TooltipFrames = preload("res://test/tooltip_frames.gd")
 const ADRENALINE_ID: int = 120
 const LEADING_STRIKE_ID: int = 1
 
@@ -180,6 +181,27 @@ func test_a_pool_row_tooltip_ends_the_description_with_the_action_bar_limit() ->
 	]
 	assert_true(GameTooltip.is_showing(), "the tooltip shows")
 	assert_eq(_tooltip_texts(), expected)
+
+
+# The tooltip shows the title alone first, then every section. Each of these
+# two stages draws at its final size from its first frame (#491).
+func test_a_tree_node_tooltip_draws_at_its_final_size_from_its_first_frame() -> void:
+	var window: Control = _window()
+	var node_button: Button = window.get_node("TreeNodes/Node0")
+	var frames: Array = await TooltipFrames.record(get_tree(), func(): node_button.mouse_entered.emit())
+	assert_eq(TooltipFrames.stages(frames), [false, true], "the title shows alone, then every section shows")
+	assert_eq(TooltipFrames.resized_frames(frames), [], "no frame draws a size that the tooltip does not keep")
+
+
+func test_a_pool_row_tooltip_draws_at_its_final_size_from_its_first_frame() -> void:
+	var save: PlayerSave = GameData.current_save
+	save.move_matrix2.clear()
+	save.move_matrix2.append(LEADING_STRIKE_ID)
+	var window: Control = _window()
+	var row: Button = window.get_node("Pool/Mask/Rows/PoolRow0")
+	var frames: Array = await TooltipFrames.record(get_tree(), func(): row.mouse_entered.emit())
+	assert_eq(TooltipFrames.stages(frames), [false, true], "the title shows alone, then every section shows")
+	assert_eq(TooltipFrames.resized_frames(frames), [], "no frame draws a size that the tooltip does not keep")
 
 
 # -> the ability that the first pool row shows in a new game. The pool walks

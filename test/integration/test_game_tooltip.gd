@@ -6,6 +6,7 @@
 # from the project root to regenerate the class cache, then retry.
 extends GutTest
 
+const TooltipFrames = preload("res://test/tooltip_frames.gd")
 
 var _default_mouse_source: Callable
 
@@ -296,6 +297,16 @@ func test_an_ability_icons_tooltip_shows_the_title_alone_first():
 	assert_false(GameTooltip._sections.get_child(1).visible, "still waiting just before the delay ends")
 	GameTooltip._process(delay * 0.2)
 	assert_true(GameTooltip._sections.get_child(1).visible, "the body shows after the delay")
+
+
+# An item's tooltip shows every section at once, and draws at its final size
+# from its first frame (#491).
+func test_an_item_tooltip_draws_at_its_final_size_from_its_first_frame():
+	var slot: ItemSlot = add_child_autofree(preload("res://scenes/ui/item_slot.tscn").instantiate())
+	slot.set_item(_rare_item())
+	var frames: Array = await TooltipFrames.record(get_tree(), func(): slot.mouse_entered.emit())
+	assert_eq(TooltipFrames.stages(frames), [true], "every section shows at once")
+	assert_eq(TooltipFrames.resized_frames(frames), [], "no frame draws a size that the tooltip does not keep")
 
 
 func test_a_tooltip_without_the_delay_shows_every_section_at_once():
