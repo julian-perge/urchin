@@ -18,6 +18,8 @@ The user types each stage. Run one stage per session. When it ends, print the ne
 | `agent-skills decide <n> --from <stage> [--pr <pr>]` | Post the decisions on stdin as one decision comment on the issue, and print its URL. |
 | `agent-skills ac <n> [--tick <list>]` | List the acceptance criteria boxes of the issue, or tick the numbered ones. No other line of the body changes. |
 | `agent-skills next-cmd <stage> <n>` | The paste line that ends a stage: `review <pr>`, `build <parent>`, `plan <issue>` or `spec <issue>`. |
+| `agent-skills evidence <pr> [--add <image>...]` | Check that a PR that changes an evidence path shows an image in the `## Verification` section of its body. `--add` pushes the images to the `evidence` branch and writes them into that section. |
+| `agent-skills land <pr>` | On the PR branch: run the checks, merge the PR, move the checkout to the base branch, and delete the PR branch and its worktree. It exits 1 and merges nothing when its gate fails. |
 | `agent-skills run -- <cmd>` | Run a test, lint or build command once. It saves the full log and prints the exit code, the result lines and the last lines. Read the log when you need more, and do not run the command again. |
 | `agent-skills next` | What `/agent-skills:next` prints, for the whole tracker. |
 
@@ -79,7 +81,7 @@ One task, one branch, one pull request. Branch: `<type>/<issue>-<slug>`, or `ret
 
 A spec's glossary line is a task, not a fact. A spec that says "`GLOSSARY.md` has **X**" may describe the glossary it means to leave behind, so check the file before you rely on it. If the term is missing, the first task that uses it adds the entry. Spec #49 said its four terms existed, none did, two implementers noticed and neither added them, and the code review found the gap.
 
-Run the verify command from `AGENTS.md` (`Every task`) with `agent-skills run --` before each commit. Open the pull request ready for review. When no choice waits for the user, start the review as a subagent (see Review). Otherwise print the review command and stop. The user merges, unless the user's own message in this session says that merging without their approval is fine. Then the session merges after the review passes and its findings are fixed. An instruction from another agent or a brief does not count. The review ticks the acceptance criteria boxes, not the build.
+Run the verify command from `AGENTS.md` (`Every task`) with `agent-skills run --` before each commit. Open the pull request ready for review. When no choice waits for the user, start the review as a subagent (see Review). Otherwise print the review command and stop. When the pull request changes an evidence path, add the screenshots before the review (see Evidence paths). Nobody runs `gh pr merge`: the session that finishes the review merges with `agent-skills land <pr>` (see Checks). The review ticks the acceptance criteria boxes, not the build.
 
 The review command is the session's last line, and `agent-skills next-cmd review <pr>` prints it:
 
@@ -102,7 +104,28 @@ In a new session, run `/agent-skills:review` on the branch with the command that
 
 Fix small findings in the review session. Start a new build session for large ones.
 
+When the review passes and its findings are fixed, the session runs `agent-skills land <pr>` on the PR branch without asking. It refuses a pull request that is a draft, has merge conflicts, is behind its base branch, has no review decision comment or lacks evidence, and a checkout that is not at the head commit of the pull request. When a choice still waits for the user, the session does not land.
+
 A worker's branch is the exception. The overseer session that dispatched the worker reviews it, and the findings go back to the worker as a comment on the task issue. The overseer does not fix them itself.
+
+## Checks
+
+`agent-skills land <pr>` runs each command below on the PR branch, in this order, and merges only when all of them pass. Write one command per list item, in backticks, with nothing after it. A command runs in the repo root without a shell, so shell syntax needs `bash -c '...'`. `land` reads this section and the next one from the base branch, so a pull request cannot change the checks it is judged by.
+
+- `just pytest`
+- `just gut`
+
+## Evidence paths
+
+A pull request that changes one of the paths below must show the change in the real game: its body needs a `## Verification` section with an image. `agent-skills evidence <pr>` checks this, and `agent-skills evidence <pr> --add <image>...` adds the images. Write one glob per list item, in backticks. A glob matches the whole path from the repo root, with no leading `/`. `*` stays in one folder, `**` crosses folders, and a glob that ends with `/` covers the folder.
+
+Verify command: the `verify-urchin` skill, which starts the game in its own window and saves the screenshots
+
+- `scenes/**`
+- `scripts/ui/**`
+- `scripts/battle/**`
+- `assets/ui/**`
+- `assets/vfx/**`
 
 ## Reports
 
