@@ -26,7 +26,7 @@ The user is Julian and any agent that runs verify-urchin on the Mac, on WSL or i
 
 - `git submodule add https://github.com/julian-perge/godot-mcp.git vendor/godot-mcp`.
 - `.gitmodules` sets `branch = main` for it.
-- The pin is the head commit of the godot-mcp#12 pull request branch. When that PR merges, a follow-up commit moves the pin to the merge commit on `main`.
+- The pin is the merge commit of godot-mcp PR #17 on `main`. Merge #17 with a merge commit, not a squash. godot-mcp deletes a branch when its PR merges, so after a squash the branch head is on no branch. #488 merges only after the pin is on `main`.
 - `vendor/.gdignore` (empty) keeps Godot's import and the class cache out of `vendor/`. godot-mcp holds `.gd` files and a nested Godot project under `tests/fixtures/`, and urchin's import must not read them.
 
 ### `urchin_verify.py`
@@ -37,6 +37,7 @@ The user is Julian and any agent that runs verify-urchin on the Mac, on WSL or i
 - `launch` passes the harness itself with `-s`, and sets `GODOT_MCP_HARNESS_TITLE` to `AGENT VERIFY - <run>`.
 - `doctor` can no longer find its Godot process by the wrapper path, because every run now loads the same harness file. Its `godot_runs_our_harness` check reads `/proc/<pid>/environ` of each process in the run's group, and passes when a non-`just` process holds `GODOT_MCP_HARNESS_TOKEN=<this run's token>`. On macOS the check still passes by default, as it does now.
 - `tree --all` sends `include_hidden`. `node --props` reads the values from the result's `props` dictionary. The CLI flags do not change.
+- `node` sends the `props` key only when `--props` is given. The harness adds a `props` dictionary to the result whenever the request has the key, so an empty list puts `"props": {}` in each answer.
 
 ### `setup_worktree.py`
 
@@ -82,16 +83,15 @@ The user is Julian and any agent that runs verify-urchin on the Mac, on WSL or i
 
 - `rg -n "DEV/git_repos|HARNESS_CANDIDATES|verify_harness" .claude AGENTS.md` finds nothing.
 - In a fresh worktree made with `git worktree add`, `just setup-worktree` fills `vendor/godot-mcp` at the pinned commit.
-- In that worktree, the proof run passes: `launch` prints `"ready": true`, `doctor` prints `"healthy": true`, the window title is `AGENT VERIFY - proof`, `tree` lists the battle's controls, an attack lowers the target's HP, and `stop` keeps the evidence with `real_user_dir_unchanged` true.
+- In that worktree, the proof run passes: `launch` prints `"ready": true`, `doctor` prints `"healthy": true`, the window title is `AGENT VERIFY - proof` (`node proof /root --props title` returns `"props": {"title": "\"AGENT VERIFY - proof\""}`, because `var_to_str` keeps the quotes of a string), `tree` lists the battle's controls, an attack lowers the target's HP, and `stop` keeps the evidence with `real_user_dir_unchanged` true.
 - `just gut` and `just pytest` pass in the main checkout with the submodule filled in.
-- `.gitmodules` names `vendor/godot-mcp` with `branch = main`, and the pin is the godot-mcp#12 branch head.
+- `.gitmodules` names `vendor/godot-mcp` with `branch = main`, and the pin is the godot-mcp PR #17 merge commit on `main`.
 
 ## Out of scope (deferred)
 
 - Running the godot-mcp MCP server from the submodule. It stays on `~/code/godot-mcp/build/index.js` until a later decision, for example after the godot-ai research.
 - Deleting `~/code/godot-mcp`. It stays, because the MCP server runs from it.
 - A proof run on the Mac. The `HOME` isolation and the submodule path there stay unverified until a Mac run covers them.
-- Moving the pin to the godot-mcp#12 merge commit. That is a follow-up commit after the merge.
 
 ## Open questions
 

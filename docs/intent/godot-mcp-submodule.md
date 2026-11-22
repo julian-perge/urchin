@@ -28,6 +28,9 @@ Date: 2026-11-22. Confirmed with Julian in an interview-me session.
   commits.
 - **Added in the spec stage:** the godot-mcp server also gets `inspect_node`
   and `inspect_tree` tools for the two new harness commands.
+- **Changed after the godot-mcp PR #17 review:** the pin is the merge commit
+  of #17 on `main`, not the PR branch head. #17 merges first, with a merge
+  commit.
 - **Out of scope:**
   - Running the MCP server from the submodule.
   - The godot-ai research.
