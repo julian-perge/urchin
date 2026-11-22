@@ -9,8 +9,8 @@ The user surface is the Godot game window: an 800x575 Stage, driven with the
 mouse and a few keys. This skill drives it through one helper,
 `urchin_verify.py`. The helper starts Godot through `just godot` with the
 godot-mcp harness as the main loop, so it can click, type and take
-screenshots. It adds two read-only commands, `node` and `tree`, that find
-a control by its node name or path. Use those names, not typed coordinates.
+screenshots. The harness also has two read-only commands, `node` and `tree`,
+that find a control by its node name or path. Use those names, not typed coordinates.
 
 Run every command from the repo root (or a worktree root). Each command is
 shown with its full path once. Later lines write `$V` for it:
@@ -21,9 +21,11 @@ V=.claude/skills/verify-urchin/urchin_verify.py
 
 The helper is a stdlib Python script that `uv run --script` runs. It
 needs `just`, a working `GODOT_BIN` (see AGENTS.md), a display, and the
-godot-mcp fork built at `~/code/godot-mcp/build/scripts/mcp_harness.gd`
-(`~/DEV/git_repos/godot-mcp/...` on the Mac). Set
-`URCHIN_VERIFY_HARNESS` to use another path.
+godot-mcp submodule at `vendor/godot-mcp`. It loads
+`vendor/godot-mcp/src/scripts/mcp_harness.gd` from the checkout it runs in.
+`just setup-worktree` fills the submodule in a new worktree. Set
+`URCHIN_VERIFY_HARNESS` to a harness file elsewhere, such as an unpushed
+change in `~/code/godot-mcp`, to use that one instead.
 
 ## Isolation
 
@@ -34,7 +36,8 @@ godot-mcp fork built at `~/code/godot-mcp/build/scripts/mcp_harness.gd`
   `stop` prove this: they compare the size and mtime of each file in the
   real `user://` with the values at launch.
 - Each run has its own harness port and token, so two runs can go at the
-  same time. Each run opens a window on the user's desktop titled
+  same time. Every run loads the same harness file, so `doctor` finds the
+  run's Godot process by the token in that process's environment. Each run opens a window on the user's desktop titled
   `AGENT VERIFY - <run>`. Audio is off unless you pass `--sound`.
 - Do not use the godot-mcp `run_project` or `run_scene` tools for
   verification. They use the real `user://` and stop the previous game.
@@ -73,8 +76,9 @@ Run it first whenever anything looks wrong. It changes nothing.
 .claude/skills/verify-urchin/urchin_verify.py doctor <run>
 ```
 
-It exits 1 unless all of these hold: the process group is up, a Godot
-process in it runs this run's harness script, the harness answers with this
+It exits 1 unless all of these hold: the process group is up, a process in
+it other than `just` has this run's `GODOT_MCP_HARNESS_TOKEN` in
+`/proc/<pid>/environ` (macOS skips this check), the harness answers with this
 run's token, git HEAD is the commit from launch time, the run's own
 `user://` exists, the real `user://` is unchanged, and the log has no Parse
 Error. It also prints the last 10 `SCRIPT ERROR` lines, which do not fail
@@ -88,7 +92,7 @@ The window size does not change them.
 | Command | What it does |
 | --- | --- |
 | `$V tree <run> [<node>] [--depth N] [--all] [--paths]` | Lists the visible nodes under a node, with rect and text. `--all` adds hidden nodes. `--paths` prints the path that `click` and `node` take. |
-| `$V node <run> <node>... [--props a,b]` | Reads nodes: class, visible, rect, center, text, and any property you name. Read-only. |
+| `$V node <run> <node>... [--props a,b]` | Reads nodes: class, visible, rect, center, text, and the properties you name, under `props`. Read-only. |
 | `$V click <run> <node> [--label L] [--wait MS]` | Clicks the center of a visible Control, waits (500 ms by default), and saves a screenshot. It refuses a hidden node. |
 | `$V send <run> '<json>' [--label L] [--warp]` | Sends harness commands in one sequence: `click {x,y}`, `mouse_move`, `mouse_drag {from_x,from_y,to_x,to_y}`, `key {key}` (`"Space"`, `"Ctrl+A"`), `text {text}`, `wait {duration_ms}`, `screenshot`. `@file` reads the JSON from a file. |
 | `$V shot <run> <label>` | Saves a screenshot. |
@@ -140,7 +144,7 @@ Proof standards:
 
 `stop` sends SIGTERM to the process group that `launch` started, then
 SIGKILL after 10 s. It copies the log and the run's `user://` into
-`evidence/`, then deletes `data/` and the wrapper script. It keeps
+`evidence/`, then deletes `data/`. It keeps
 `evidence/` and `state.json`. It prints `real_user_dir_unchanged` and
 `left_running`, which must be `true` and `[]`. Run `stop` after every
 failed attempt too. Never kill Godot by name: `pkill -f` in a Bash call can

@@ -5,6 +5,10 @@
 # This runs Godot's import in a Godot slot, so parallel agents stay under the
 # machine's Godot limit. The SWFs need no setup here, because every checkout
 # reads them from URCHIN_SWF_DIR (see urchin_dev/__init__.py).
+#
+# A new worktree also gets an empty vendor/godot-mcp, and verify-urchin loads
+# its harness from there, so this fills the submodule first. Tests and
+# extractors do not need it, so a failed fill only warns.
 from __future__ import annotations
 
 import subprocess
@@ -18,12 +22,25 @@ def godot_import_command(godot: str) -> list[str]:
     return [godot, "--headless", "--import", "--path", str(REPO_ROOT)]
 
 
+def submodule_command() -> list[str]:
+    return ["git", "submodule", "update", "--init", "vendor/godot-mcp"]
+
+
 def main() -> None:
     missing = [swf.name for swf in (WEB_SWF, STEAM_SWF) if not swf.exists()]
     if missing:
         print(
             f"no {', '.join(missing)} in {SWF_DIR}, so extractors that read it"
             " will fail. Set URCHIN_SWF_DIR to the folder that holds the SWFs."
+        )
+    submodule = subprocess.run(
+        submodule_command(), cwd=REPO_ROOT, capture_output=True, text=True
+    )
+    if submodule.returncode != 0:
+        print(submodule.stdout + submodule.stderr, end="")
+        print(
+            "vendor/godot-mcp is still empty, so verify-urchin cannot launch the"
+            " game. Tests and extractors do not need it."
         )
     command = godot_import_command(godot_bin())
     print("running Godot's import")

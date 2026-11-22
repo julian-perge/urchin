@@ -42,98 +42,9 @@ from pathlib import Path
 
 TMP_ROOT = Path.home() / "tmp"
 RUN_SUFFIX = "-verify-urchin"
-HARNESS_CANDIDATES = [
-    Path.home() / "code/godot-mcp/build/scripts/mcp_harness.gd",
-    Path.home() / "DEV/git_repos/godot-mcp/build/scripts/mcp_harness.gd",
-]
+HARNESS = Path("vendor/godot-mcp/src/scripts/mcp_harness.gd")
 ERROR_MARKERS = ("SCRIPT ERROR", "Parse Error", "SHADER ERROR")
 READY_MARKER = "[godot-mcp harness] listening on"
-
-# The wrapper extends the godot-mcp harness, so the game runs with every
-# harness command, and adds two read-only commands: node reads one node, and
-# tree lists the nodes under one. Both resolve a name or a path the same way.
-WRAPPER = """extends "{harness}"
-
-
-func _initialize() -> void:
-\tsuper()
-\tDisplayServer.window_set_title("AGENT VERIFY - {run}")
-
-
-func _run_command(client: Client, command: Dictionary, warp: bool) -> Dictionary:
-\tmatch str(command.get("type", "")):
-\t\t"node":
-\t\t\treturn _node(command)
-\t\t"tree":
-\t\t\treturn _tree(command)
-\treturn await super(client, command, warp)
-
-
-func _find(path: String) -> Node:
-\tif path.is_empty():
-\t\treturn current_scene
-\tif path.begins_with("/"):
-\t\treturn root.get_node_or_null(path)
-\tvar node: Node = current_scene.get_node_or_null(path) if current_scene != null else null
-\tif node == null:
-\t\tnode = root.get_node_or_null(path)
-\tif node == null and not path.contains("/"):
-\t\tvar matches: Array[Node] = root.find_children(path, "", true, false)
-\t\tfor match_node in matches:
-\t\t\tif not match_node is CanvasItem or match_node.is_visible_in_tree():
-\t\t\t\treturn match_node
-\t\tif not matches.is_empty():
-\t\t\tnode = matches[0]
-\treturn node
-
-
-func _describe(node: Node, props: Array) -> Dictionary:
-\tvar info: Dictionary = {{"path": str(node.get_path()), "class": node.get_class()}}
-\tif node is CanvasItem:
-\t\tinfo["visible"] = node.is_visible_in_tree()
-\tif node is Control:
-\t\tvar rect: Rect2 = node.get_global_rect()
-\t\tinfo["rect"] = [rect.position.x, rect.position.y, rect.size.x, rect.size.y]
-\t\tinfo["center"] = [rect.get_center().x, rect.get_center().y]
-\telif node is Node2D:
-\t\tinfo["position"] = [node.global_position.x, node.global_position.y]
-\tif "text" in node:
-\t\tinfo["text"] = str(node.get("text"))
-\tfor prop in props:
-\t\tinfo[str(prop)] = var_to_str(node.get(str(prop)))
-\treturn info
-
-
-func _node(command: Dictionary) -> Dictionary:
-\tvar node: Node = _find(str(command.get("path", "")))
-\tif node == null:
-\t\treturn {{"error": "no node %s in the scene %s" % [command.get("path", ""), current_scene.scene_file_path if current_scene else "none"]}}
-\tvar props = command.get("props", [])
-\treturn _describe(node, props if typeof(props) == TYPE_ARRAY else [])
-
-
-func _tree(command: Dictionary) -> Dictionary:
-\tvar start: Node = _find(str(command.get("path", "")))
-\tif start == null:
-\t\treturn {{"error": "no node %s" % command.get("path", "")}}
-\tvar depth: int = int(command.get("depth", 3))
-\tvar include_hidden: bool = bool(command.get("all", false))
-\tvar lines: Array = []
-\t_walk(start, 0, depth, include_hidden, lines)
-\treturn {{"scene": current_scene.scene_file_path if current_scene else "", "root": str(current_scene.get_path()) if current_scene else "/root", "nodes": lines}}
-
-
-func _walk(node: Node, level: int, depth: int, include_hidden: bool, lines: Array) -> void:
-\tif node is CanvasItem and not node.is_visible_in_tree() and not include_hidden:
-\t\treturn
-\tvar entry: Dictionary = _describe(node, [])
-\tentry["depth"] = level
-\tlines.append(entry)
-\tif level >= depth:
-\t\treturn
-\tfor child in node.get_children():
-\t\t_walk(child, level + 1, depth, include_hidden, lines)
-"""
 
 
 def now() -> datetime.datetime:
@@ -163,15 +74,17 @@ def git_head(root: Path) -> str:
     ).stdout.strip()
 
 
-def find_harness() -> Path:
+def find_harness(root: Path) -> Path:
     override = os.environ.get("URCHIN_VERIFY_HARNESS")
-    for path in [Path(override)] if override else HARNESS_CANDIDATES:
-        if path.exists():
-            return path
-    fail(
-        "no godot-mcp harness found. Build julian-perge/godot-mcp, or set URCHIN_VERIFY_HARNESS to its build/scripts/mcp_harness.gd"
-    )
-    raise AssertionError
+    if override:
+        if not Path(override).exists():
+            fail(f"URCHIN_VERIFY_HARNESS is {override}, and that file does not exist")
+        return Path(override)
+    if not (root / HARNESS).exists():
+        fail(
+            "vendor/godot-mcp is empty. Run just setup-worktree, or git submodule update --init vendor/godot-mcp"
+        )
+    return root / HARNESS
 
 
 def real_user_dir() -> Path:
@@ -335,7 +248,7 @@ def print_answer(answer: dict) -> None:
 
 def cmd_launch(args: argparse.Namespace) -> None:
     root = repo_root()
-    harness = find_harness()
+    harness = find_harness(root)
     folder = run_dir(args.run, create=True)
     if (folder / "state.json").exists():
         state = json.loads((folder / "state.json").read_text())
@@ -363,16 +276,15 @@ def cmd_launch(args: argparse.Namespace) -> None:
         (evidence / f"preset-{name}-{slot}.log").write_text(out.stdout + out.stderr)
         if out.returncode != 0:
             fail(f"just apply-preset {name} {slot} failed:\n{out.stdout}{out.stderr}")
-    wrapper = folder / "verify_harness.gd"
-    wrapper.write_text(WRAPPER.format(harness=harness, run=args.run))
     port = free_port()
     token = secrets.token_hex(16)
     env["GODOT_MCP_HARNESS_PORT"] = str(port)
     env["GODOT_MCP_HARNESS_TOKEN"] = token
+    env["GODOT_MCP_HARNESS_TITLE"] = f"AGENT VERIFY - {args.run}"
     command = ["just", "godot", "--path", str(root)]
     if not args.sound:
         command += ["--audio-driver", "Dummy"]
-    command += ["-s", str(wrapper)]
+    command += ["-s", str(harness)]
     if args.scene:
         command.append(args.scene)
     game_args = args.game_args
@@ -465,22 +377,18 @@ def cmd_doctor(args: argparse.Namespace) -> None:
     checks = {}
     alive = state.get("status") == "running" and pid_alive(state["pid"])
     checks["process_up"] = alive
+    # Every run loads the same harness file, so the run's own token in a
+    # process's environment is what marks that process as this run's Godot.
     godot_pids = []
+    token = f"GODOT_MCP_HARNESS_TOKEN={state['token']}".encode()
     if alive:
         for pid in group_pids(state["pgid"]):
             try:
-                cmdline = (
-                    Path(f"/proc/{pid}/cmdline")
-                    .read_bytes()
-                    .decode(errors="replace")
-                    .split("\0")
-                )
+                program = Path(f"/proc/{pid}/cmdline").read_bytes().split(b"\0")[0]
+                environ = Path(f"/proc/{pid}/environ").read_bytes().split(b"\0")
             except OSError:
                 continue
-            if (
-                str(Path(state["data"]).parent / "verify_harness.gd") in cmdline
-                and "just" not in Path(cmdline[0]).name
-            ):
+            if token in environ and "just" not in Path(program.decode()).name:
                 godot_pids.append(pid)
     checks["godot_runs_our_harness"] = bool(godot_pids) or sys.platform == "darwin"
     try:
@@ -550,7 +458,10 @@ def cmd_node(args: argparse.Namespace) -> None:
     print_answer(
         request(
             state,
-            [{"type": "node", "path": path, "props": props} for path in args.node],
+            [
+                {"type": "node", "path": path, **({"props": props} if props else {})}
+                for path in args.node
+            ],
         )
     )
 
@@ -564,7 +475,7 @@ def cmd_tree(args: argparse.Namespace) -> None:
                 "type": "tree",
                 "path": args.node or "",
                 "depth": args.depth,
-                "all": args.all,
+                "include_hidden": args.all,
             }
         ],
     )
@@ -621,7 +532,6 @@ def cmd_stop(args: argparse.Namespace) -> None:
         shutil.copy2(folder / "godot.log", evidence / "godot.log")
     unchanged = fingerprint(Path(state["real_user_dir"])) == state["real_fingerprint"]
     shutil.rmtree(folder / "data", ignore_errors=True)
-    (folder / "verify_harness.gd").unlink(missing_ok=True)
     state["status"] = "stopped"
     state["stopped"] = now().isoformat(timespec="seconds")
     save_state(folder, state)

@@ -41,6 +41,11 @@ such as `git`, `gh`, `rg`, `cat` and `agent-skills` directly, not through
   "No loader found for resource". `just gut` runs this import by itself only in
   a checkout with no `.godot` folder.
 - Any other Godot command: `just godot <arguments>`.
+- `vendor/godot-mcp` is a git submodule, and verify-urchin loads its harness
+  from there. A submodule starts on a detached HEAD. Before you edit in it,
+  run `git -C vendor/godot-mcp switch -c <branch>`. Push that branch, then
+  commit the new pin in urchin. The MCP server runs from `~/code/godot-mcp`,
+  so it does not see edits made in the submodule.
 - In Codex, if a check cannot write its normal tool cache outside the
   workspace, rerun it with sandbox escalation. A blocked write to prek's
   `prek.log` stopped the #220 checks before any hook ran; the same checks
