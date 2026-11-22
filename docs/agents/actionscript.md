@@ -250,6 +250,20 @@ otherwise.
   On Heroic the player's half-turn passes by itself after 4 seconds, so the
   battle plays on with no clicks. The Probe is
   `references/traced_runs/cost_failure_probe.as`.
+- **A throwaway Probe must not wrap `AImoveAdder`.** `dev/probes/aimove.as`
+  checks every 200 ms that its own wrapper is `_root.AImoveAdder`, and wraps
+  the function again when it is not. In #492 a Probe wrapped it after
+  `aimove.as` did. `aimove.as` then wrapped that wrapper, so the two called
+  each other at the first AI decision. Flash 11.9 stopped all ActionScript and
+  the log, while the animations played on. Ruffle ran the two hooks in the
+  other order and did not show the problem. To change a unit's move, wrap
+  `krinAddMove` instead, as `references/traced_runs/vapour_cannon_probe.as`
+  does.
+- **In Ruffle, a Probe's own enterFrame clip stopped at the main menu.** In
+  #492, a clip that a Probe made with `createEmptyMovieClip` ran its
+  `onEnterFrame` up to root frame 45, then stopped. Drive the steps of a
+  Probe with `setInterval`, as `aimove_drive_probe.as` and
+  `vapour_cannon_probe.as` do.
 - **A capture Probe that changes the game is kept next to its capture.** The
   #162 Probes jump from `mainMenu` to `LOADBATTLESCENE` with `BattlePick` 408,
   freeze the dolls and attach clips, so they are not in `dev/probes/`, where

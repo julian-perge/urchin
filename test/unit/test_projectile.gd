@@ -336,6 +336,72 @@ func test_the_trail_ends_where_krin_bolt_make_puts_it_on_every_frame_of_a_hit():
 	assert_eq(ported, original, "the trail's far end on each frame")
 
 
+# The Flash capture of #492 (references/traced_runs/vapour_cannon_web_flash.txt,
+# written by vapour_cannon_probe.as in the same folder). Each cast is one
+# Vapour Cannon bolt in battle 100: cast 1 flies from slot 3 to slot 2, and cast
+# 2 from slot 2 to slot 1. Its "made" line gives where krinBoltMake put the bolt
+# and its target, in BATTLESCREEN space. Its BOLT lines give the bolt and its
+# KrinTrail after each of the bolt's enterFrames, until the frame that removed
+# the bolt.
+func _flash_cast(cast: int) -> Dictionary:
+	var made: Dictionary = {}
+	var frames: Array[Dictionary] = []
+	var path := "res://references/traced_runs/vapour_cannon_web_flash.txt"
+	for line: String in FileAccess.get_file_as_string(path).split("\n"):
+		var fields: PackedStringArray = line.split("\t")
+		var values: Dictionary = {}
+		for field: String in fields:
+			var pair: PackedStringArray = field.split("=", false, 1)
+			if pair.size() == 2:
+				values[pair[0]] = pair[1]
+		if values.get("cast") != str(cast):
+			continue
+		if fields[0] == "VAP" and fields[1] == "made":
+			made = values
+		elif fields[0] == "BOLT":
+			frames.append(values)
+	return {"made": made, "frames": frames}
+
+
+# On every frame of the Flash capture, the port's bolt is where the original's
+# was, and its trail ends where the original's did. The original's trail ends
+# at its _x and _y plus its length along its _rotation, and its length is the
+# 10 px art times the inner clip's _xscale. Flash keeps _x and _y in whole
+# twips (0.05 px) after each move, so the positions drift from the port's by a
+# little each frame.
+func test_the_bolt_and_its_trail_match_the_flash_capture_on_every_frame():
+	for cast: int in [1, 2]:
+		var capture: Dictionary = _flash_cast(cast)
+		var made: Dictionary = capture["made"]
+		assert_eq(made.get("model"), "Krin.Iceblade", "cast %d is a Vapour Cannon bolt" % cast)
+		var field: Node2D = add_child_autofree(Node2D.new())
+		var bolt: Projectile = ProjectileScene.instantiate()
+		bolt.clip_name = "Krin.Iceblade"
+		bolt.did_hit = made["strikeSuccess"] == "true"
+		field.add_child(bolt)
+		bolt.start(
+			Vector2(float(made["boltX"]), float(made["boltY"])),
+			Vector2(float(made["hitterX"]), float(made["hitterY"]))
+		)
+		bolt.set_process(false)
+		var frames: Array[Dictionary] = capture["frames"]
+		assert_gt(frames.size(), 10, "cast %d has its frames" % cast)
+		for frame: Dictionary in frames:
+			bolt._process(1.0 / BattleScreenClip.fps())
+			var at := "cast %d, frame %s" % [cast, frame["n"]]
+			if frame["removed"] == "true":
+				assert_true(bolt.is_queued_for_deletion(), "%s: the bolt hit" % at)
+				continue
+			var flash_bolt := Vector2(float(frame["boltX"]), float(frame["boltY"]))
+			var length: float = 10.0 * float(frame["innerXscale"]) / 100.0
+			var flash_end := (
+				Vector2(float(frame["trailX"]), float(frame["trailY"]))
+				+ Vector2.from_angle(deg_to_rad(float(frame["trailRot"]))) * length
+			)
+			assert_almost_eq(bolt.position, flash_bolt, Vector2(0.5, 0.5), "%s: the bolt" % at)
+			assert_almost_eq(_trail_end_in(field, bolt), flash_end, Vector2(0.5, 0.5), "%s: the trail's far end" % at)
+
+
 # GridZoomer zooms and pans BATTLESCREEN while a Missile flies. krinBoltMake
 # attaches both the bolt and KrinTrail to BATTLESCREEN (frame_42/DoAction_4.as:140
 # and 174), so the zoom moves and scales the trail the same as the bolt. The
