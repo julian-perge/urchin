@@ -138,7 +138,8 @@ record is `docs/adr/0008-trace-the-original-with-probes.md`. The code is
   older file. It prints the number of GOTO lines and exits 1 when the log has
   no `HOOK<tab>installed<tab>true` line. The players come from
   `FLASH_DEBUG_PLAYER` and `RUFFLE_BIN`, with defaults in `trace.py` and
-  `.env.example`. It needs macOS.
+  `.env.example`. It runs on macOS, and on Linux under WSL2 (see "Traced runs
+  on WSL2" below).
 - `just trace-diff <log a> <log b>` reads two Trace logs and prints the
   distinct gotos that only one of them has, in two sorted groups. Each line
   is kind, clip, total frames, target, and `moved` or `stayed`. `moved` means
@@ -172,10 +173,11 @@ otherwise.
 
 - **`flashlog.txt` starts empty at every launch of the Flash debug player.**
   `trace-run` copies it when the player quits. A second launch before that
-  copy loses the first run's log. The player writes the file only when
-  `~/mm.cfg` has `TraceOutputFileEnable=1`, and `trace-run` stops with a
-  message when that line is missing.
-- **Ruffle opens a SWF only inside its sandbox container.**
+  copy loses the first run's log. The player writes the file only when its
+  `mm.cfg` has `TraceOutputFileEnable=1`, and `trace-run` stops with a
+  message when that line is missing. On macOS that file is `~/mm.cfg`. On
+  WSL2 it is `mm.cfg` in the Windows profile.
+- **On macOS, Ruffle opens a SWF only inside its sandbox container.**
   `/Applications/Ruffle.app` has the app-sandbox entitlement. A SWF path
   outside `~/Library/Containers/rs.ruffle.ruffle/Data/` fails to open, and
   Ruffle 0.7.1 then panics in a folder picker. So `trace-run` first copies
@@ -188,12 +190,34 @@ otherwise.
   #37 a second agent's `trace-run` started 30 seconds after the first one,
   rebuilt the Traced copy with its own Probes and emptied `flashlog.txt`, so
   the first run's log was lost. A `pgrep` check before the start did not
-  prevent it. Hold `lockf -k /tmp/urchin-ffdec.lock` for the whole build, run
-  and log copy. A long run that only measures can instead build under the
-  lock, copy the Traced copy to a scratch folder, and play that copy in Ruffle
+  prevent it. Hold `lockf -k /tmp/urchin-ffdec.lock` (on Linux,
+  `flock /tmp/urchin-ffdec.lock`) for the whole build, run and log copy. A
+  long run that only measures can instead build under the lock, copy the Traced copy to a scratch folder, and play that copy in Ruffle
   from its own subfolder of the container, with stdout to a scratch file. Two
   such Ruffle runs played side by side in #37.
 - Flash reports `_currentframe` 0 for an empty clip and Ruffle reports 1.
+- **Traced runs on WSL2.** The session of #492 measured these on WSL2 with
+  WSLg.
+  - The Flash player is the Windows debug player of Flashpoint, a `.exe` that
+    WSL runs. Set `FLASH_DEBUG_PLAYER` to it. `trace-run` stops for a Flash
+    player on Linux that is not a `.exe`. Windows Flashpoint has a debug
+    player only for version 11 (`flashplayer11_9r900_152_win_sa_debug.exe`),
+    so a WSL2 Flash log comes from Flash 11.9, where the committed macOS logs
+    come from the Flash 14 debug player. Nobody compared the two versions
+    beyond the first lines: both logs start with the same
+    `addEventListener is not a function` warnings.
+  - The Windows player reads `%USERPROFILE%\mm.cfg` and writes
+    `%APPDATA%\Macromedia\Flash Player\Logs\flashlog.txt`. `trace-run` asks
+    `cmd.exe` for both folders at run time.
+  - The Windows player opens the Traced copy through its `\\wsl.localhost`
+    path, so no copy to the C drive is needed. The WSL call waits until the
+    player window closes, then `trace-run` copies the log. A kill of the WSL
+    side leaves the Windows player running: close its window, or end it with
+    `taskkill.exe /PID <pid>`.
+  - Ruffle 0.8.0 from `brew install --cask ruffle` writes the `trace()` lines
+    as `INFO avm_trace:` lines, as 0.7.1 does on macOS. On Wayland it stops
+    within a second with "Event loop failure", so `trace-run` runs it without
+    `WAYLAND_DISPLAY` and it takes X11. It plays the Traced copy where it is.
 - **`trace-run` overwrites the committed Trace log.** A run for a logic Probe
   still saves to `references/traced_runs/<build>_<player>.txt`. Copy its lines
   to a file of their own, such as `forin_web_flash.txt`, and restore the Trace
@@ -226,6 +250,20 @@ otherwise.
   On Heroic the player's half-turn passes by itself after 4 seconds, so the
   battle plays on with no clicks. The Probe is
   `references/traced_runs/cost_failure_probe.as`.
+- **A throwaway Probe must not wrap `AImoveAdder`.** `dev/probes/aimove.as`
+  checks every 200 ms that its own wrapper is `_root.AImoveAdder`, and wraps
+  the function again when it is not. In #492 a Probe wrapped it after
+  `aimove.as` did. `aimove.as` then wrapped that wrapper, so the two called
+  each other at the first AI decision. Flash 11.9 stopped all ActionScript and
+  the log, while the animations played on. Ruffle ran the two hooks in the
+  other order and did not show the problem. To change a unit's move, wrap
+  `krinAddMove` instead, as `references/traced_runs/vapour_cannon_probe.as`
+  does.
+- **In Ruffle, a Probe's own enterFrame clip stopped at the main menu.** In
+  #492, a clip that a Probe made with `createEmptyMovieClip` ran its
+  `onEnterFrame` up to root frame 45, then stopped. Drive the steps of a
+  Probe with `setInterval`, as `aimove_drive_probe.as` and
+  `vapour_cannon_probe.as` do.
 - **A capture Probe that changes the game is kept next to its capture.** The
   #162 Probes jump from `mainMenu` to `LOADBATTLESCENE` with `BattlePick` 408,
   freeze the dolls and attach clips, so they are not in `dev/probes/`, where

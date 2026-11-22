@@ -43,7 +43,6 @@ animations = [{
 }]
 
 [node name="Trail" type="Node2D"]
-top_level = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0.0, -3.5)

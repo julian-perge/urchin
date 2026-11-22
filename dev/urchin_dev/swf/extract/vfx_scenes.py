@@ -39,7 +39,7 @@ def _frame_paths(clip_dir: Path) -> list[Path]:
 
 
 def _build_scene(
-    frame_paths, res_prefix, offset, texture_size, anim_name, loop, node_name, top_level
+    frame_paths, res_prefix, offset, texture_size, anim_name, loop, node_name
 ):
     real_w_px, real_h_px = texture_size
     scale_x = round(offset["w"] / real_w_px, 6)
@@ -67,8 +67,6 @@ def _build_scene(
     lines.append("}]")
     lines.append("")
     lines.append(f'[node name="{node_name}" type="Node2D"]')
-    if top_level:
-        lines.append("top_level = true")
     lines.append("")
     lines.append('[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]')
     lines.append(f"position = Vector2({offset['x']}, {offset['y']})")
@@ -108,7 +106,6 @@ def main():
                 anim_name,
                 loop,
                 node_name,
-                category == "trail",
             )
             (out_dir / f"{name}.tscn").write_text(text)
             written += 1

@@ -74,7 +74,8 @@ must not run the command.
 - `just --command` runs only `uv`. Run plain tools directly. Try
   `just --command git status`.
 - ffdec, java with ffdec, and each recipe that requires ffdec run under
-  `lockf -k /tmp/urchin-ffdec.lock`. Try `just extract-faces --help`.
+  `lockf -k /tmp/urchin-ffdec.lock` on macOS or `flock /tmp/urchin-ffdec.lock`
+  on Linux. Try `just extract-faces --help`.
 - `just gut` and `just test` do not go into a pipe. Try `just gut | tail -1`.
 - `git commit` stops when staged Python fails `uv run ruff check` or
   `uv run ruff format --check`. Try it with a staged file that holds `x=1`.
