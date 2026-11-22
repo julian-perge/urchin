@@ -26,7 +26,9 @@ godot-mcp submodule at `vendor/godot-mcp`. It loads
 `vendor/godot-mcp/src/scripts/mcp_harness.gd` from the checkout it runs in.
 `just setup-worktree` fills the submodule in a new worktree. Set
 `URCHIN_VERIFY_HARNESS` to a harness file elsewhere, such as an unpushed
-change in `~/code/godot-mcp`, to use that one instead.
+change in `~/code/godot-mcp`, to use that one instead. It runs only on
+Linux and macOS. On Windows Godot keeps `user://` under `%APPDATA%`, where
+the helper cannot isolate it, so `launch` refuses to start there.
 
 ## Isolation
 
@@ -86,8 +88,9 @@ Run it first whenever anything looks wrong. It changes nothing.
 It exits 1 unless all of these hold: the process group is up, a process in
 it other than `just` has this run's `GODOT_MCP_HARNESS_TOKEN` in
 `/proc/<pid>/environ` (macOS skips this check), the harness answers with this
-run's token, git HEAD is the commit from launch time, `vendor/godot-mcp` is
-at the pinned commit or on a branch (`harness_matches_pin`), the run's own
+run's token, git HEAD is the commit from launch time, the harness commit
+that the game loaded at launch is still the pinned commit, or was on a
+branch (`harness_matches_pin`), the run's own
 `user://` exists, the real `user://` is unchanged, and the log has no Parse
 Error. It also prints the last 10 `SCRIPT ERROR` lines, which do not fail
 it.

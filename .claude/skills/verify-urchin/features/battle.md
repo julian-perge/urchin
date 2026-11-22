@@ -36,10 +36,13 @@ Preconditions:
 - **Find the enemy.** Run `$V tree v Battlefield --depth 3`. Each fighter
   has an `Overlay/HitButton` (56x100). The enemy is the one on the right.
   In battle 109 it is
-  `HallWindow/HallSpace/BattleScreenClip/Battlefield/FighterPresenter/Overlay/HitButton`
-  at rect `[609.9, 245.4, 56, 100]`, center `(637.9, 295.4)`.
+  `HallWindow/HallSpace/BattleScreenClip/Battlefield/FighterPresenter/Overlay/HitButton`.
+  Run `$V node v <that path>` and read its `center`. On 2026-11-22 it was
+  `[637.9, 295.4]`, rect `[609.9, 245.4, 56, 100]`.
 - **Attack.** The radial menu opens around the enemy's Overlay. Orb0 is 51 px
-  above that point. Open and pick in one sequence:
+  above that point. Put the `center` you read in the first click and the
+  same x with y less 51 in the second, then open and pick in one sequence.
+  With the center above:
   `$V send v '[{"type":"click","x":637.9,"y":295.4},{"type":"wait","duration_ms":150},{"type":"screenshot"},{"type":"click","x":637.9,"y":246.4},{"type":"wait","duration_ms":3000},{"type":"screenshot"}]' --label battle-attack`.
   The first screenshot shows the red target ring and the move orbs. The
   second shows a damage number over the enemy and a lower HP on its bar.

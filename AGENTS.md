@@ -51,8 +51,10 @@ such as `git`, `gh`, `rg`, `cat` and `agent-skills` directly, not through
   commit the new pin in urchin. Merge it into godot-mcp `main` with a merge
   commit, and pin that merge commit, before the urchin PR merges. godot-mcp
   deletes a branch when its PR merges, so after a squash the old pin is on no
-  branch. The MCP server runs from `~/code/godot-mcp`, so it does not see
-  edits made in the submodule.
+  branch. With `submodule.recurse` set, git's docs say that `git push` in
+  urchin also pushes the submodule commits that the pin needs, and stops when
+  it cannot push them. The MCP server runs from `~/code/godot-mcp`, so it does
+  not see edits made in the submodule.
 - In Codex, if a check cannot write its normal tool cache outside the
   workspace, rerun it with sandbox escalation. A blocked write to prek's
   `prek.log` stopped the #220 checks before any hook ran; the same checks

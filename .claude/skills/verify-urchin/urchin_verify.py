@@ -31,6 +31,7 @@ import base64
 import datetime
 import json
 import os
+import re
 import secrets
 import shutil
 import signal
@@ -90,29 +91,35 @@ def find_harness(root: Path) -> Path:
     return root / HARNESS
 
 
-# A pull or a branch switch moves urchin's pin but leaves the files in
-# vendor/godot-mcp alone unless submodule.recurse is set, so a run could load
-# an old harness with no sign of it. A branch checked out in the submodule
-# means someone is editing the harness there, so that case only gets a note.
-def harness_drift(root: Path, harness: Path) -> tuple[str, bool]:
-    if harness.resolve() != (root / HARNESS).resolve():
-        return "", False
+def submodule_head(root: Path) -> tuple[str, str]:
     submodule = ["git", "-C", str(root / "vendor/godot-mcp")]
-    pinned = subprocess.run(
-        ["git", "-C", str(root), "ls-files", "-s", "vendor/godot-mcp"],
-        capture_output=True,
-        text=True,
-    ).stdout.split()
-    current = subprocess.run(
+    commit = subprocess.run(
         [*submodule, "rev-parse", "HEAD"], capture_output=True, text=True
     ).stdout.strip()
-    if len(pinned) < 2 or pinned[1] == current:
-        return "", False
     branch = subprocess.run(
         [*submodule, "symbolic-ref", "-q", "--short", "HEAD"],
         capture_output=True,
         text=True,
     ).stdout.strip()
+    return commit, branch
+
+
+# A pull or a branch switch moves urchin's pin but leaves the files in
+# vendor/godot-mcp alone unless submodule.recurse is set, so a run could load
+# an old harness with no sign of it. head is the submodule's commit and branch
+# when the game loaded the harness. A branch checked out in the submodule
+# means someone is editing the harness there, so that case only gets a note.
+def harness_drift(root: Path, harness: Path, head: tuple[str, str]) -> tuple[str, bool]:
+    if harness.resolve() != (root / HARNESS).resolve():
+        return "", False
+    pinned = subprocess.run(
+        ["git", "-C", str(root), "ls-files", "-s", "vendor/godot-mcp"],
+        capture_output=True,
+        text=True,
+    ).stdout.split()
+    current, branch = head
+    if len(pinned) < 2 or pinned[1] == current:
+        return "", False
     where = f"branch {branch} at {current[:8]}" if branch else current[:8]
     message = f"vendor/godot-mcp is at {where}, but urchin pins {pinned[1][:8]}"
     if branch:
@@ -153,6 +160,8 @@ def fingerprint(folder: Path) -> dict:
 
 
 def run_dir(run: str, create: bool = False) -> Path:
+    if not re.fullmatch(r"[\w.-]+", run):
+        fail(f"a run name holds only letters, digits, _, . and -, not {run}")
     if create:
         return TMP_ROOT / f"{now():%Y-%m-%d}{RUN_SUFFIX}" / run
     matches = sorted(TMP_ROOT.glob(f"*{RUN_SUFFIX}/{run}/state.json"))
@@ -299,9 +308,14 @@ def print_answer(answer: dict) -> None:
 
 
 def cmd_launch(args: argparse.Namespace) -> None:
+    if sys.platform not in ("linux", "darwin"):
+        fail(
+            "verify-urchin runs only on Linux and macOS. On Windows Godot keeps user:// under %APPDATA%, so this helper cannot keep the game away from the real saves"
+        )
     root = repo_root()
     harness = find_harness(root)
-    drift, stale = harness_drift(root, harness)
+    head = submodule_head(root)
+    drift, stale = harness_drift(root, harness, head)
     if stale:
         fail(drift)
     folder = run_dir(args.run, create=True)
@@ -367,6 +381,7 @@ def cmd_launch(args: argparse.Namespace) -> None:
         "repo": str(root),
         "head": git_head(root),
         "harness": str(harness),
+        "harness_head": list(head),
         "command": command,
         "data": str(data),
         "user_dir": str(isolated_user_dir(data)),
@@ -449,7 +464,9 @@ def cmd_doctor(args: argparse.Namespace) -> None:
         checks["harness_answers_with_our_token"] = False
         checks["harness_error"] = str(error)
     checks["same_commit_as_launch"] = git_head(Path(state["repo"])) == state["head"]
-    drift, stale = harness_drift(Path(state["repo"]), Path(state["harness"]))
+    repo = Path(state["repo"])
+    head = tuple(state.get("harness_head") or submodule_head(repo))
+    drift, stale = harness_drift(repo, Path(state["harness"]), head)
     checks["harness_matches_pin"] = not stale
     if drift:
         checks["harness_note"] = drift
@@ -488,7 +505,7 @@ def cmd_send(args: argparse.Namespace) -> None:
 def cmd_click(args: argparse.Namespace) -> None:
     folder, state = load_state(args.run)
     found = request(state, [{"type": "node", "path": args.node}])
-    info = found.get("results", [{}])[0]
+    info = (found.get("results") or [{}])[0]
     if not found.get("ok") or "center" not in info:
         print_answer({"ok": False, "error": f"cannot click {args.node}", "node": info})
     if not info.get("visible", True):
@@ -561,7 +578,7 @@ def cmd_log(args: argparse.Namespace) -> None:
     lines = (folder / "godot.log").read_text(errors="replace").splitlines()
     if args.grep:
         lines = [line for line in lines if args.grep in line]
-    print("\n".join(lines[-args.n :]))
+    print("\n".join(lines[-args.n :] if args.n > 0 else []))
 
 
 def cmd_stop(args: argparse.Namespace) -> None:
