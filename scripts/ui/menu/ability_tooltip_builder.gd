@@ -92,6 +92,19 @@ static func build_sections(
 	return {"sections": sections, "icon_color": element_color}
 
 
+# A pool row shows the move's description followed by SKILLTHRS1, the move's
+# action bar limit KRINABILITY[8] and SKILLTHRS2
+# (DefineSprite_3142/frame_25/DoAction.as:49). A ring socket shows the
+# description alone (line 74), so only the pool row calls this. The copy keeps
+# the shared Ability that MoveManagerAuto holds unchanged.
+static func pool_row_sections(move: Ability) -> Dictionary:
+	var pool_move: Ability = move.duplicate()
+	pool_move.tooltip_description += (
+		Strings.text("SKILLTHRS1") + str(move.hotbar_slot_limit) + Strings.text("SKILLTHRS2")
+	)
+	return build_sections({}, null, pool_move)
+
+
 # DefineSprite_3142/frame_25/DoAction.as:85-88 gives an empty socket SKILLNONE
 # as its title, SKILLTUT2 as toolTip3 and SKILLTUT as toolTip. These are the
 # two fields that a move's cost and description fill, so they take the cost

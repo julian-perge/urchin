@@ -163,6 +163,25 @@ func test_an_empty_socket_tooltip_reads_strings_json() -> void:
 	assert_eq(socket.tooltip_text, "", "no native tooltip shows over the rich one")
 
 
+# A pool row shows its title, then toolTip3 (the cost), then toolTip: the
+# description followed by SKILLTHRS1, the action bar limit and SKILLTHRS2
+# (DefineSprite_3142/frame_25/DoAction.as:48-50).
+func test_a_pool_row_tooltip_ends_the_description_with_the_action_bar_limit() -> void:
+	var save: PlayerSave = GameData.current_save
+	save.move_matrix2.clear()
+	save.move_matrix2.append(LEADING_STRIKE_ID)
+	var window: Control = _window()
+	(window.get_node("Pool/Mask/Rows/PoolRow0") as Button).mouse_entered.emit()
+	var move: Ability = MoveManagerAuto.get_move(LEADING_STRIKE_ID)
+	var expected: Array[String] = [
+		move.display_name,
+		move.tooltip_cost,
+		move.tooltip_description + Strings.text("SKILLTHRS1") + "1" + Strings.text("SKILLTHRS2"),
+	]
+	assert_true(GameTooltip.is_showing(), "the tooltip shows")
+	assert_eq(_tooltip_texts(), expected)
+
+
 # -> the ability that the first pool row shows in a new game. The pool walks
 # move_matrix2 from the end, so that is the last owned ability. The tests below
 # read its copy limit, KRINABILITY[8], from the move data.
