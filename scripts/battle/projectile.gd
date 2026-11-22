@@ -19,10 +19,10 @@
 # own timeline, not a static frame this script fades manually). Both
 # clips are rotated to the flight angle, which never changes after spawn.
 # Trail is spawned once at the bolt's position on the first tick, handed
-# over to the bolt's own parent so it can outlive it, played once
-# (non-looping - its own frames already carry the fade), tinted by
-# trail_color (RGB only - alpha comes from the frames), and grows scale.x
-# every tick, independent of its own internal animation - see
+# over to the bolt's own parent so it can outlive it and zooms with the
+# battlefield, played once (non-looping - its own frames already carry the
+# fade), tinted by trail_color (RGB only - alpha comes from the frames), and
+# grows scale.x every tick, independent of its own internal animation - see
 # spec/old/2026-08-19-vfx-registration-scenes-design.md.
 class_name Projectile
 extends Node2D
@@ -166,18 +166,17 @@ func _process(delta: float) -> void:
 		if FlashAlpha.to_percent(_alpha) < 100.0:
 			_alpha = FlashAlpha.add(_alpha, float(_bolt_fade["fade_in_step"]))
 		position += _step * _speed_const
+		_speed_const *= float(_krin["krinBoltIncrease"])
 		if not _trail_spawned:
 			_spawn_trail()
 		if _bolt_sprite != null:
 			_bolt_sprite.modulate.a = FlashAlpha.multiplier(_alpha)
-		# The trail runs its own fade to the end and frees itself, which on
-		# a long miss happens while the bolt is still flying - so this has
-		# to check the node is still there before touching it.
-		if is_instance_valid(_trail_root) and _trail_root.visible:
-			_trail_growth += _trail_growth_share * _step.length() * _speed_const
-			_trail_sprite.scale = Vector2(_trail_base_scale.x * _trail_growth, _trail_base_scale.y)
-		_speed_const *= float(_krin["krinBoltIncrease"])
-		if not _reached and (_target_x - position.x) * _checker <= 0.0:
+		# krinBoltMake grows the trail by the new SpeedConst, on every frame
+		# but the one where a hit removes the bolt (frame_42/DoAction_4.as:188-210).
+		var crossed: bool = (_target_x - position.x) * _checker <= 0.0
+		if not (crossed and did_hit):
+			_grow_trail()
+		if crossed and not _reached:
 			_reached = true
 			reached_target.emit()
 			if did_hit:
@@ -189,29 +188,34 @@ func _process(delta: float) -> void:
 	queue_redraw()
 
 
+# The trail runs its own fade to the end and frees itself, which on a long
+# miss happens while the bolt is still flying, so this checks that the node is
+# still there before it touches it.
+func _grow_trail() -> void:
+	if not is_instance_valid(_trail_root):
+		return
+	_trail_growth += _trail_growth_share * _step.length() * _speed_const
+	_trail_sprite.scale = Vector2(_trail_base_scale.x * _trail_growth, _trail_base_scale.y)
+
+
 func _end_flight() -> void:
 	queue_free()
 	flight_ended.emit()
 
 
-# Places the trail at the point the bolt is passing through right now,
-# then hands it over to the bolt's own parent so it stops being the
-# bolt's child. On a hit the bolt frees itself the instant it reaches the
-# target, and KrinTrail's 33-frame fade is nowhere near finished by then -
-# as the bolt's child the trail would be torn down mid-fade. The source
-# has the same separation: the trail is attached to BATTLESCREEN, a
-# sibling of the bolt clip, not to the bolt itself. Trail's own generated
-# scene already sets top_level = true, so where it draws is unchanged by
-# the move.
+# Hands the trail over to the bolt's own parent and places it at the point the
+# bolt is passing through right now. On a hit the bolt frees itself the instant
+# it reaches the target, and KrinTrail's 33-frame fade is nowhere near finished
+# by then, so as the bolt's child the trail would be torn down mid-fade. The
+# source has the same separation: it attaches the trail to BATTLESCREEN, the
+# bolt clip's parent, so GridZoomer zooms and pans the trail with the bolt.
 func _spawn_trail() -> void:
 	_trail_spawned = true
-	_trail_root.global_position = global_position
+	remove_child(_trail_root)
+	get_parent().add_child(_trail_root)
+	_trail_root.position = position
 	_trail_root.rotation = _step.angle()
 	_trail_root.visible = true
-	var parent: Node = get_parent()
-	if parent != null:
-		remove_child(_trail_root)
-		parent.add_child(_trail_root)
 	_trail_sprite.animation_finished.connect(_trail_root.queue_free)
 	_trail_sprite.play("pulse")
 

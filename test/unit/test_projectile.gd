@@ -86,10 +86,12 @@ func test_trail_art_is_halved_and_grows_from_that_baseline():
 	bolt._process(1.0 / 30.0)  # first tick - spawns the trail and grows it once
 	assert_eq(bolt._trail_sprite.scale.y, 0.5, "the trail's thickness stays at its design size")
 	# One tick of growth is krinBoltTrailGrowth percent of the step length
-	# times speed_const on top of a 1.0 baseline, then the whole thing is
-	# halved (the trail scene's own baked scale).
+	# times SpeedConst after its first krinBoltIncrease, on top of a 1.0
+	# baseline, then the whole thing is halved (the trail scene's own baked
+	# scale).
 	var step_length: float = (Vector2(300, 100) - Vector2(100, 100)).length() / float(_krin["krinBoltTime"])
-	assert_almost_eq(bolt._trail_sprite.scale.x, 0.5 * (1.0 + float(_krin["krinBoltTrailGrowth"]) / 100.0 * step_length), 0.001,
+	var speed: float = float(_krin["krinBoltSpeed"]) * float(_krin["krinBoltIncrease"])
+	assert_almost_eq(bolt._trail_sprite.scale.x, 0.5 * (1.0 + float(_krin["krinBoltTrailGrowth"]) / 100.0 * step_length * speed), 0.001,
 		"growth is a multiple of the halved baseline, not an unscaled increment")
 
 
@@ -156,13 +158,9 @@ func test_start_loads_the_trail_as_a_non_looping_tinted_pulse():
 
 
 func test_trail_stays_anchored_at_its_spawn_point_as_the_bolt_flies_on():
-	# Confirmed empirically (a real running scene): a normal Node2D child
-	# keeps inheriting its parent's transform every frame - without
-	# top_level=true (baked into the trail's generated scene), the trail
-	# would be dragged along as Projectile's own position keeps advancing,
-	# instead of staying anchored at the point it was given on the first
-	# tick, defeating the whole point of a streak that bridges a growing
-	# gap as the bolt flies away.
+	# The first tick moves the trail from the bolt to the bolt's parent. As
+	# the bolt's child it would be dragged along as the bolt flies, instead
+	# of staying at the point it was given on the first tick.
 	var bolt: Projectile = add_child_autofree(ProjectileScene.instantiate())
 	bolt.clip_name = "Krin.Firebolt"
 	bolt.trail_color = Color.WHITE
@@ -284,3 +282,88 @@ func test_a_miss_with_no_horizontal_travel_still_ends():
 		if bolt.is_queued_for_deletion():
 			break
 	assert_true(bolt.is_queued_for_deletion(), "the tick cap ends a flight that can never exit sideways")
+
+
+# The far end of the trail, in the coordinates of the node the bolt flies in.
+# KrinTrail's inner shape runs from x 0 to 10 at its own size, and the scene
+# draws it from a texture twice that size.
+func _trail_end_in(field: Node2D, bolt: Projectile) -> Vector2:
+	var texture: Texture2D = bolt._trail_sprite.sprite_frames.get_frame_texture("pulse", 0)
+	var tip: Vector2 = Vector2(texture.get_width(), texture.get_height() / 2.0)
+	return field.get_global_transform().affine_inverse() * (bolt._trail_sprite.get_global_transform() * tip)
+
+
+# A bolt from slot 1 to slot 2 (SLOT_POSITIONS in battle_scene.gd) that hits.
+# Each frame, krinBoltMake moves the bolt and multiplies SpeedConst by
+# krinBoltIncrease (frame_42/DoAction_4.as:165-171). On the first frame it then
+# attaches KrinTrail at the bolt's new _x, with its inner clip at an _xscale of
+# 100 (lines 173-177). While the bolt has not crossed the target's x, it grows
+# the inner clip's _xscale by krinBoltTrailGrowth times the step times the new
+# SpeedConst (line 209). On the frame it crosses on a hit, it removes the bolt
+# and does not grow the trail (lines 188-195).
+func test_the_trail_ends_where_krin_bolt_make_puts_it_on_every_frame_of_a_hit():
+	var from := Vector2(160.9, 297.4)
+	var to := Vector2(637.9, 297.4)
+	var field: Node2D = add_child_autofree(Node2D.new())
+	var bolt: Projectile = ProjectileScene.instantiate()
+	bolt.clip_name = "Krin.Iceblade"
+	bolt.did_hit = true
+	field.add_child(bolt)
+	bolt.start(from, to)
+	bolt.set_process(false)
+	var step: float = (to.x - from.x) / float(_krin["krinBoltTime"])
+	var speed: float = float(_krin["krinBoltSpeed"])
+	var bolt_x: float = from.x
+	var trail_x: float = 0.0
+	var xscale: float = 0.0
+	var ported: Array[float] = []
+	var original: Array[float] = []
+	for frame: int in 60:
+		bolt._process(1.0 / BattleScreenClip.fps())
+		bolt_x += step * speed
+		speed *= float(_krin["krinBoltIncrease"])
+		if frame == 0:
+			trail_x = bolt_x
+			xscale = 100.0
+		var crossed: bool = to.x - bolt_x <= 0.0
+		if not crossed:
+			xscale += float(_krin["krinBoltTrailGrowth"]) * step * speed
+		ported.append(snappedf(_trail_end_in(field, bolt).x, 0.01))
+		original.append(snappedf(trail_x + 10.0 * xscale / 100.0, 0.01))
+		if crossed:
+			break
+	assert_true(bolt.is_queued_for_deletion(), "the bolt hit on the frame the original's crossed")
+	assert_eq(ported, original, "the trail's far end on each frame")
+
+
+# GridZoomer zooms and pans BATTLESCREEN while a Missile flies. krinBoltMake
+# attaches both the bolt and KrinTrail to BATTLESCREEN (frame_42/DoAction_4.as:140
+# and 174), so the zoom moves and scales the trail the same as the bolt. The
+# same flight with and without the zoom leaves the trail's far end at the same
+# point of the field.
+func test_the_trail_zooms_and_pans_with_the_battle_screen():
+	var from := Vector2(160.9, 297.4)
+	var to := Vector2(637.9, 297.4)
+	var flights: Array[Dictionary] = []
+	for zoomed: bool in [false, true]:
+		var screen := BattleScreenClip.new()
+		add_child_autofree(screen)
+		var field := Node2D.new()
+		screen.add_child(field)
+		var bolt: Projectile = ProjectileScene.instantiate()
+		bolt.clip_name = "Krin.Iceblade"
+		field.add_child(bolt)
+		bolt.start(from, to)
+		bolt.set_process(false)
+		if zoomed:
+			var missile: Dictionary = BattleScreenClip.motion()["zooms"]["Missile"]
+			var center := Vector2(float(missile["center"]["x"]), float(missile["center"]["y"]))
+			screen.zoom((to - screen.rest) * float(missile["factor"]) + center, int(missile["hold"]))
+		flights.append({"screen": screen, "field": field, "bolt": bolt, "ends": [] as Array[float]})
+	for _frame: int in 10:
+		for flight: Dictionary in flights:
+			flight["screen"].advance_frame()
+			flight["bolt"]._process(1.0 / BattleScreenClip.fps())
+			flight["ends"].append(snappedf(_trail_end_in(flight["field"], flight["bolt"]).x, 0.01))
+	assert_ne(flights[1]["screen"].scale, Vector2.ONE, "the zoomed screen really is zoomed")
+	assert_eq(flights[1]["ends"], flights[0]["ends"], "the trail's far end in the field, zoomed and not")
