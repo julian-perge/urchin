@@ -75,14 +75,6 @@ func show_sections(
 	for section_index in sections.size():
 		var section: Dictionary = sections[section_index]
 		var panel: PanelContainer = PanelContainer.new()
-		# A wrapping Label is as tall as its text wrapped at its own width, and a
-		# new Label is 0 px wide. A container sets a child's width only when it
-		# sorts, at the end of the frame, and it skips a hidden child. So the
-		# panel, its lines and each Label start at the width that the sort gives
-		# them. Without this, the tooltip took the height of text wrapped at 0 px
-		# for one frame, on the frame it showed or on the frame its details
-		# showed (#491).
-		panel.size.x = line_width
 		var gloss_add: Variant = _gloss_add(section, section_index, rarity)
 		if gloss_add == null:
 			var style: StyleBoxFlat = StyleBoxFlat.new()
@@ -94,7 +86,6 @@ func show_sections(
 		var lines_box: VBoxContainer = VBoxContainer.new()
 		lines_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		lines_box.add_theme_constant_override("separation", FIELD_SPACING)
-		lines_box.size.x = line_width
 		for line in section["lines"]:
 			var label: Label = Label.new()
 			label.text = line["text"]
@@ -115,6 +106,12 @@ func show_sections(
 			label.add_theme_font_size_override("font_size", TooltipTheme.FONT_SIZE)
 			label.add_theme_color_override("font_color", line["color"])
 			label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			# A wrapping Label is as tall as its text wrapped at its own width, and
+			# a new Label is 0 px wide. A container sets a child's width only when
+			# it sorts, at the end of the frame, and it skips a hidden child. So
+			# each Label starts at the width that the sort gives it. Without this,
+			# the tooltip took the height of text wrapped at 0 px for one frame, on
+			# the frame it showed or on the frame its details showed (#491).
 			label.size.x = line_width
 			lines_box.add_child(label)
 		panel.add_child(lines_box)
