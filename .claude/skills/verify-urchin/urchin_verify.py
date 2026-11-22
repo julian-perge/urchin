@@ -77,9 +77,12 @@ def git_head(root: Path) -> str:
 def find_harness(root: Path) -> Path:
     override = os.environ.get("URCHIN_VERIFY_HARNESS")
     if override:
-        if not Path(override).exists():
+        # Godot starts in the repo root, so a relative path is resolved here,
+        # from the folder that the helper runs in.
+        harness = Path(override).expanduser().resolve()
+        if not harness.exists():
             fail(f"URCHIN_VERIFY_HARNESS is {override}, and that file does not exist")
-        return Path(override)
+        return harness
     if not (root / HARNESS).exists():
         fail(
             "vendor/godot-mcp is empty. Run just setup-worktree, or git submodule update --init vendor/godot-mcp"
@@ -520,7 +523,10 @@ def cmd_stop(args: argparse.Namespace) -> None:
         while group_pids(state["pgid"]) and time.time() < deadline:
             time.sleep(0.25)
         if group_pids(state["pgid"]):
-            os.killpg(state["pgid"], signal.SIGKILL)
+            try:
+                os.killpg(state["pgid"], signal.SIGKILL)
+            except ProcessLookupError:
+                pass
     if user_dir.is_dir():
         shutil.copytree(
             user_dir,

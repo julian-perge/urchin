@@ -9,8 +9,9 @@ The user surface is the Godot game window: an 800x575 Stage, driven with the
 mouse and a few keys. This skill drives it through one helper,
 `urchin_verify.py`. The helper starts Godot through `just godot` with the
 godot-mcp harness as the main loop, so it can click, type and take
-screenshots. The harness also has two read-only commands, `node` and `tree`,
-that find a control by its node name or path. Use those names, not typed coordinates.
+screenshots. The harness also has two read-only commands, `node` and
+`tree`, that find a control by its node name or path. Use those names, not
+typed coordinates.
 
 Run every command from the repo root (or a worktree root). Each command is
 shown with its full path once. Later lines write `$V` for it:
@@ -37,8 +38,9 @@ change in `~/code/godot-mcp`, to use that one instead.
   real `user://` with the values at launch.
 - Each run has its own harness port and token, so two runs can go at the
   same time. Every run loads the same harness file, so `doctor` finds the
-  run's Godot process by the token in that process's environment. Each run opens a window on the user's desktop titled
-  `AGENT VERIFY - <run>`. Audio is off unless you pass `--sound`.
+  run's Godot process by the token in that process's environment. Each run
+  opens a window on the user's desktop titled `AGENT VERIFY - <run>`. Audio
+  is off unless you pass `--sound`.
 - Do not use the godot-mcp `run_project` or `run_scene` tools for
   verification. They use the real `user://` and stop the previous game.
 - Never drive a game that this skill did not start. `$V list` shows the runs.
@@ -144,10 +146,9 @@ Proof standards:
 
 `stop` sends SIGTERM to the process group that `launch` started, then
 SIGKILL after 10 s. It copies the log and the run's `user://` into
-`evidence/`, then deletes `data/`. It keeps
-`evidence/` and `state.json`. It prints `real_user_dir_unchanged` and
-`left_running`, which must be `true` and `[]`. Run `stop` after every
-failed attempt too. Never kill Godot by name: `pkill -f` in a Bash call can
+`evidence/`, then deletes `data/`. It keeps `evidence/` and `state.json`.
+It prints `real_user_dir_unchanged` and `left_running`, which must be
+`true` and `[]`. Run `stop` after every failed attempt too. Never kill Godot by name: `pkill -f` in a Bash call can
 kill the tool's own shell, and it can kill the user's game.
 
 ## Gotchas
