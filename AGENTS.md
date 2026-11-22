@@ -13,8 +13,12 @@ for Godot themselves, so `uv run gut` outside `just` fails. Run plain tools
 such as `git`, `gh`, `rg`, `cat` and `agent-skills` directly, not through
 `just --command`, because they do not read `.env`.
 
-- In a new git worktree, run `just setup-worktree` first. It runs Godot's
-  import and warns when `URCHIN_SWF_DIR` has no SWFs.
+- In a new git worktree, run `just setup-worktree` first. It fills
+  `vendor/godot-mcp`, runs Godot's import and warns when `URCHIN_SWF_DIR` has
+  no SWFs. Run it once in each existing clone too: it sets
+  `submodule.recurse` in the clone's config, so a pull or a branch switch
+  moves `vendor/godot-mcp` to the pinned commit. Git never shares that
+  setting through the repo.
 - Extraction and conversion scripts are `[project.scripts]` entry points with
   a recipe each: `just extract-battle-screen`, `just convert-items`, and so on.
   Arguments pass through. `just` lists them.
@@ -44,8 +48,11 @@ such as `git`, `gh`, `rg`, `cat` and `agent-skills` directly, not through
 - `vendor/godot-mcp` is a git submodule, and verify-urchin loads its harness
   from there. A submodule starts on a detached HEAD. Before you edit in it,
   run `git -C vendor/godot-mcp switch -c <branch>`. Push that branch, then
-  commit the new pin in urchin. The MCP server runs from `~/code/godot-mcp`,
-  so it does not see edits made in the submodule.
+  commit the new pin in urchin. Merge it into godot-mcp `main` with a merge
+  commit, and pin that merge commit, before the urchin PR merges. godot-mcp
+  deletes a branch when its PR merges, so after a squash the old pin is on no
+  branch. The MCP server runs from `~/code/godot-mcp`, so it does not see
+  edits made in the submodule.
 - In Codex, if a check cannot write its normal tool cache outside the
   workspace, rerun it with sandbox escalation. A blocked write to prek's
   `prek.log` stopped the #220 checks before any hook ran; the same checks

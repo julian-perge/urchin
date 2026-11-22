@@ -90,6 +90,36 @@ def find_harness(root: Path) -> Path:
     return root / HARNESS
 
 
+# A pull or a branch switch moves urchin's pin but leaves the files in
+# vendor/godot-mcp alone unless submodule.recurse is set, so a run could load
+# an old harness with no sign of it. A branch checked out in the submodule
+# means someone is editing the harness there, so that case only gets a note.
+def harness_drift(root: Path, harness: Path) -> tuple[str, bool]:
+    if harness.resolve() != (root / HARNESS).resolve():
+        return "", False
+    submodule = ["git", "-C", str(root / "vendor/godot-mcp")]
+    pinned = subprocess.run(
+        ["git", "-C", str(root), "ls-files", "-s", "vendor/godot-mcp"],
+        capture_output=True,
+        text=True,
+    ).stdout.split()
+    current = subprocess.run(
+        [*submodule, "rev-parse", "HEAD"], capture_output=True, text=True
+    ).stdout.strip()
+    if len(pinned) < 2 or pinned[1] == current:
+        return "", False
+    branch = subprocess.run(
+        [*submodule, "symbolic-ref", "-q", "--short", "HEAD"],
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    where = f"branch {branch} at {current[:8]}" if branch else current[:8]
+    message = f"vendor/godot-mcp is at {where}, but urchin pins {pinned[1][:8]}"
+    if branch:
+        return message, False
+    return message + ". Run git submodule update --init vendor/godot-mcp", True
+
+
 def real_user_dir() -> Path:
     if sys.platform == "darwin":
         return Path.home() / "Library/Application Support/Godot/app_userdata/urchin"
@@ -252,6 +282,9 @@ def print_answer(answer: dict) -> None:
 def cmd_launch(args: argparse.Namespace) -> None:
     root = repo_root()
     harness = find_harness(root)
+    drift, stale = harness_drift(root, harness)
+    if stale:
+        fail(drift)
     folder = run_dir(args.run, create=True)
     if (folder / "state.json").exists():
         state = json.loads((folder / "state.json").read_text())
@@ -369,6 +402,7 @@ def cmd_launch(args: argparse.Namespace) -> None:
                 "evidence": str(evidence),
                 "screenshot": answer["results"][-1].get("saved"),
                 "log_errors": errors,
+                **({"harness_note": drift} if drift else {}),
             },
             indent=2,
         )
@@ -401,6 +435,10 @@ def cmd_doctor(args: argparse.Namespace) -> None:
         checks["harness_answers_with_our_token"] = False
         checks["harness_error"] = str(error)
     checks["same_commit_as_launch"] = git_head(Path(state["repo"])) == state["head"]
+    drift, stale = harness_drift(Path(state["repo"]), Path(state["harness"]))
+    checks["harness_matches_pin"] = not stale
+    if drift:
+        checks["harness_note"] = drift
     checks["isolated_user_dir_exists"] = Path(state["user_dir"]).is_dir()
     checks["real_user_dir_unchanged"] = (
         fingerprint(Path(state["real_user_dir"])) == state["real_fingerprint"]
@@ -409,7 +447,9 @@ def cmd_doctor(args: argparse.Namespace) -> None:
     checks["no_parse_errors"] = not any("Parse Error" in line for line in errors)
     checks["log_errors"] = errors[-10:]
     healthy = all(
-        v for k, v in checks.items() if k not in ("log_errors", "harness_error")
+        v
+        for k, v in checks.items()
+        if k not in ("log_errors", "harness_error", "harness_note")
     )
     checks["healthy"] = healthy
     checks["godot_pids"] = godot_pids

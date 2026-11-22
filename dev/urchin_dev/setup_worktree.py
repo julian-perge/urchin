@@ -8,7 +8,10 @@
 #
 # A new worktree also gets an empty vendor/godot-mcp, and verify-urchin loads
 # its harness from there, so this fills the submodule first. Tests and
-# extractors do not need it, so a failed fill only warns.
+# extractors do not need it, so a failed fill only warns. It also sets
+# submodule.recurse in the clone's config, which every worktree of the clone
+# shares, because a plain pull or branch switch otherwise leaves the
+# submodule at the old pin.
 from __future__ import annotations
 
 import subprocess
@@ -22,6 +25,10 @@ def godot_import_command(godot: str) -> list[str]:
     return [godot, "--headless", "--import", "--path", str(REPO_ROOT)]
 
 
+def recurse_config_command() -> list[str]:
+    return ["git", "config", "submodule.recurse", "true"]
+
+
 def submodule_command() -> list[str]:
     return ["git", "submodule", "update", "--init", "vendor/godot-mcp"]
 
@@ -33,6 +40,7 @@ def main() -> None:
             f"no {', '.join(missing)} in {SWF_DIR}, so extractors that read it"
             " will fail. Set URCHIN_SWF_DIR to the folder that holds the SWFs."
         )
+    subprocess.run(recurse_config_command(), cwd=REPO_ROOT)
     submodule = subprocess.run(
         submodule_command(), cwd=REPO_ROOT, capture_output=True, text=True
     )

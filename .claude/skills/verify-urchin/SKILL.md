@@ -69,6 +69,11 @@ change in `~/code/godot-mcp`, to use that one instead.
   at once.
 - An empty data folder is a new player: no saves, no achievements. The game
   needs no other setup.
+- A launch fails when `vendor/godot-mcp` is on a detached HEAD that is not
+  the commit urchin pins, because a pull without `submodule.recurse` leaves
+  the old harness there. The error says to run
+  `git submodule update --init vendor/godot-mcp`. When a branch is checked
+  out in the submodule, the launch goes on and prints `harness_note`.
 
 ## Doctor
 
@@ -81,7 +86,8 @@ Run it first whenever anything looks wrong. It changes nothing.
 It exits 1 unless all of these hold: the process group is up, a process in
 it other than `just` has this run's `GODOT_MCP_HARNESS_TOKEN` in
 `/proc/<pid>/environ` (macOS skips this check), the harness answers with this
-run's token, git HEAD is the commit from launch time, the run's own
+run's token, git HEAD is the commit from launch time, `vendor/godot-mcp` is
+at the pinned commit or on a branch (`harness_matches_pin`), the run's own
 `user://` exists, the real `user://` is unchanged, and the log has no Parse
 Error. It also prints the last 10 `SCRIPT ERROR` lines, which do not fail
 it.
