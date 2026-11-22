@@ -191,8 +191,8 @@ otherwise.
   rebuilt the Traced copy with its own Probes and emptied `flashlog.txt`, so
   the first run's log was lost. A `pgrep` check before the start did not
   prevent it. Hold `lockf -k /tmp/urchin-ffdec.lock` (on Linux,
-  `flock /tmp/urchin-ffdec.lock`) for the whole build, run and log copy. A long run that only measures can instead build under the
-  lock, copy the Traced copy to a scratch folder, and play that copy in Ruffle
+  `flock /tmp/urchin-ffdec.lock`) for the whole build, run and log copy. A
+  long run that only measures can instead build under the lock, copy the Traced copy to a scratch folder, and play that copy in Ruffle
   from its own subfolder of the container, with stdout to a scratch file. Two
   such Ruffle runs played side by side in #37.
 - Flash reports `_currentframe` 0 for an empty clip and Ruffle reports 1.

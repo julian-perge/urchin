@@ -8,6 +8,11 @@ const AlphaSteps = preload("res://test/alpha_steps.gd")
 const ProjectileScene = preload("res://scenes/battle/projectile.tscn")
 
 var _krin: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(Projectile.KRIN_SETTINGS_PATH))
+# The width of KrinTrail's inner shape at an _xscale of 100, from the extracted
+# registration offsets.
+var _trail_art_width: float = float(
+	JSON.parse_string(FileAccess.get_file_as_string("res://assets/vfx/vfx_offsets.json"))["krintrail"]["w"]
+)
 
 
 # Each frame krinBoltMake moves the bolt by the distance it measured at the
@@ -285,8 +290,8 @@ func test_a_miss_with_no_horizontal_travel_still_ends():
 
 
 # The far end of the trail, in the coordinates of the node the bolt flies in.
-# KrinTrail's inner shape runs from x 0 to 10 at its own size, and the scene
-# draws it from a texture twice that size.
+# KrinTrail's inner shape starts at x 0, and the scene draws it from a texture
+# twice its size, so the texture's right edge is the shape's far end.
 func _trail_end_in(field: Node2D, bolt: Projectile) -> Vector2:
 	var texture: Texture2D = bolt._trail_sprite.sprite_frames.get_frame_texture("pulse", 0)
 	var tip: Vector2 = Vector2(texture.get_width(), texture.get_height() / 2.0)
@@ -329,7 +334,7 @@ func test_the_trail_ends_where_krin_bolt_make_puts_it_on_every_frame_of_a_hit():
 		if not crossed:
 			xscale += float(_krin["krinBoltTrailGrowth"]) * step * speed
 		ported.append(snappedf(_trail_end_in(field, bolt).x, 0.01))
-		original.append(snappedf(trail_x + 10.0 * xscale / 100.0, 0.01))
+		original.append(snappedf(trail_x + _trail_art_width * xscale / 100.0, 0.01))
 		if crossed:
 			break
 	assert_true(bolt.is_queued_for_deletion(), "the bolt hit on the frame the original's crossed")
@@ -364,9 +369,10 @@ func _flash_cast(cast: int) -> Dictionary:
 
 
 # On every frame of the Flash capture, the port's bolt is where the original's
-# was, and its trail ends where the original's did. The original's trail ends
-# at its _x and _y plus its length along its _rotation, and its length is the
-# 10 px art times the inner clip's _xscale. Flash keeps _x and _y in whole
+# was, and its trail ends where the original's did. On the frame that removes
+# the bolt, the port's bolt is freed, and only the trail is compared. The
+# original's trail ends at its _x and _y plus its length along its _rotation,
+# and its length is the width of the art times the inner clip's _xscale. Flash keeps _x and _y in whole
 # twips (0.05 px) after each move, so the positions drift from the port's by a
 # little each frame.
 func test_the_bolt_and_its_trail_match_the_flash_capture_on_every_frame():
@@ -389,17 +395,17 @@ func test_the_bolt_and_its_trail_match_the_flash_capture_on_every_frame():
 		for frame: Dictionary in frames:
 			bolt._process(1.0 / BattleScreenClip.fps())
 			var at := "cast %d, frame %s" % [cast, frame["n"]]
-			if frame["removed"] == "true":
-				assert_true(bolt.is_queued_for_deletion(), "%s: the bolt hit" % at)
-				continue
-			var flash_bolt := Vector2(float(frame["boltX"]), float(frame["boltY"]))
-			var length: float = 10.0 * float(frame["innerXscale"]) / 100.0
+			var length: float = _trail_art_width * float(frame["innerXscale"]) / 100.0
 			var flash_end := (
 				Vector2(float(frame["trailX"]), float(frame["trailY"]))
 				+ Vector2.from_angle(deg_to_rad(float(frame["trailRot"]))) * length
 			)
-			assert_almost_eq(bolt.position, flash_bolt, Vector2(0.5, 0.5), "%s: the bolt" % at)
 			assert_almost_eq(_trail_end_in(field, bolt), flash_end, Vector2(0.5, 0.5), "%s: the trail's far end" % at)
+			if frame["removed"] == "true":
+				assert_true(bolt.is_queued_for_deletion(), "%s: the bolt hit" % at)
+			else:
+				var flash_bolt := Vector2(float(frame["boltX"]), float(frame["boltY"]))
+				assert_almost_eq(bolt.position, flash_bolt, Vector2(0.5, 0.5), "%s: the bolt" % at)
 
 
 # GridZoomer zooms and pans BATTLESCREEN while a Missile flies. krinBoltMake
