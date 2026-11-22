@@ -1,0 +1,4 @@
+[submodule "vendor/godot-mcp"]
+	path = vendor/godot-mcp
+	url = https://github.com/julian-perge/godot-mcp.git
+	branch = main
