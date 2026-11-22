@@ -151,10 +151,7 @@ func test_pool_row_hover_has_no_rank_prefix_or_next_rank_section():
 			"no rank progress to show outside a tree-node hover"
 		)
 
-# A pool row's toolTip is the move's description, then SKILLTHRS1, the move's
-# action bar limit KRINABILITY[8] and SKILLTHRS2
-# (DefineSprite_3142/frame_25/DoAction.as:49). The text is typed here to check
-# that the tooltip shows the original's English words.
+
 func _body_text(result: Dictionary) -> String:
 	for section in result["sections"]:
 		if section["bg_color"] == TooltipTheme.BG_BODY:
@@ -162,6 +159,10 @@ func _body_text(result: Dictionary) -> String:
 	return ""
 
 
+# A pool row's toolTip is the move's description, then SKILLTHRS1, the move's
+# action bar limit KRINABILITY[8] and SKILLTHRS2
+# (DefineSprite_3142/frame_25/DoAction.as:49). The text is typed here to check
+# that the tooltip shows the original's English words.
 func test_a_pool_row_with_a_limit_of_one_ends_its_description_with_the_limit():
 	var move: Ability = MoveManagerAuto.get_move(1)
 	assert_eq(move.hotbar_slot_limit, 1, "sanity: Leading Strike has a limit of 1")

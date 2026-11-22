@@ -176,7 +176,7 @@ func test_a_pool_row_tooltip_ends_the_description_with_the_action_bar_limit() ->
 	var expected: Array[String] = [
 		move.display_name,
 		move.tooltip_cost,
-		move.tooltip_description + Strings.text("SKILLTHRS1") + "1" + Strings.text("SKILLTHRS2"),
+		move.tooltip_description + Strings.text("SKILLTHRS1") + str(move.hotbar_slot_limit) + Strings.text("SKILLTHRS2"),
 	]
 	assert_true(GameTooltip.is_showing(), "the tooltip shows")
 	assert_eq(_tooltip_texts(), expected)

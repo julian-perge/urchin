@@ -1,8 +1,9 @@
 # ability_tooltip_builder.gd
 # Pure data builder for the abilities screen's rich tooltip (talent tree
 # node / action-bar wheel socket / ability pool row hover). No Node/scene
-# dependency on purpose - abilities_window.gd consumes build_sections()'s
-# output directly; GUT tests target this directly.
+# dependency on purpose - abilities_window.gd consumes the output of
+# build_sections() and pool_row_sections() directly; GUT tests target this
+# directly.
 class_name AbilityTooltipBuilder
 extends RefCounted
 
