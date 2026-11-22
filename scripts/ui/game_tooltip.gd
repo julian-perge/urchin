@@ -68,12 +68,21 @@ func show_sections(
 ) -> void:
 	for child in _sections.get_children():
 		child.free()
-	_sections.custom_minimum_size.x = text_width + 2.0 * TEXT_GUTTER
+	var line_width: float = text_width + 2.0 * TEXT_GUTTER
+	_sections.custom_minimum_size.x = line_width
 	var gutter: StyleBoxEmpty = StyleBoxEmpty.new()
 	gutter.set_content_margin_all(TEXT_GUTTER)
 	for section_index in sections.size():
 		var section: Dictionary = sections[section_index]
 		var panel: PanelContainer = PanelContainer.new()
+		# A wrapping Label is as tall as its text wrapped at its own width, and a
+		# new Label is 0 px wide. A container sets a child's width only when it
+		# sorts, at the end of the frame, and it skips a hidden child. So the
+		# panel, its lines and each Label start at the width that the sort gives
+		# them. Without this, the tooltip took the height of text wrapped at 0 px
+		# for one frame, on the frame it showed or on the frame its details
+		# showed (#491).
+		panel.size.x = line_width
 		var gloss_add: Variant = _gloss_add(section, section_index, rarity)
 		if gloss_add == null:
 			var style: StyleBoxFlat = StyleBoxFlat.new()
@@ -85,6 +94,7 @@ func show_sections(
 		var lines_box: VBoxContainer = VBoxContainer.new()
 		lines_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		lines_box.add_theme_constant_override("separation", FIELD_SPACING)
+		lines_box.size.x = line_width
 		for line in section["lines"]:
 			var label: Label = Label.new()
 			label.text = line["text"]
@@ -105,6 +115,7 @@ func show_sections(
 			label.add_theme_font_size_override("font_size", TooltipTheme.FONT_SIZE)
 			label.add_theme_color_override("font_color", line["color"])
 			label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			label.size.x = line_width
 			lines_box.add_child(label)
 		panel.add_child(lines_box)
 		if gloss_add != null:
@@ -122,8 +133,8 @@ func show_sections(
 		_detail_wait = float(TooltipTheme.look()["detail_delay_frames"]) / float(TooltipTheme.look()["frame_rate"])
 		_show_details(false)
 	_root.visible = true
-	# The new Labels have no wrapped size until the containers sort them, so
-	# the first placement waits for the end of this frame.
+	# The sections move right of the icon only when Root sorts, at the end of
+	# this frame, so the first placement waits until then.
 	_follow.call_deferred()
 
 
@@ -173,6 +184,11 @@ func sections_position() -> Vector2:
 # -> the top left corner of the whole tooltip, icon included, in Stage px.
 func box_position() -> Vector2:
 	return _root.global_position
+
+
+# -> the size of the whole tooltip, icon included, in Stage px.
+func box_size() -> Vector2:
+	return _root.size
 
 
 # -> the add terms to draw a section's 2715 gradient with, or null for a section
