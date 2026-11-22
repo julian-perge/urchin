@@ -129,6 +129,8 @@ original each module ports or relies on.
 - Reviewing a diff, or calling a change verified: `CODING_STANDARDS.md`.
 - Dispatching a Build or Bug task to a worker model, or working as one:
   `docs/agents/multi-model.md`.
+- Seeing a change in the real game: the verify-urchin skill,
+  `.claude/skills/verify-urchin/SKILL.md`.
 
 ## Workflow
 
