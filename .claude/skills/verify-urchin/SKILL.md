@@ -154,8 +154,11 @@ Proof standards:
 SIGKILL after 10 s. It copies the log and the run's `user://` into
 `evidence/`, then deletes `data/`. It keeps `evidence/` and `state.json`.
 It prints `real_user_dir_unchanged` and `left_running`, which must be
-`true` and `[]`. Run `stop` after every failed attempt too. Never kill Godot by name: `pkill -f` in a Bash call can
-kill the tool's own shell, and it can kill the user's game.
+`true` and `[]`. On Linux it signals the process group only while a
+process in it still has the run's token, because after a reboot the saved
+group number can belong to another program. Run `stop` after every failed
+attempt too. Never kill Godot by name: `pkill -f` in a Bash call can kill
+the tool's own shell, and it can kill the user's game.
 
 ## Gotchas
 

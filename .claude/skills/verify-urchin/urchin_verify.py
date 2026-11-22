@@ -192,6 +192,25 @@ def group_pids(pgid: int) -> list[int]:
     return pids
 
 
+# Every run loads the same harness file, so the run's own token in a
+# process's environment is what marks that process as this run's Godot.
+def token_pids(state: dict, godot_only: bool = True) -> list[int]:
+    token = f"GODOT_MCP_HARNESS_TOKEN={state['token']}".encode()
+    pids = []
+    for pid in group_pids(state["pgid"]):
+        try:
+            program = Path(f"/proc/{pid}/cmdline").read_bytes().split(b"\0")[0]
+            environ = Path(f"/proc/{pid}/environ").read_bytes().split(b"\0")
+        except OSError:
+            continue
+        if token not in environ:
+            continue
+        if godot_only and "just" in Path(program.decode()).name:
+            continue
+        pids.append(pid)
+    return pids
+
+
 def free_port() -> int:
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0))
@@ -370,13 +389,20 @@ def cmd_launch(args: argparse.Namespace) -> None:
         fail(
             f"no harness listening line after {args.timeout} s. Log: {log}. Run stop {args.run}"
         )
+    answer: dict = {"ok": False, "error": "the harness gave no answer yet"}
     while time.time() < deadline:
-        answer = record(
-            folder,
-            state,
-            [{"type": "wait", "duration_ms": args.settle_ms}, {"type": "screenshot"}],
-            "launch",
-        )
+        try:
+            answer = record(
+                folder,
+                state,
+                [
+                    {"type": "wait", "duration_ms": args.settle_ms},
+                    {"type": "screenshot"},
+                ],
+                "launch",
+            )
+        except (OSError, ValueError) as error:
+            answer = {"ok": False, "error": str(error)}
         if answer.get("ok"):
             break
         time.sleep(1)
@@ -414,19 +440,7 @@ def cmd_doctor(args: argparse.Namespace) -> None:
     checks = {}
     alive = state.get("status") == "running" and pid_alive(state["pid"])
     checks["process_up"] = alive
-    # Every run loads the same harness file, so the run's own token in a
-    # process's environment is what marks that process as this run's Godot.
-    godot_pids = []
-    token = f"GODOT_MCP_HARNESS_TOKEN={state['token']}".encode()
-    if alive:
-        for pid in group_pids(state["pgid"]):
-            try:
-                program = Path(f"/proc/{pid}/cmdline").read_bytes().split(b"\0")[0]
-                environ = Path(f"/proc/{pid}/environ").read_bytes().split(b"\0")
-            except OSError:
-                continue
-            if token in environ and "just" not in Path(program.decode()).name:
-                godot_pids.append(pid)
+    godot_pids = token_pids(state) if alive else []
     checks["godot_runs_our_harness"] = bool(godot_pids) or sys.platform == "darwin"
     try:
         answer = request(state, [], timeout=5)
@@ -554,7 +568,11 @@ def cmd_stop(args: argparse.Namespace) -> None:
     folder, state = load_state(args.run)
     evidence = folder / "evidence"
     user_dir = Path(state["user_dir"])
-    if state.get("status") == "running":
+    # After a reboot, the saved process group number can belong to another
+    # program, so on Linux stop signals the group only while a process in it
+    # still has this run's token. macOS has no /proc to check that with.
+    ours = sys.platform == "darwin" or bool(token_pids(state, godot_only=False))
+    if state.get("status") == "running" and ours:
         try:
             os.killpg(state["pgid"], signal.SIGTERM)
         except ProcessLookupError:
@@ -588,7 +606,7 @@ def cmd_stop(args: argparse.Namespace) -> None:
                 "evidence": str(evidence),
                 "files": sorted(p.name for p in evidence.iterdir()),
                 "real_user_dir_unchanged": unchanged,
-                "left_running": group_pids(state["pgid"]),
+                "left_running": group_pids(state["pgid"]) if ours else [],
             },
             indent=2,
         )

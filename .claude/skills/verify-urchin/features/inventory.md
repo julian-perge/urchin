@@ -37,6 +37,6 @@ Preconditions:
 ## Gotchas
 
 - A bare `CloseButton` used to hit the hidden Store window's button. The
-  helper now takes the first visible match, but a full path is safer.
+  harness now takes the first visible match, but a full path is safer.
 - The `rich` preset starts with an empty grid. Buy an item in the store
   first (see [store.md](./store.md)) to have one to equip.
